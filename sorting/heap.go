@@ -1,8 +1,6 @@
 package sort
 
-import builtinSort "sort"
-
-func heapSink(target builtinSort.Interface, pos int, len int) {
+func heapSink(target Interface, pos int, len int) {
 	for k := pos; 2*k <= len; {
 		p := 2 * k
 		if p < len && target.Less(p-1, p) {
@@ -17,7 +15,7 @@ func heapSink(target builtinSort.Interface, pos int, len int) {
 }
 
 // Heap sorts target with "Heap sort" algorithm.
-func Heap(target builtinSort.Interface) {
+func Heap(target Interface) {
 	len := target.Len()
 	for k := len / 2; k >= 1; k-- {
 		heapSink(target, k, len)

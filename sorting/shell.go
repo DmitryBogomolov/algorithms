@@ -1,9 +1,7 @@
 package sort
 
-import builtinSort "sort"
-
 // Shell sorts target with "Shell sort" algorithm.
-func Shell(target builtinSort.Interface) {
+func Shell(target Interface) {
 	len := target.Len()
 	h := 1
 	for h < len/3 {
