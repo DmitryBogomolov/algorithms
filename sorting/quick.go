@@ -5,39 +5,31 @@ import (
 	builtinSort "sort"
 )
 
-func partition(target builtinSort.Interface, lo int, hi int) int {
-	i := lo
-	j := hi + 1
-	pivot := lo
-	for {
-		for {
+func partition(target builtinSort.Interface, lo int, hi int) (int, int) {
+	lt := lo
+	gt := hi
+	for i := lo + 1; i <= gt; {
+		if target.Less(i, lt) {
+			target.Swap(lt, i)
+			lt++
 			i++
-			if i == hi || !target.Less(i, pivot) {
-				break
-			}
+		} else if target.Less(lt, i) {
+			target.Swap(i, gt)
+			gt--
+		} else {
+			i++
 		}
-		for {
-			j--
-			if j == lo || !target.Less(pivot, j) {
-				break
-			}
-		}
-		if i >= j {
-			break
-		}
-		target.Swap(i, j)
 	}
-	target.Swap(pivot, j)
-	return j
+	return lt, gt
 }
 
 func quickCore(target builtinSort.Interface, lo int, hi int) {
 	if hi <= lo {
 		return
 	}
-	pos := partition(target, lo, hi)
-	quickCore(target, lo, pos-1)
-	quickCore(target, pos+1, hi)
+	lt, gt := partition(target, lo, hi)
+	quickCore(target, lo, lt-1)
+	quickCore(target, gt+1, hi)
 }
 
 // Quick sorts target with "Quick sort" algorithm.
