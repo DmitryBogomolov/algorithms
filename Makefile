@@ -1,3 +1,6 @@
+install:
+	go get -v -t -d ./...
+
 lint:
 	golint ./...
 
