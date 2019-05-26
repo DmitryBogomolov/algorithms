@@ -5,6 +5,9 @@ import (
 	builtinSort "sort"
 )
 
+// QuickToInsertionCutoff defines threshold when quick sort is switched to insertion sort.
+const QuickToInsertionCutoff = 11
+
 func partition(target builtinSort.Interface, lo int, hi int) (int, int) {
 	lt := lo
 	gt := hi
@@ -24,7 +27,8 @@ func partition(target builtinSort.Interface, lo int, hi int) (int, int) {
 }
 
 func quickCore(target builtinSort.Interface, lo int, hi int) {
-	if hi <= lo {
+	if hi-lo <= QuickToInsertionCutoff {
+		insertionCore(target, lo, hi)
 		return
 	}
 	lt, gt := partition(target, lo, hi)
