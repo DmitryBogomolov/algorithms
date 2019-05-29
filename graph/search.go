@@ -2,40 +2,40 @@ package graph
 
 import "container/list"
 
-// SearchResult represents result of depth-first search.
-type SearchResult struct {
+// VertexPaths represents paths from a vertex.
+type VertexPaths struct {
 	source int
 	count  int
 	marked []bool
 	edgeTo []int
 }
 
-func newSearchResult(graph Graph, vertex int) SearchResult {
+func newVertexPaths(graph Graph, vertex int) VertexPaths {
 	count := graph.NumVertices()
-	return SearchResult{
+	return VertexPaths{
 		source: vertex,
 		marked: make([]bool, count),
 		edgeTo: make([]int, count),
 	}
 }
 
-// Source show source vertex.
-func (r SearchResult) Source() int {
+// Origin show initial vertex.
+func (r VertexPaths) Origin() int {
 	return r.source
 }
 
-// Marked shows if *vertex* connected with source vertex.
-func (r SearchResult) Marked(vertex int) bool {
+// HasPathTo shows if *vertex* is connected with initial vertex.
+func (r VertexPaths) HasPathTo(vertex int) bool {
 	return r.marked[vertex]
 }
 
-// Count shows number of vertices connected with source vertex.
-func (r SearchResult) Count() int {
+// Count shows number of vertices connected with initial vertex.
+func (r VertexPaths) Count() int {
 	return r.count
 }
 
 // PathTo shows a path from source vertex to *vertex*.
-func (r SearchResult) PathTo(vertex int) []int {
+func (r VertexPaths) PathTo(vertex int) []int {
 	if !r.marked[vertex] {
 		return nil
 	}
@@ -52,25 +52,25 @@ func (r SearchResult) PathTo(vertex int) []int {
 	return path
 }
 
-func depthFirstSearch(r *SearchResult, graph Graph, vertex int) {
+func findPathsDepthFirstCore(r *VertexPaths, graph Graph, vertex int) {
 	r.marked[vertex] = true
 	r.count++
 	for _, v := range graph.AdjacentVertices(vertex) {
 		if !r.marked[v] {
 			r.edgeTo[v] = vertex
-			depthFirstSearch(r, graph, v)
+			findPathsDepthFirstCore(r, graph, v)
 		}
 	}
 }
 
-// DepthFirstSearch performs depth-first search for a specified vertex.
-func DepthFirstSearch(graph Graph, vertex int) SearchResult {
-	result := newSearchResult(graph, vertex)
-	depthFirstSearch(&result, graph, vertex)
+// FindPathsDepthFirst finds paths from "vertex" using depth-first search.
+func FindPathsDepthFirst(graph Graph, vertex int) VertexPaths {
+	result := newVertexPaths(graph, vertex)
+	findPathsDepthFirstCore(&result, graph, vertex)
 	return result
 }
 
-func breadthFirstSearch(r *SearchResult, graph Graph, vertex int) {
+func findPathsBreadthFirstCore(r *VertexPaths, graph Graph, vertex int) {
 	queue := list.New()
 	queue.PushBack(vertex)
 	r.marked[vertex] = true
@@ -89,10 +89,10 @@ func breadthFirstSearch(r *SearchResult, graph Graph, vertex int) {
 	}
 }
 
-// BreadthFirstSearch performs breadth-first search for a specified vertex.
-func BreadthFirstSearch(graph Graph, vertex int) SearchResult {
-	result := newSearchResult(graph, vertex)
-	breadthFirstSearch(&result, graph, vertex)
+// FindPathsBreadthFirst finds paths from "vertex" using breadth-first search.
+func FindPathsBreadthFirst(graph Graph, vertex int) VertexPaths {
+	result := newVertexPaths(graph, vertex)
+	findPathsBreadthFirstCore(&result, graph, vertex)
 	return result
 }
 
@@ -118,12 +118,12 @@ func (cc ConnectedComponents) ComponentID(vertex int) int {
 	return cc.components[vertex]
 }
 
-func findConnectedComponents(cc *ConnectedComponents, graph Graph, vertex int) {
+func findConnectedComponentsCore(cc *ConnectedComponents, graph Graph, vertex int) {
 	cc.marked[vertex] = true
 	cc.components[vertex] = cc.count
 	for _, v := range graph.AdjacentVertices(vertex) {
 		if !cc.marked[v] {
-			findConnectedComponents(cc, graph, v)
+			findConnectedComponentsCore(cc, graph, v)
 		}
 	}
 }
@@ -137,7 +137,7 @@ func FindConnectedComponents(graph Graph) ConnectedComponents {
 	}
 	for v := 0; v < count; v++ {
 		if !result.marked[v] {
-			findConnectedComponents(&result, graph, v)
+			findConnectedComponentsCore(&result, graph, v)
 			result.count++
 		}
 	}
