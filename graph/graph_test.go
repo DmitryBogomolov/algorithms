@@ -18,6 +18,18 @@ type testGraph struct {
 	adjacency   [][]int
 }
 
+func newTestGraph(numVertices int, connections ...int) *testGraph {
+	graph := testGraph{
+		numVertices: numVertices,
+		numEdges:    len(connections) / 2,
+		adjacency:   make([][]int, numVertices),
+	}
+	for i := 0; i < len(connections)/2; i++ {
+		graph.addEdge(connections[2*i], connections[2*i+1])
+	}
+	return &graph
+}
+
 func (g *testGraph) addEdge(v1, v2 int) {
 	g.adjacency[v1] = append(g.adjacency[v1], v2)
 	g.adjacency[v2] = append(g.adjacency[v2], v1)

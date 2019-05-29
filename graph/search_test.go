@@ -7,19 +7,16 @@ import (
 )
 
 func TestDepthFirstSearch(t *testing.T) {
-	graph := &testGraph{
-		numVertices: 7,
-		numEdges:    8,
-		adjacency:   make([][]int, 7),
-	}
-	graph.addEdge(0, 5)
-	graph.addEdge(2, 4)
-	graph.addEdge(2, 3)
-	graph.addEdge(1, 2)
-	graph.addEdge(0, 1)
-	graph.addEdge(3, 4)
-	graph.addEdge(3, 5)
-	graph.addEdge(0, 2)
+	graph := newTestGraph(7,
+		0, 5,
+		2, 4,
+		2, 3,
+		1, 2,
+		0, 1,
+		3, 4,
+		3, 5,
+		0, 2,
+	)
 
 	t.Run("Count", func(t *testing.T) {
 		var ret SearchResult
@@ -87,19 +84,16 @@ func TestDepthFirstSearch(t *testing.T) {
 }
 
 func TestBreadthFirstSearch(t *testing.T) {
-	graph := &testGraph{
-		numVertices: 7,
-		numEdges:    8,
-		adjacency:   make([][]int, 7),
-	}
-	graph.addEdge(0, 5)
-	graph.addEdge(2, 4)
-	graph.addEdge(2, 3)
-	graph.addEdge(1, 2)
-	graph.addEdge(0, 1)
-	graph.addEdge(3, 4)
-	graph.addEdge(3, 5)
-	graph.addEdge(0, 2)
+	graph := newTestGraph(7,
+		0, 5,
+		2, 4,
+		2, 3,
+		1, 2,
+		0, 1,
+		3, 4,
+		3, 5,
+		0, 2,
+	)
 
 	t.Run("Count", func(t *testing.T) {
 		var ret SearchResult
@@ -168,19 +162,16 @@ func TestBreadthFirstSearch(t *testing.T) {
 }
 
 func TestFindConnectedComponents(t *testing.T) {
-	graph := &testGraph{
-		numVertices: 8,
-		numEdges:    8,
-		adjacency:   make([][]int, 8),
-	}
-	graph.addEdge(0, 1)
-	graph.addEdge(1, 4)
-	graph.addEdge(4, 7)
-	graph.addEdge(7, 2)
-	graph.addEdge(2, 0)
-	graph.addEdge(1, 2)
-	graph.addEdge(2, 4)
-	graph.addEdge(5, 6)
+	graph := newTestGraph(8,
+		0, 1,
+		1, 4,
+		4, 7,
+		7, 2,
+		2, 0,
+		1, 2,
+		2, 4,
+		5, 6,
+	)
 
 	ret := FindConnectedComponents(graph)
 
