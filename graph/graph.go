@@ -1,6 +1,6 @@
 package graph
 
-// Graph represents a undirected graph.
+// Graph represents an undirected graph.
 type Graph interface {
 	NumVertices() int
 	NumEdges() int
