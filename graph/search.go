@@ -95,3 +95,51 @@ func BreadthFirstSearch(graph Graph, vertex int) SearchResult {
 	breadthFirstSearch(&result, graph, vertex)
 	return result
 }
+
+// ConnectedComponents respresents connected components of a graph.
+type ConnectedComponents struct {
+	marked     []bool
+	count      int
+	components []int
+}
+
+// Count returns number of connected components.
+func (cc ConnectedComponents) Count() int {
+	return cc.count
+}
+
+// Connected tells if two vertices are connected.
+func (cc ConnectedComponents) Connected(vertex1 int, vertex2 int) bool {
+	return cc.components[vertex1] == cc.components[vertex2]
+}
+
+// ComponentID tells the component which vertex belongs to.
+func (cc ConnectedComponents) ComponentID(vertex int) int {
+	return cc.components[vertex]
+}
+
+func findConnectedComponents(cc *ConnectedComponents, graph Graph, vertex int) {
+	cc.marked[vertex] = true
+	cc.components[vertex] = cc.count
+	for _, v := range graph.AdjacentVertices(vertex) {
+		if !cc.marked[v] {
+			findConnectedComponents(cc, graph, v)
+		}
+	}
+}
+
+// FindConnectedComponents finds connected components in a graph.
+func FindConnectedComponents(graph Graph) ConnectedComponents {
+	count := graph.NumVertices()
+	result := ConnectedComponents{
+		marked:     make([]bool, count),
+		components: make([]int, count),
+	}
+	for v := 0; v < count; v++ {
+		if !result.marked[v] {
+			findConnectedComponents(&result, graph, v)
+			result.count++
+		}
+	}
+	return result
+}

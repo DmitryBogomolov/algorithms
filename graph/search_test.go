@@ -119,8 +119,8 @@ func TestBreadthFirstSearch(t *testing.T) {
 
 		allMarked := func() []bool {
 			all := make([]bool, graph.NumVertices())
-			for i := 0; i < graph.NumVertices(); i++ {
-				all[i] = ret.Marked(i)
+			for v := 0; v < graph.NumVertices(); v++ {
+				all[v] = ret.Marked(v)
 			}
 			return all
 		}
@@ -165,4 +165,42 @@ func TestBreadthFirstSearch(t *testing.T) {
 		assert.Equal(t, []int{6}, ret.PathTo(6), "6 -> 6")
 		assert.Equal(t, []int(nil), ret.PathTo(5), "6 -> 5")
 	})
+}
+
+func TestFindConnectedComponents(t *testing.T) {
+	graph := &testGraph{
+		numVertices: 8,
+		numEdges:    8,
+		adjacency:   make([][]int, 8),
+	}
+	graph.addEdge(0, 1)
+	graph.addEdge(1, 4)
+	graph.addEdge(4, 7)
+	graph.addEdge(7, 2)
+	graph.addEdge(2, 0)
+	graph.addEdge(1, 2)
+	graph.addEdge(2, 4)
+	graph.addEdge(5, 6)
+
+	ret := FindConnectedComponents(graph)
+
+	assert.Equal(t, 3, ret.Count(), "count)")
+
+	components := make([]int, graph.NumVertices())
+	for v := 0; v < graph.NumVertices(); v++ {
+		components[v] = ret.ComponentID(v)
+	}
+	assert.Equal(t,
+		[]int{0, 0, 0, 1, 0, 2, 2, 0},
+		components,
+		"components",
+	)
+
+	assert.Equal(t, true, ret.Connected(0, 7), "0 - 7")
+	assert.Equal(t, false, ret.Connected(2, 5), "2 - 5")
+	assert.Equal(t, false, ret.Connected(4, 3), "4 - 3")
+	assert.Equal(t, true, ret.Connected(3, 3), "3 - 3")
+	assert.Equal(t, true, ret.Connected(5, 6), "5 - 6")
+	assert.Equal(t, true, ret.Connected(7, 1), "7 - 1")
+	assert.Equal(t, true, ret.Connected(2, 4), "2 - 4")
 }
