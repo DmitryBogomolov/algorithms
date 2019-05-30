@@ -195,3 +195,38 @@ func TestFindConnectedComponents(t *testing.T) {
 	assert.Equal(t, true, ret.Connected(7, 1), "7 - 1")
 	assert.Equal(t, true, ret.Connected(2, 4), "2 - 4")
 }
+
+func TestHasCycle(t *testing.T) {
+	var graph *testGraph
+
+	graph = newTestGraph(3,
+		0, 1,
+		1, 2,
+		2, 0,
+	)
+	assert.Equal(t, true, HasCycle(graph))
+
+	graph = newTestGraph(3,
+		0, 1,
+		1, 2,
+	)
+	assert.Equal(t, false, HasCycle(graph))
+
+	graph = newTestGraph(5,
+		0, 1,
+		0, 2,
+		1, 3,
+		1, 4,
+	)
+	assert.Equal(t, false, HasCycle(graph))
+
+	graph = newTestGraph(5,
+		0, 1,
+		0, 2,
+		1, 3,
+		1, 4,
+		2, 3,
+		3, 4,
+	)
+	assert.Equal(t, true, HasCycle(graph))
+}

@@ -144,3 +144,30 @@ func FindConnectedComponents(graph Graph) ConnectedComponents {
 	}
 	return result
 }
+
+func hasCycleCore(marked []bool, graph Graph, initialVertex int, vertex int) bool {
+	marked[vertex] = true
+	for _, v := range graph.AdjacentVertices(vertex) {
+		if !marked[v] {
+			if hasCycleCore(marked, graph, vertex, v) {
+				return true
+			}
+		} else if v != initialVertex {
+			return true
+		}
+	}
+	return false
+}
+
+// HasCycle shows if there is a cycle in a graph.
+func HasCycle(graph Graph) bool {
+	marked := make([]bool, graph.NumVertices())
+	for v := 0; v < graph.NumVertices(); v++ {
+		if !marked[v] {
+			if hasCycleCore(marked, graph, -1, v) {
+				return true
+			}
+		}
+	}
+	return false
+}
