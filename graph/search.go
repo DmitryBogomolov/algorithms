@@ -1,6 +1,8 @@
 package graph
 
-import "container/list"
+import (
+	"container/list"
+)
 
 // VertexPaths represents paths from a vertex.
 type VertexPaths struct {
@@ -98,7 +100,7 @@ func FindPathsBreadthFirst(graph Graph, vertex int) VertexPaths {
 	return result
 }
 
-// ConnectedComponents respresents connected components of a graph.
+// ConnectedComponents represents connected components of a graph.
 type ConnectedComponents struct {
 	count      int
 	components []int
@@ -201,4 +203,51 @@ func IsBipartite(graph Graph) bool {
 		}
 	}
 	return true
+}
+
+// CutEdge represents cut-edge in a graph.
+type CutEdge = [2]int
+
+func min(a, b int) int {
+	var ret int
+	if a <= b {
+		ret = a
+	} else {
+		ret = b
+	}
+	return ret
+}
+
+func findCutEdgesCore(result *[]CutEdge, pre []int, low []int, cnt int, graph Graph, u int, v int) {
+	pre[v] = cnt
+	low[v] = pre[v]
+	for _, w := range graph.AdjacentVertices(v) {
+		if pre[w] == -1 {
+			findCutEdgesCore(result, pre, low, cnt+1, graph, v, w)
+			low[v] = min(low[v], low[w])
+			if low[w] == pre[w] {
+				*result = append(*result, CutEdge{v, w})
+			}
+		} else if w != u {
+			low[v] = min(low[v], pre[w])
+		}
+	}
+}
+
+// FindCutEdges finds cut-edges in a graph.
+func FindCutEdges(graph Graph) []CutEdge {
+	numVertices := graph.NumVertices()
+	pre := make([]int, numVertices)
+	low := make([]int, numVertices)
+	for v := 0; v < numVertices; v++ {
+		pre[v] = -1
+		low[v] = -1
+	}
+	var result []CutEdge
+	for v := 0; v < numVertices; v++ {
+		if pre[v] == -1 {
+			findCutEdgesCore(&result, pre, low, 0, graph, v, v)
+		}
+	}
+	return result
 }
