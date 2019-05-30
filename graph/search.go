@@ -161,8 +161,9 @@ func hasCycleCore(marked []bool, graph Graph, initialVertex int, vertex int) boo
 
 // HasCycle shows if there is a cycle in a graph.
 func HasCycle(graph Graph) bool {
-	marked := make([]bool, graph.NumVertices())
-	for v := 0; v < graph.NumVertices(); v++ {
+	numVertices := graph.NumVertices()
+	marked := make([]bool, numVertices)
+	for v := 0; v < numVertices; v++ {
 		if !marked[v] {
 			if hasCycleCore(marked, graph, -1, v) {
 				return true
@@ -170,4 +171,34 @@ func HasCycle(graph Graph) bool {
 		}
 	}
 	return false
+}
+
+func isBipartiteCore(marked []bool, colors []bool, graph Graph, vertex int) bool {
+	marked[vertex] = true
+	for _, v := range graph.AdjacentVertices(vertex) {
+		if !marked[v] {
+			colors[v] = !colors[vertex]
+			if !isBipartiteCore(marked, colors, graph, v) {
+				return false
+			}
+		} else if colors[v] == colors[vertex] {
+			return false
+		}
+	}
+	return true
+}
+
+// IsBipartite shows if graph is two-colorable.
+func IsBipartite(graph Graph) bool {
+	numVertices := graph.NumVertices()
+	marked := make([]bool, numVertices)
+	colors := make([]bool, numVertices)
+	for v := 0; v < numVertices; v++ {
+		if !marked[v] {
+			if !isBipartiteCore(marked, colors, graph, v) {
+				return false
+			}
+		}
+	}
+	return true
 }
