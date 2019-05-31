@@ -218,7 +218,11 @@ func min(a, b int) int {
 	return ret
 }
 
-func findCutEdgesCore(result *[]CutEdge, pre []int, low []int, cnt int, graph Graph, u int, v int) {
+func findCutEdgesCore(
+	result *[]CutEdge,
+	pre []int, low []int, cnt int,
+	graph Graph, u int, v int,
+) {
 	pre[v] = cnt
 	low[v] = pre[v]
 	for _, w := range graph.AdjacentVertices(v) {
@@ -247,6 +251,55 @@ func FindCutEdges(graph Graph) []CutEdge {
 	for v := 0; v < numVertices; v++ {
 		if pre[v] == -1 {
 			findCutEdgesCore(&result, pre, low, 0, graph, v, v)
+		}
+	}
+	return result
+}
+
+func findCutVerticesCore(
+	articulation []bool,
+	pre []int, low []int, cnt int,
+	graph Graph, u int, v int,
+) {
+	children := 0
+	pre[v] = cnt
+	low[v] = pre[v]
+	for _, w := range graph.AdjacentVertices(v) {
+		if pre[w] == -1 {
+			children++
+			findCutVerticesCore(articulation, pre, low, cnt+1, graph, v, w)
+			low[v] = min(low[v], low[w])
+			if low[w] >= pre[v] && u != v {
+				articulation[v] = true
+			}
+		} else if w != u {
+			low[v] = min(low[v], pre[w])
+		}
+	}
+	if u == v && children > 1 {
+		articulation[v] = true
+	}
+}
+
+// FindCutVertices finds cut-vertices in a graph.
+func FindCutVertices(graph Graph) []int {
+	numVertices := graph.NumVertices()
+	pre := make([]int, numVertices)
+	low := make([]int, numVertices)
+	articulation := make([]bool, numVertices)
+	for v := 0; v < numVertices; v++ {
+		pre[v] = -1
+		low[v] = -1
+	}
+	for v := 0; v < numVertices; v++ {
+		if pre[v] == -1 {
+			findCutVerticesCore(articulation, pre, low, 0, graph, v, v)
+		}
+	}
+	var result []int
+	for v, flag := range articulation {
+		if flag {
+			result = append(result, v)
 		}
 	}
 	return result
