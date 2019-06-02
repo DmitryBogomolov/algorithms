@@ -206,16 +206,12 @@ func TestHasCycle(t *testing.T) {
 	graph = newTestGraph(3,
 		0, 1,
 		1, 2,
-		2, 0,
 	)
+	assert.Equal(t, false, HasCycle(graph))
+
+	graph.addEdge(2, 0)
 	assert.Equal(t, true, HasCycle(graph))
 
-	graph = newTestGraph(3,
-		0, 1,
-		1, 2,
-	)
-	assert.Equal(t, false, HasCycle(graph))
-
 	graph = newTestGraph(5,
 		0, 1,
 		0, 2,
@@ -224,14 +220,7 @@ func TestHasCycle(t *testing.T) {
 	)
 	assert.Equal(t, false, HasCycle(graph))
 
-	graph = newTestGraph(5,
-		0, 1,
-		0, 2,
-		1, 3,
-		1, 4,
-		2, 3,
-		3, 4,
-	)
+	graph.addEdge(2, 3)
 	assert.Equal(t, true, HasCycle(graph))
 }
 

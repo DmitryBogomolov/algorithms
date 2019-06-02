@@ -158,14 +158,14 @@ func FindConnectedComponents(graph Graph) ConnectedComponents {
 	return result
 }
 
-func hasCycleCore(marked []bool, graph Graph, initialVertex int, vertex int) bool {
-	marked[vertex] = true
-	for _, v := range graph.AdjacentVertices(vertex) {
-		if !marked[v] {
-			if hasCycleCore(marked, graph, vertex, v) {
+func hasCycleCore(marked []bool, graph Graph, parent int, current int) bool {
+	marked[current] = true
+	for _, child := range graph.AdjacentVertices(current) {
+		if !marked[child] {
+			if hasCycleCore(marked, graph, current, child) {
 				return true
 			}
-		} else if v != initialVertex {
+		} else if child != parent {
 			return true
 		}
 	}
