@@ -116,29 +116,40 @@ func (cc ConnectedComponents) Connected(vertex1 int, vertex2 int) bool {
 	return cc.components[vertex1] == cc.components[vertex2]
 }
 
-// ComponentID tells the component which vertex belongs to.
+// ComponentID returns the component to which vertex belongs.
 func (cc ConnectedComponents) ComponentID(vertex int) int {
 	return cc.components[vertex]
 }
 
-func findConnectedComponentsCore(cc *ConnectedComponents, marked []bool, graph Graph, vertex int) {
-	marked[vertex] = true
-	cc.components[vertex] = cc.count
-	for _, v := range graph.AdjacentVertices(vertex) {
-		if !marked[v] {
-			findConnectedComponentsCore(cc, marked, graph, v)
+// Component returns vertices of connected component.
+func (cc ConnectedComponents) Component(component int) []int {
+	var ret []int
+	for i := 0; i < len(cc.components); i++ {
+		if cc.components[i] == component {
+			ret = append(ret, i)
+		}
+	}
+	return ret
+}
+
+func findConnectedComponentsCore(cc *ConnectedComponents, marked []bool, graph Graph, current int) {
+	marked[current] = true
+	cc.components[current] = cc.count
+	for _, child := range graph.AdjacentVertices(current) {
+		if !marked[child] {
+			findConnectedComponentsCore(cc, marked, graph, child)
 		}
 	}
 }
 
 // FindConnectedComponents finds connected components in a graph.
 func FindConnectedComponents(graph Graph) ConnectedComponents {
-	count := graph.NumVertices()
+	numVertices := graph.NumVertices()
 	result := ConnectedComponents{
-		components: make([]int, count),
+		components: make([]int, numVertices),
 	}
-	marked := make([]bool, count)
-	for v := 0; v < count; v++ {
+	marked := make([]bool, numVertices)
+	for v := 0; v < numVertices; v++ {
 		if !marked[v] {
 			findConnectedComponentsCore(&result, marked, graph, v)
 			result.count++
@@ -175,15 +186,15 @@ func HasCycle(graph Graph) bool {
 	return false
 }
 
-func isBipartiteCore(marked []bool, colors []bool, graph Graph, vertex int) bool {
-	marked[vertex] = true
-	for _, v := range graph.AdjacentVertices(vertex) {
-		if !marked[v] {
-			colors[v] = !colors[vertex]
-			if !isBipartiteCore(marked, colors, graph, v) {
+func isBipartiteCore(marked []bool, colors []bool, graph Graph, current int) bool {
+	marked[current] = true
+	for _, child := range graph.AdjacentVertices(current) {
+		if !marked[child] {
+			colors[child] = !colors[current]
+			if !isBipartiteCore(marked, colors, graph, child) {
 				return false
 			}
-		} else if colors[v] == colors[vertex] {
+		} else if colors[child] == colors[current] {
 			return false
 		}
 	}
