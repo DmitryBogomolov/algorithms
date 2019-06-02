@@ -256,28 +256,44 @@ func FindCutEdges(graph Graph) []CutEdge {
 	return result
 }
 
+// In a DFS tree a vertex *v* is articulation point if:
+// - *v* is root and has at least two children
+// - *v* is not root and has subtree with no back edges to ancestors of *v*
+//
+// *dist* - distance from DFS root of *current* vertex
+// *pre* - original distances
+// *low* - updated distances
 func findCutVerticesCore(
 	articulation []bool,
-	pre []int, low []int, cnt int,
-	graph Graph, u int, v int,
+	pre []int, low []int, dist int,
+	graph Graph, parent int, current int,
 ) {
 	children := 0
-	pre[v] = cnt
-	low[v] = pre[v]
-	for _, w := range graph.AdjacentVertices(v) {
-		if pre[w] == -1 {
+	pre[current] = dist
+	low[current] = pre[current]
+	for _, child := range graph.AdjacentVertices(current) {
+		if pre[child] == -1 {
 			children++
-			findCutVerticesCore(articulation, pre, low, cnt+1, graph, v, w)
-			low[v] = min(low[v], low[w])
-			if low[w] >= pre[v] && u != v {
-				articulation[v] = true
+			findCutVerticesCore(articulation, pre, low, dist+1, graph, current, child)
+			// If *child* distance is less than *current* distance
+			// then there is back edge from *child* to ancestors of *current*.
+			if low[current] > low[child] {
+				low[current] = low[child]
 			}
-		} else if w != u {
-			low[v] = min(low[v], pre[w])
+			// *current* is not root and *child* has no back edges to ancestors of *current*.
+			// If *child* had back edge then its updated distance would be less
+			// than *current* original distance.
+			if low[child] >= pre[current] && parent != current {
+				articulation[current] = true
+			}
+		} else if child != parent && low[current] > pre[child] {
+			// Update *current* distance - it can be reached faster going through *child*.
+			low[current] = pre[child]
 		}
 	}
-	if u == v && children > 1 {
-		articulation[v] = true
+	// *current* is root and has at least two children.
+	if parent == current && children > 1 {
+		articulation[current] = true
 	}
 }
 
