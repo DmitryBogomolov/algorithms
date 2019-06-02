@@ -208,32 +208,35 @@ func IsBipartite(graph Graph) bool {
 // CutEdge represents cut-edge in a graph.
 type CutEdge = [2]int
 
-func min(a, b int) int {
-	var ret int
-	if a <= b {
-		ret = a
-	} else {
-		ret = b
-	}
-	return ret
-}
-
+// In a DFS tree edge *u-v* is bridge if *v* subtree has no back edges to ancestors of *u*.
+//
+// *dist* - distance from DFS root of *current* vertex
+// *pre* - original distances
+// *low* - updated distances
 func findCutEdgesCore(
 	result *[]CutEdge,
-	pre []int, low []int, cnt int,
-	graph Graph, u int, v int,
+	pre []int, low []int, dist int,
+	graph Graph, parent int, current int,
 ) {
-	pre[v] = cnt
-	low[v] = pre[v]
-	for _, w := range graph.AdjacentVertices(v) {
-		if pre[w] == -1 {
-			findCutEdgesCore(result, pre, low, cnt+1, graph, v, w)
-			low[v] = min(low[v], low[w])
-			if low[w] == pre[w] {
-				*result = append(*result, CutEdge{v, w})
+	pre[current] = dist
+	low[current] = pre[current]
+	for _, child := range graph.AdjacentVertices(current) {
+		if pre[child] == -1 {
+			findCutEdgesCore(result, pre, low, dist+1, graph, current, child)
+			// If *child* distance is less than *current* distance
+			// then there is back edge from *child* to ancestors of *current*.
+			if low[current] > low[child] {
+				low[current] = low[child]
 			}
-		} else if w != u {
-			low[v] = min(low[v], pre[w])
+			// *child* has no back edges to ancestors of *current*.
+			// If *child* had back edge then its updated distance would be less
+			// then its original distance.
+			if low[child] == pre[child] {
+				*result = append(*result, CutEdge{current, child})
+			}
+		} else if child != parent && low[current] > pre[child] {
+			// Update *current* distance - it can be reached faster going through *child*.
+			low[current] = pre[child]
 		}
 	}
 }

@@ -279,6 +279,11 @@ func TestFindCutEdges(t *testing.T) {
 
 	ret = FindCutEdges(graph)
 	assert.Equal(t, []CutEdge{CutEdge{3, 4}}, ret)
+
+	graph.addEdge(1, 5)
+
+	ret = FindCutEdges(graph)
+	assert.Equal(t, []CutEdge(nil), ret)
 }
 
 func TestFindCutVertices(t *testing.T) {
