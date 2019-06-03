@@ -32,9 +32,9 @@ func TestFindConnectedComponents(t *testing.T) {
 		"components",
 	)
 
-	assert.Equal(t, []int{0, 1, 2, 4, 7}, ret.Component(0), "component 1")
-	assert.Equal(t, []int{3}, ret.Component(1), "component 2")
-	assert.Equal(t, []int{5, 6}, ret.Component(2), "component 3")
+	assert.Equal(t, []int{0, 1, 2, 4, 7}, ret.Component(0), "component 0")
+	assert.Equal(t, []int{3}, ret.Component(1), "component 1")
+	assert.Equal(t, []int{5, 6}, ret.Component(2), "component 2")
 
 	assert.Equal(t, true, ret.Connected(0, 7), "0 - 7")
 	assert.Equal(t, false, ret.Connected(2, 5), "2 - 5")
