@@ -35,6 +35,10 @@ func (g *testGraph) addEdge(v1, v2 int) {
 	g.adjacency[v2] = append(g.adjacency[v2], v1)
 }
 
+func (g *testGraph) addDirectedEdge(v1, v2 int) {
+	g.adjacency[v1] = append(g.adjacency[v1], v2)
+}
+
 func (g *testGraph) NumVertices() int {
 	return g.numVertices
 }
@@ -45,6 +49,18 @@ func (g *testGraph) NumEdges() int {
 
 func (g *testGraph) AdjacentVertices(vertex int) []int {
 	return g.adjacency[vertex]
+}
+
+func newTestDigraph(numVertices int, connections ...int) *testGraph {
+	digraph := testGraph{
+		numVertices: numVertices,
+		numEdges:    len(connections) / 2,
+		adjacency:   make([][]int, numVertices),
+	}
+	for i := 0; i < len(connections)/2; i++ {
+		digraph.addDirectedEdge(connections[2*i], connections[2*i+1])
+	}
+	return &digraph
 }
 
 func readLine(reader *bufio.Reader) (string, error) {
