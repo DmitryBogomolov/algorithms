@@ -8,7 +8,7 @@ import (
 
 func TestFindCutEdges(t *testing.T) {
 	var graph *testGraph
-	var ret []CutEdge
+	var ret []Edge
 
 	graph = newTestGraph(7,
 		0, 1,
@@ -21,15 +21,15 @@ func TestFindCutEdges(t *testing.T) {
 	)
 
 	ret = FindCutEdges(graph)
-	assert.Equal(t, []CutEdge{CutEdge{4, 5}, CutEdge{4, 6}, CutEdge{3, 4}}, ret)
+	assert.Equal(t, []Edge{{4, 5}, {4, 6}, {3, 4}}, ret)
 
 	graph.addEdge(5, 6)
 
 	ret = FindCutEdges(graph)
-	assert.Equal(t, []CutEdge{CutEdge{3, 4}}, ret)
+	assert.Equal(t, []Edge{{3, 4}}, ret)
 
 	graph.addEdge(1, 5)
 
 	ret = FindCutEdges(graph)
-	assert.Equal(t, []CutEdge(nil), ret)
+	assert.Equal(t, []Edge(nil), ret)
 }
