@@ -1,24 +1,25 @@
 package graph
 
 type reversedDigraph struct {
-	original  Graph
+	Graph
 	adjacency [][]int
 }
 
-func (rd reversedDigraph) NumVertices() int {
-	return rd.original.NumVertices()
-}
-
-func (rd reversedDigraph) NumEdges() int {
-	return rd.original.NumEdges()
+// ReversibleDigraph represents reversible digraph.
+type ReversibleDigraph interface {
+	Graph
+	Reverse() Graph
 }
 
 func (rd reversedDigraph) AdjacentVertices(vertex int) []int {
 	return rd.adjacency[vertex]
 }
 
-// Reverse builts reversed digraph for a digraph.
-func Reverse(digraph Graph) Graph {
+func (rd reversedDigraph) Reverse() Graph {
+	return rd.Graph
+}
+
+func reverseDigraph(digraph Graph) ReversibleDigraph {
 	numVertices := digraph.NumVertices()
 	adjacency := make([][]int, numVertices)
 	for v := 0; v < numVertices; v++ {
@@ -27,7 +28,16 @@ func Reverse(digraph Graph) Graph {
 		}
 	}
 	return reversedDigraph{
-		original:  digraph,
+		Graph:     digraph,
 		adjacency: adjacency,
 	}
+}
+
+// ReverseDigraph builts reversed digraph for a digraph.
+func ReverseDigraph(digraph Graph) Graph {
+	reversible, ok := digraph.(ReversibleDigraph)
+	if ok {
+		return reversible.Reverse()
+	}
+	return reverseDigraph(digraph)
 }
