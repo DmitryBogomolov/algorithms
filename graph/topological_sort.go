@@ -19,9 +19,7 @@ func getReversedPostOrder(digraph Graph) []int {
 			getReversedPostOrderCore(&list, marked, digraph, v)
 		}
 	}
-	for i, j := 0, len(list)-1; i < j; i, j = i+1, j-1 {
-		list[i], list[j] = list[j], list[i]
-	}
+	reverseList(list)
 	return list
 }
 

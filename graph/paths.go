@@ -46,10 +46,14 @@ func (r VertexPaths) PathTo(vertex int) []int {
 	for v := vertex; v >= 0; v = r.edgeTo[v] {
 		stack = append(stack, v)
 	}
-	for i, j := 0, len(stack)-1; i < j; i, j = i+1, j-1 {
-		stack[i], stack[j] = stack[j], stack[i]
-	}
+	reverseList(stack)
 	return stack
+}
+
+func reverseList(list []int) {
+	for i, j := 0, len(list)-1; i < j; i, j = i+1, j-1 {
+		list[i], list[j] = list[j], list[i]
+	}
 }
 
 func findPathsDepthFirstCore(r *VertexPaths, marked []bool, graph Graph, vertex int) {
