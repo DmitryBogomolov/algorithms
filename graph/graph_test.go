@@ -63,6 +63,38 @@ func newTestDigraph(numVertices int, connections ...int) *testGraph {
 	return &digraph
 }
 
+func TestEdges(t *testing.T) {
+	graph := newTestGraph(6,
+		0, 1,
+		1, 2,
+		0, 3,
+		3, 2,
+		4, 3,
+		4, 5,
+		5, 0,
+	)
+
+	ret := Edges(graph)
+
+	assert.Equal(t, []Edge{{0, 1}, {0, 3}, {0, 5}, {1, 2}, {2, 3}, {3, 4}, {4, 5}}, ret)
+}
+
+func TestDirectedEdges(t *testing.T) {
+	graph := newTestDigraph(6,
+		0, 1,
+		1, 2,
+		0, 3,
+		3, 0,
+		4, 3,
+		4, 5,
+		5, 0,
+	)
+
+	ret := DirectedEdges(graph)
+
+	assert.Equal(t, []Edge{{0, 1}, {0, 3}, {1, 2}, {3, 0}, {4, 3}, {4, 5}, {5, 0}}, ret)
+}
+
 func readLine(reader *bufio.Reader) (string, error) {
 	line, err := reader.ReadString('\n')
 	if err != nil {

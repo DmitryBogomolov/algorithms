@@ -15,8 +15,8 @@ func FindStrongComponents(digraph Graph) ConnectedComponents {
 	numVertices := digraph.NumVertices()
 	result := newConnectedComponents(numVertices)
 	marked := make([]bool, numVertices)
-	reversedPostorder := getReversedPostOrder(Reverse(digraph))
-	for _, v := range reversedPostorder {
+	reversedPostOrder := getReversedPostOrder(ReverseDigraph(digraph))
+	for _, v := range reversedPostOrder {
 		if !marked[v] {
 			findStrongComponentsCore(&result, marked, digraph, v)
 			result.count++
