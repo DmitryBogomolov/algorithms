@@ -63,3 +63,30 @@ func newVerticesPQ(numVertices int) *verticesPQ {
 	}
 	return &pq
 }
+
+type minimumSpanningTree struct {
+	origin    EdgeWeightedGraph
+	numEdges  int
+	adjacency [][]int
+	weights   [][]float64
+}
+
+func (t minimumSpanningTree) NumVertices() int {
+	return t.origin.NumVertices()
+}
+func (t minimumSpanningTree) NumEdges() int {
+	return t.numEdges
+}
+func (t minimumSpanningTree) AdjacentVertices(vertex int) []int {
+	return t.adjacency[vertex]
+}
+func (t minimumSpanningTree) AdjacentWeights(vertex int) []float64 {
+	return t.weights[vertex]
+}
+
+// MinimumSpanningTreePrim computes minimum spanning tree for a graph using Prim's algorithm.
+func MinimumSpanningTreePrim(graph EdgeWeightedGraph) EdgeWeightedGraph {
+	return minimumSpanningTree{
+		origin: graph,
+	}
+}
