@@ -68,12 +68,12 @@ func TestMinimumSpanningTreeKruskal(t *testing.T) {
 	assert.Equal(t, 8, ret.NumVertices(), "vertices")
 	assert.Equal(t, 7, ret.NumEdges(), "edges")
 	assert.Equal(t,
-		[]Edge{{0, 2}, {0, 7}, {1, 7}, {2, 3}, {2, 6}, {4, 5}, {5, 7}},
+		[]Edge{{0, 7}, {0, 2}, {1, 7}, {2, 3}, {2, 6}, {4, 5}, {5, 7}},
 		AllGraphEdges(ret),
 		"all edges",
 	)
 	assert.Equal(t,
-		[]float64{0.26, 0.16, 0.19, 0.17, 0.4, 0.35, 0.28},
+		[]float64{0.16, 0.26, 0.19, 0.17, 0.4, 0.35, 0.28},
 		AllGraphWeights(ret),
 		"all weights",
 	)

@@ -91,5 +91,32 @@ func newEdgesPQ() *edgesPQ {
 
 // MinimumSpanningTreeKruskal computes minimum spanning tree for a graph using Kruskal's algorithm.
 func MinimumSpanningTreeKruskal(graph EdgeWeightedGraph) EdgeWeightedGraph {
-	return nil
+	pq := newEdgesPQ()
+	allWeights := AllGraphWeights(graph)
+	for i, edge := range AllGraphEdges(graph) {
+		pq.push(edge, allWeights[i])
+	}
+	numVertices := graph.NumVertices()
+	uf := newUnionFind(numVertices)
+	adjacency := make([][]int, numVertices)
+	weights := make([][]float64, numVertices)
+	numEdges := 0
+	for pq.Len() > 0 {
+		edge, weight := pq.pop()
+		v, w := edge[0], edge[1]
+		if !uf.connected(v, w) {
+			uf.union(v, w)
+			adjacency[v] = append(adjacency[v], w)
+			adjacency[w] = append(adjacency[w], v)
+			weights[v] = append(weights[v], weight)
+			weights[w] = append(weights[w], weight)
+			numEdges++
+		}
+	}
+	return minimumSpanningTree{
+		origin:    graph,
+		numEdges:  numEdges,
+		adjacency: adjacency,
+		weights:   weights,
+	}
 }
