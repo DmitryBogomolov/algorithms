@@ -5,33 +5,33 @@ import (
 	"math"
 )
 
-type verticesPQ struct {
+type verticesIndexPQ struct {
 	size          int
 	vertexToIndex []int
 	indexToVertex []int
 	weights       []float64
 }
 
-func (pq *verticesPQ) Len() int {
+func (pq *verticesIndexPQ) Len() int {
 	return pq.size
 }
-func (pq *verticesPQ) Less(i, j int) bool {
+func (pq *verticesIndexPQ) Less(i, j int) bool {
 	vi, vj := pq.indexToVertex[i], pq.indexToVertex[j]
 	return pq.weights[vi] < pq.weights[vj]
 }
-func (pq *verticesPQ) Swap(i, j int) {
+func (pq *verticesIndexPQ) Swap(i, j int) {
 	vi, vj := pq.indexToVertex[j], pq.indexToVertex[i]
 	pq.indexToVertex[i], pq.indexToVertex[j] = vi, vj
 	pq.vertexToIndex[vi], pq.vertexToIndex[vj] = i, j
 }
 
-func (pq *verticesPQ) Push(val interface{}) {
+func (pq *verticesIndexPQ) Push(val interface{}) {
 }
-func (pq *verticesPQ) Pop() interface{} {
+func (pq *verticesIndexPQ) Pop() interface{} {
 	return nil
 }
 
-func (pq *verticesPQ) update(vertex int, weight float64) {
+func (pq *verticesIndexPQ) update(vertex int, weight float64) {
 	index := pq.vertexToIndex[vertex]
 	if index == -1 {
 		pq.indexToVertex[pq.size] = vertex
@@ -45,7 +45,7 @@ func (pq *verticesPQ) update(vertex int, weight float64) {
 	}
 
 }
-func (pq *verticesPQ) pop() int {
+func (pq *verticesIndexPQ) pop() int {
 	ret := pq.indexToVertex[0]
 	heap.Pop(pq)
 	pq.indexToVertex[pq.size] = -1
@@ -54,8 +54,8 @@ func (pq *verticesPQ) pop() int {
 	return ret
 }
 
-func newVerticesPQ(numVertices int) *verticesPQ {
-	pq := verticesPQ{
+func newVerticesIndexPQ(numVertices int) *verticesIndexPQ {
+	pq := verticesIndexPQ{
 		vertexToIndex: make([]int, numVertices),
 		indexToVertex: make([]int, numVertices),
 		weights:       make([]float64, numVertices),
@@ -88,7 +88,7 @@ func (t minimumSpanningTree) AdjacentWeights(vertex int) []float64 {
 }
 
 func scanMinimumSpanningTreeVertex(
-	pq *verticesPQ, marked []bool, edgeTo []int, distTo []float64,
+	pq *verticesIndexPQ, marked []bool, edgeTo []int, distTo []float64,
 	graph EdgeWeightedGraph, current int,
 ) {
 	marked[current] = true
@@ -104,7 +104,7 @@ func scanMinimumSpanningTreeVertex(
 }
 
 func processMinimumSpanningTree(
-	pq *verticesPQ, marked []bool, edgeTo []int, distTo []float64,
+	pq *verticesIndexPQ, marked []bool, edgeTo []int, distTo []float64,
 	graph EdgeWeightedGraph, start int,
 ) {
 	distTo[start] = 0
@@ -121,7 +121,7 @@ func MinimumSpanningTreePrim(graph EdgeWeightedGraph) EdgeWeightedGraph {
 	marked := make([]bool, numVertices)
 	edgeTo := make([]int, numVertices)
 	distTo := make([]float64, numVertices)
-	pq := newVerticesPQ(numVertices)
+	pq := newVerticesIndexPQ(numVertices)
 	for v := 0; v < numVertices; v++ {
 		edgeTo[v] = -1
 		distTo[v] = math.MaxFloat64

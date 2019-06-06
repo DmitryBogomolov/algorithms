@@ -22,6 +22,27 @@ func TestUnionFind(t *testing.T) {
 	assert.False(t, uf.connected(2, 7), "2 - 7")
 }
 
+func TestEdgesPQ(t *testing.T) {
+	pq := newEdgesPQ()
+
+	pq.push(Edge{1, 2}, 1.2)
+	pq.push(Edge{2, 0}, 2.4)
+	pq.push(Edge{4, 1}, 0.4)
+	pq.push(Edge{3, 4}, 1.5)
+	pq.push(Edge{2, 4}, 1.9)
+
+	assert.Equal(t, 5, pq.Len())
+	var edges []Edge
+	var weights []float64
+	for pq.Len() > 0 {
+		edge, weight := pq.pop()
+		edges = append(edges, edge)
+		weights = append(weights, weight)
+	}
+	assert.Equal(t, []Edge{{4, 1}, {1, 2}, {3, 4}, {2, 4}, {2, 0}}, edges)
+	assert.Equal(t, []float64{0.4, 1.2, 1.5, 1.9, 2.4}, weights)
+}
+
 func TestMinimumSpanningTreeKruskal(t *testing.T) {
 	graph := newTestEdgeWeightedGraph(8, []testWeightedEdge{
 		{4, 5, 0.35},

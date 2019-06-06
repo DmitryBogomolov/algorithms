@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestVerticesPQ(t *testing.T) {
-	pq := newVerticesPQ(10)
+func TestVerticesIndexPQ(t *testing.T) {
+	pq := newVerticesIndexPQ(10)
 
 	pq.update(2, 1.2)
 	pq.update(3, 0.3)
