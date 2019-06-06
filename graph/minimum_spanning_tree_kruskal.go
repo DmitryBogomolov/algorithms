@@ -106,10 +106,7 @@ func MinimumSpanningTreeKruskal(graph EdgeWeightedGraph) EdgeWeightedGraph {
 		v, w := edge[0], edge[1]
 		if !uf.connected(v, w) {
 			uf.union(v, w)
-			adjacency[v] = append(adjacency[v], w)
-			adjacency[w] = append(adjacency[w], v)
-			weights[v] = append(weights[v], weight)
-			weights[w] = append(weights[w], weight)
+			addWeightedEdge(adjacency, weights, v, w, weight)
 			numEdges++
 		}
 	}
