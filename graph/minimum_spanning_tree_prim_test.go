@@ -60,5 +60,5 @@ func TestMinimumSpanningTreePrim(t *testing.T) {
 		AllGraphWeights(ret),
 		"all weights",
 	)
-	assert.Equal(t, 1.81, TotalGraphWeight(ret), "total weight")
+	assert.InDelta(t, 1.81, TotalGraphWeight(ret), 0.0001, "total weight")
 }

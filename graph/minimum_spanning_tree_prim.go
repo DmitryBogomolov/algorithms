@@ -1,6 +1,9 @@
 package graph
 
-import "container/heap"
+import (
+	"container/heap"
+	"math"
+)
 
 type verticesPQ struct {
 	size          int
@@ -84,9 +87,68 @@ func (t minimumSpanningTree) AdjacentWeights(vertex int) []float64 {
 	return t.weights[vertex]
 }
 
+func scanMinimumSpanningTreeVertex(
+	pq *verticesPQ, marked []bool, edgeTo []int, distTo []float64,
+	graph EdgeWeightedGraph, current int,
+) {
+	marked[current] = true
+	weights := graph.AdjacentWeights(current)
+	for i, v := range graph.AdjacentVertices(current) {
+		weight := weights[i]
+		if !marked[v] && weight < distTo[v] {
+			edgeTo[v] = current
+			distTo[v] = weight
+			pq.update(v, weight)
+		}
+	}
+}
+
+func processMinimumSpanningTree(
+	pq *verticesPQ, marked []bool, edgeTo []int, distTo []float64,
+	graph EdgeWeightedGraph, start int,
+) {
+	distTo[start] = 0
+	pq.update(start, 0)
+	for pq.Len() > 0 {
+		v := pq.pop()
+		scanMinimumSpanningTreeVertex(pq, marked, edgeTo, distTo, graph, v)
+	}
+}
+
 // MinimumSpanningTreePrim computes minimum spanning tree for a graph using Prim's algorithm.
 func MinimumSpanningTreePrim(graph EdgeWeightedGraph) EdgeWeightedGraph {
+	numVertices := graph.NumVertices()
+	marked := make([]bool, numVertices)
+	edgeTo := make([]int, numVertices)
+	distTo := make([]float64, numVertices)
+	pq := newVerticesPQ(numVertices)
+	for v := 0; v < numVertices; v++ {
+		edgeTo[v] = -1
+		distTo[v] = math.MaxFloat64
+	}
+	for v := 0; v < numVertices; v++ {
+		if !marked[v] {
+			processMinimumSpanningTree(pq, marked, edgeTo, distTo, graph, v)
+		}
+	}
+	adjacency := make([][]int, numVertices)
+	weights := make([][]float64, numVertices)
+	numEdges := 0
+	for v := 0; v < numVertices; v++ {
+		w := edgeTo[v]
+		if w != -1 {
+			weight := distTo[v]
+			adjacency[v] = append(adjacency[v], w)
+			adjacency[w] = append(adjacency[w], v)
+			weights[v] = append(weights[v], weight)
+			weights[w] = append(weights[w], weight)
+			numEdges++
+		}
+	}
 	return minimumSpanningTree{
-		origin: graph,
+		origin:    graph,
+		numEdges:  numEdges,
+		adjacency: adjacency,
+		weights:   weights,
 	}
 }
