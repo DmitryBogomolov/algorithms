@@ -181,7 +181,7 @@ func TestAllDigraphWeights(t *testing.T) {
 	ret := AllDigraphWeights(graph)
 
 	assert.Equal(t, []float64{1.2, 3.1, 2.3, 4.1, 5.1, 1.6, 2.2}, ret)
-	assert.InDelta(t, 19.6, TotalGraphWeight(graph), 0.0001)
+	assert.InDelta(t, 19.6, TotalDigraphWeight(graph), 0.0001)
 }
 
 func readLine(reader *bufio.Reader) (string, error) {
