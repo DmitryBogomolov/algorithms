@@ -18,6 +18,11 @@ type testGraph struct {
 	adjacency   [][]int
 }
 
+type testEdgeWeightedGraph struct {
+	testGraph
+	weights [][]float64
+}
+
 func newTestGraph(numVertices int, connections ...int) *testGraph {
 	graph := testGraph{
 		numVertices: numVertices,
@@ -63,7 +68,57 @@ func newTestDigraph(numVertices int, connections ...int) *testGraph {
 	return &digraph
 }
 
-func TestEdges(t *testing.T) {
+type testWeightedEdge struct {
+	v1, v2 int
+	weight float64
+}
+
+func (g *testEdgeWeightedGraph) addEdge(v1, v2 int, w float64) {
+	g.testGraph.addEdge(v1, v2)
+	g.weights[v1] = append(g.weights[v1], w)
+	g.weights[v2] = append(g.weights[v2], w)
+}
+
+func (g *testEdgeWeightedGraph) addDirectedEdge(v1, v2 int, w float64) {
+	g.testGraph.addDirectedEdge(v1, v2)
+	g.weights[v1] = append(g.weights[v1], w)
+}
+
+func (g *testEdgeWeightedGraph) AdjacentWeights(vertex int) []float64 {
+	return g.weights[vertex]
+}
+
+func newTestEdgeWeightedGraph(numVertices int, edges []testWeightedEdge) *testEdgeWeightedGraph {
+	graph := testEdgeWeightedGraph{
+		testGraph: testGraph{
+			numVertices: numVertices,
+			numEdges:    len(edges),
+			adjacency:   make([][]int, numVertices),
+		},
+		weights: make([][]float64, numVertices),
+	}
+	for _, edge := range edges {
+		graph.addEdge(edge.v1, edge.v2, edge.weight)
+	}
+	return &graph
+}
+
+func newTestEdgeWeightedDigraph(numVertices int, edges []testWeightedEdge) *testEdgeWeightedGraph {
+	digraph := testEdgeWeightedGraph{
+		testGraph: testGraph{
+			numVertices: numVertices,
+			numEdges:    len(edges),
+			adjacency:   make([][]int, numVertices),
+		},
+		weights: make([][]float64, numVertices),
+	}
+	for _, edge := range edges {
+		digraph.addDirectedEdge(edge.v1, edge.v2, edge.weight)
+	}
+	return &digraph
+}
+
+func TestAllGraphEdges(t *testing.T) {
 	graph := newTestGraph(6,
 		0, 1,
 		1, 2,
@@ -74,12 +129,12 @@ func TestEdges(t *testing.T) {
 		5, 0,
 	)
 
-	ret := Edges(graph)
+	ret := AllGraphEdges(graph)
 
 	assert.Equal(t, []Edge{{0, 1}, {0, 3}, {0, 5}, {1, 2}, {2, 3}, {3, 4}, {4, 5}}, ret)
 }
 
-func TestDirectedEdges(t *testing.T) {
+func TestAllDigraphEdges(t *testing.T) {
 	graph := newTestDigraph(6,
 		0, 1,
 		1, 2,
@@ -90,9 +145,43 @@ func TestDirectedEdges(t *testing.T) {
 		5, 0,
 	)
 
-	ret := DirectedEdges(graph)
+	ret := AllDigraphEdges(graph)
 
 	assert.Equal(t, []Edge{{0, 1}, {0, 3}, {1, 2}, {3, 0}, {4, 3}, {4, 5}, {5, 0}}, ret)
+}
+
+func TestAllGraphWeights(t *testing.T) {
+	graph := newTestEdgeWeightedGraph(6, []testWeightedEdge{
+		{0, 1, 1.2},
+		{1, 2, 2.3},
+		{0, 3, 3.1},
+		{3, 2, 4.1},
+		{4, 3, 5.1},
+		{4, 5, 1.6},
+		{5, 0, 2.2},
+	})
+
+	ret := AllGraphWeights(graph)
+
+	assert.Equal(t, []float64{1.2, 3.1, 2.2, 2.3, 4.1, 5.1, 1.6}, ret)
+	assert.InDelta(t, 19.6, TotalGraphWeight(graph), 0.0001)
+}
+
+func TestAllDigraphWeights(t *testing.T) {
+	graph := newTestEdgeWeightedDigraph(6, []testWeightedEdge{
+		{0, 1, 1.2},
+		{1, 2, 2.3},
+		{0, 3, 3.1},
+		{3, 0, 4.1},
+		{4, 3, 5.1},
+		{4, 5, 1.6},
+		{5, 0, 2.2},
+	})
+
+	ret := AllDigraphWeights(graph)
+
+	assert.Equal(t, []float64{1.2, 3.1, 2.3, 4.1, 5.1, 1.6, 2.2}, ret)
+	assert.InDelta(t, 19.6, TotalDigraphWeight(graph), 0.0001)
 }
 
 func readLine(reader *bufio.Reader) (string, error) {
