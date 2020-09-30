@@ -1,7 +1,10 @@
-package sort
+package sorting
 
-// Shell sorts target with "Shell sort" algorithm.
-func Shell(target Interface) {
+import "sort"
+
+// Shell sorts using *Shell sort* algorithm.
+// https://algs4.cs.princeton.edu/21elementary/
+func Shell(target sort.Interface) {
 	len := target.Len()
 	h := 1
 	for h < len/3 {

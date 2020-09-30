@@ -1,4 +1,4 @@
-package sort
+package sorting
 
 import (
 	"math/rand"
@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type sortFunc = func(Interface)
+type sortFunc = func(sort.Interface)
 type sortDesc struct {
 	name string
 	f    sortFunc

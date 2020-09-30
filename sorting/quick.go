@@ -1,13 +1,14 @@
-package sort
+package sorting
 
 import (
 	"math/rand"
+	"sort"
 )
 
 // QuickToInsertionCutoff defines threshold when quick sort is switched to insertion sort.
 const QuickToInsertionCutoff = 11
 
-func partition(target Interface, lo int, hi int) (int, int) {
+func partition(target sort.Interface, lo int, hi int) (int, int) {
 	lt := lo
 	gt := hi
 	for i := lo + 1; i <= gt; {
@@ -25,7 +26,7 @@ func partition(target Interface, lo int, hi int) (int, int) {
 	return lt, gt
 }
 
-func quickCore(target Interface, lo int, hi int) {
+func quickCore(target sort.Interface, lo int, hi int) {
 	if hi-lo <= QuickToInsertionCutoff {
 		insertionCore(target, lo, hi)
 		return
@@ -35,8 +36,9 @@ func quickCore(target Interface, lo int, hi int) {
 	quickCore(target, gt+1, hi)
 }
 
-// Quick sorts target with "Quick sort" algorithm.
-func Quick(target Interface) {
+// Quick sorts using *Quick sort* algorithm.
+// https://algs4.cs.princeton.edu/23quicksort/
+func Quick(target sort.Interface) {
 	rand.Shuffle(target.Len(), target.Swap)
 	quickCore(target, 0, target.Len()-1)
 }
