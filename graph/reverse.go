@@ -33,7 +33,7 @@ func reverseDigraph(digraph Graph) ReversibleDigraph {
 	}
 }
 
-// ReverseDigraph builts reversed digraph for a digraph.
+// ReverseDigraph builts reversed digraph.
 func ReverseDigraph(digraph Graph) Graph {
 	reversible, ok := digraph.(ReversibleDigraph)
 	if ok {

@@ -16,7 +16,8 @@ func hasDirectedCycleCore(marked []bool, stack []bool, digraph Graph, current in
 	return false
 }
 
-// HasDirectedCycle shows if there is a cycle in a directed graph.
+// HasDirectedCycle shows if there is a cycle in a digraph.
+// https://algs4.cs.princeton.edu/44sp/DirectedCycle.java.html
 func HasDirectedCycle(digraph Graph) bool {
 	numVertices := digraph.NumVertices()
 	marked := make([]bool, numVertices)

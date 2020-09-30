@@ -11,6 +11,7 @@ func findStrongComponentsCore(cc *ConnectedComponents, marked []bool, digraph Gr
 }
 
 // FindStrongComponents finds strongly connected components in a digraph.
+// https://algs4.cs.princeton.edu/42digraph/KosarajuSharirSCC.java.html
 func FindStrongComponents(digraph Graph) ConnectedComponents {
 	numVertices := digraph.NumVertices()
 	result := newConnectedComponents(numVertices)

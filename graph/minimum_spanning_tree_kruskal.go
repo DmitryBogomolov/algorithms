@@ -89,7 +89,8 @@ func newEdgesPQ() *edgesPQ {
 	return &edgesPQ{}
 }
 
-// MinimumSpanningTreeKruskal computes minimum spanning tree for a graph using Kruskal's algorithm.
+// MinimumSpanningTreeKruskal computes minimum spanning tree using Kruskal's algorithm.
+// https://algs4.cs.princeton.edu/43mst/KruskalMST.java.html
 func MinimumSpanningTreeKruskal(graph EdgeWeightedGraph) EdgeWeightedGraph {
 	pq := newEdgesPQ()
 	allWeights := AllGraphWeights(graph)

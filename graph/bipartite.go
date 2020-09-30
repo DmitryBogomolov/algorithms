@@ -15,7 +15,8 @@ func isBipartiteCore(marked []bool, colors []bool, graph Graph, current int) boo
 	return true
 }
 
-// IsBipartite shows if graph is two-colorable.
+// IsBipartite shows if graph is two-colorable. Uses depth-first search.
+// https://algs4.cs.princeton.edu/41graph/Bipartite.java.html
 func IsBipartite(graph Graph) bool {
 	numVertices := graph.NumVertices()
 	marked := make([]bool, numVertices)

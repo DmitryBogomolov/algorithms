@@ -23,7 +23,9 @@ func getReversedPostOrder(digraph Graph) []int {
 	return list
 }
 
-// TopologicalSort performs topological sort on a digraph.
+// TopologicalSort puts the vertices in order such that all directed edges
+// point from a vertex earlier in the order to a vertex later in the order.
+// https://algs4.cs.princeton.edu/42digraph/Topological.java.html
 func TopologicalSort(digraph Graph) []int {
 	if HasDirectedCycle(digraph) {
 		return nil

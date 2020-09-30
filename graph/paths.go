@@ -1,6 +1,8 @@
 package graph
 
-import "container/list"
+import (
+	"container/list"
+)
 
 // VertexPaths represents paths from a vertex.
 type VertexPaths struct {
@@ -22,7 +24,7 @@ func newVertexPaths(graph Graph, vertex int) (VertexPaths, []bool) {
 	}, marked
 }
 
-// Origin show initial vertex.
+// Origin shows initial vertex.
 func (r VertexPaths) Origin() int {
 	return r.origin
 }
@@ -67,7 +69,8 @@ func findPathsDepthFirstCore(r *VertexPaths, marked []bool, graph Graph, vertex 
 	}
 }
 
-// FindPathsDepthFirst finds paths from "vertex" using depth-first search.
+// FindPathsDepthFirst finds paths from *vertex* using depth-first search.
+// https://algs4.cs.princeton.edu/41graph/DepthFirstSearch.java.html
 func FindPathsDepthFirst(graph Graph, vertex int) VertexPaths {
 	result, marked := newVertexPaths(graph, vertex)
 	findPathsDepthFirstCore(&result, marked, graph, vertex)
@@ -93,7 +96,8 @@ func findPathsBreadthFirstCore(r *VertexPaths, marked []bool, graph Graph, verte
 	}
 }
 
-// FindPathsBreadthFirst finds paths from "vertex" using breadth-first search.
+// FindPathsBreadthFirst finds paths from *vertex* using breadth-first search.
+// https://algs4.cs.princeton.edu/41graph/BreadthFirstPaths.java.html
 func FindPathsBreadthFirst(graph Graph, vertex int) VertexPaths {
 	result, marked := newVertexPaths(graph, vertex)
 	findPathsBreadthFirstCore(&result, marked, graph, vertex)

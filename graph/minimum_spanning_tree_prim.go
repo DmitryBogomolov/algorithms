@@ -122,7 +122,8 @@ func processMinimumSpanningTree(
 	}
 }
 
-// MinimumSpanningTreePrim computes minimum spanning tree for a graph using Prim's algorithm.
+// MinimumSpanningTreePrim computes minimum spanning tree using Prim's algorithm.
+// https://algs4.cs.princeton.edu/43mst/PrimMST.java.html
 func MinimumSpanningTreePrim(graph EdgeWeightedGraph) EdgeWeightedGraph {
 	numVertices := graph.NumVertices()
 	marked := make([]bool, numVertices)

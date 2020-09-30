@@ -34,6 +34,8 @@ func findCutEdgesCore(
 }
 
 // FindCutEdges finds cut-edges in a graph.
+// Cut-edge is an edge whose deletion increases number of connected components.
+// https://algs4.cs.princeton.edu/41graph/Bridge.java.html
 func FindCutEdges(graph Graph) []Edge {
 	numVertices := graph.NumVertices()
 	pre := make([]int, numVertices)

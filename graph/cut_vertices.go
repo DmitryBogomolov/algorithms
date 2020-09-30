@@ -42,6 +42,8 @@ func findCutVerticesCore(
 }
 
 // FindCutVertices finds cut-vertices in a graph.
+// Cut-vertex is a vertex whose removal increases number of connected components.
+// https://algs4.cs.princeton.edu/41graph/Biconnected.java.html
 func FindCutVertices(graph Graph) []int {
 	numVertices := graph.NumVertices()
 	pre := make([]int, numVertices)

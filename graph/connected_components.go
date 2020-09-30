@@ -49,6 +49,7 @@ func findConnectedComponentsCore(cc *ConnectedComponents, marked []bool, graph G
 }
 
 // FindConnectedComponents finds connected components in a graph.
+// https://algs4.cs.princeton.edu/41graph/CC.java.html
 func FindConnectedComponents(graph Graph) ConnectedComponents {
 	numVertices := graph.NumVertices()
 	result := newConnectedComponents(numVertices)

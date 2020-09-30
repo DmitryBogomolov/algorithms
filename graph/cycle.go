@@ -14,7 +14,8 @@ func hasCycleCore(marked []bool, graph Graph, parent int, current int) bool {
 	return false
 }
 
-// HasCycle shows if there is a cycle in an undirected graph.
+// HasCycle shows if there is a cycle in a graph.
+// https://algs4.cs.princeton.edu/41graph/Cycle.java.html
 func HasCycle(graph Graph) bool {
 	numVertices := graph.NumVertices()
 	marked := make([]bool, numVertices)
