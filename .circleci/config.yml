@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.11
+      - image: circleci/golang:1.15.0
     steps:
       - run: go get -u golang.org/x/lint/golint
       - checkout
