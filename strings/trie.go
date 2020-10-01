@@ -6,6 +6,7 @@ type trieNode struct {
 }
 
 // Trie is search struct.
+// https://algs4.cs.princeton.edu/52trie
 type Trie struct {
 	root     *trieNode
 	alphabet Alphabet
@@ -14,13 +15,18 @@ type Trie struct {
 // NoValue is placeholder for empty nodes in a tree.
 const NoValue = -1
 
+func newNode(alphabet Alphabet) *trieNode {
+	size := alphabet.Size()
+	return &trieNode{
+		value: NoValue,
+		nodes: make([]*trieNode, size, size),
+	}
+}
+
 // NewTrie constructs trie instance.
 func NewTrie(alphabet Alphabet) *Trie {
 	trie := Trie{
-		root: &trieNode{
-			value: NoValue,
-			nodes: make([]*trieNode, alphabet.Size(), alphabet.Size()),
-		},
+		root:     nil,
 		alphabet: alphabet,
 	}
 	return &trie
@@ -46,18 +52,19 @@ func (trie *Trie) Get(key string) int {
 	return node.value
 }
 
+func getNodeIdx(alphabet Alphabet, key []rune, idx int) int {
+	return alphabet.ToIndex(key[idx])
+}
+
 func put(node *trieNode, key []rune, symbolIdx int, val int, alphabet Alphabet) *trieNode {
 	if node == nil {
-		node = &trieNode{
-			value: NoValue,
-			nodes: make([]*trieNode, alphabet.Size(), alphabet.Size()),
-		}
+		node = newNode(alphabet)
 	}
 	if symbolIdx == len(key) {
 		node.value = val
 		return node
 	}
-	nodeIdx := alphabet.ToIndex(key[symbolIdx])
+	nodeIdx := getNodeIdx(alphabet, key, symbolIdx)
 	node.nodes[nodeIdx] = put(node.nodes[nodeIdx], key, symbolIdx+1, val, alphabet)
 	return node
 }
@@ -74,7 +81,7 @@ func del(node *trieNode, key []rune, symbolIdx int, alphabet Alphabet) *trieNode
 	if symbolIdx == len(key) {
 		node.value = NoValue
 	} else {
-		nodeIdx := alphabet.ToIndex(key[symbolIdx])
+		nodeIdx := getNodeIdx(alphabet, key, symbolIdx)
 		node.nodes[nodeIdx] = del(node.nodes[nodeIdx], key, symbolIdx+1, alphabet)
 	}
 	if node.value != NoValue {
