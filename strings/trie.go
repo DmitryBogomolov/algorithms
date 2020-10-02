@@ -32,7 +32,7 @@ func NewTrie(alphabet Alphabet) *Trie {
 	return &trie
 }
 
-func size(node *trieNode, alphabet Alphabet) int {
+func (trie *Trie) size(node *trieNode) int {
 	if node == nil {
 		return 0
 	}
@@ -40,31 +40,31 @@ func size(node *trieNode, alphabet Alphabet) int {
 	if node.value != NoValue {
 		count++
 	}
-	for i := 0; i < alphabet.Size(); i++ {
-		count += size(node.nodes[i], alphabet)
+	for i := 0; i < trie.alphabet.Size(); i++ {
+		count += trie.size(node.nodes[i])
 	}
 	return count
 }
 
 // Size returns amount of elements.
 func (trie *Trie) Size() int {
-	return size(trie.root, trie.alphabet)
+	return trie.size(trie.root)
 }
 
-func get(node *trieNode, key []rune, symbolIdx int, alphabet Alphabet) *trieNode {
+func (trie *Trie) get(node *trieNode, key []rune, symbolIdx int) *trieNode {
 	if node == nil {
 		return nil
 	}
 	if symbolIdx == len(key) {
 		return node
 	}
-	nodeIdx := alphabet.ToIndex(key[symbolIdx])
-	return get(node.nodes[nodeIdx], key, symbolIdx+1, alphabet)
+	nodeIdx := trie.alphabet.ToIndex(key[symbolIdx])
+	return trie.get(node.nodes[nodeIdx], key, symbolIdx+1)
 }
 
 // Get finds value for a key.
 func (trie *Trie) Get(key string) int {
-	node := get(trie.root, []rune(key), 0, trie.alphabet)
+	node := trie.get(trie.root, []rune(key), 0)
 	if node == nil {
 		return NoValue
 	}
@@ -75,38 +75,38 @@ func getNodeIdx(alphabet Alphabet, key []rune, idx int) int {
 	return alphabet.ToIndex(key[idx])
 }
 
-func put(node *trieNode, key []rune, symbolIdx int, val int, alphabet Alphabet) *trieNode {
+func (trie *Trie) put(node *trieNode, key []rune, symbolIdx int, val int) *trieNode {
 	if node == nil {
-		node = newNode(alphabet)
+		node = newNode(trie.alphabet)
 	}
 	if symbolIdx == len(key) {
 		node.value = val
 		return node
 	}
-	nodeIdx := getNodeIdx(alphabet, key, symbolIdx)
-	node.nodes[nodeIdx] = put(node.nodes[nodeIdx], key, symbolIdx+1, val, alphabet)
+	nodeIdx := getNodeIdx(trie.alphabet, key, symbolIdx)
+	node.nodes[nodeIdx] = trie.put(node.nodes[nodeIdx], key, symbolIdx+1, val)
 	return node
 }
 
 // Put add key-value pair.
 func (trie *Trie) Put(key string, val int) {
-	trie.root = put(trie.root, []rune(key), 0, val, trie.alphabet)
+	trie.root = trie.put(trie.root, []rune(key), 0, val)
 }
 
-func del(node *trieNode, key []rune, symbolIdx int, alphabet Alphabet) *trieNode {
+func (trie *Trie) del(node *trieNode, key []rune, symbolIdx int) *trieNode {
 	if node == nil {
 		return nil
 	}
 	if symbolIdx == len(key) {
 		node.value = NoValue
 	} else {
-		nodeIdx := getNodeIdx(alphabet, key, symbolIdx)
-		node.nodes[nodeIdx] = del(node.nodes[nodeIdx], key, symbolIdx+1, alphabet)
+		nodeIdx := getNodeIdx(trie.alphabet, key, symbolIdx)
+		node.nodes[nodeIdx] = trie.del(node.nodes[nodeIdx], key, symbolIdx+1)
 	}
 	if node.value != NoValue {
 		return node
 	}
-	for i := 0; i < alphabet.Size(); i++ {
+	for i := 0; i < trie.alphabet.Size(); i++ {
 		if node.nodes[i] != nil {
 			return node
 		}
@@ -116,5 +116,5 @@ func del(node *trieNode, key []rune, symbolIdx int, alphabet Alphabet) *trieNode
 
 // Del removes a key.
 func (trie *Trie) Del(key string) {
-	trie.root = del(trie.root, []rune(key), 0, trie.alphabet)
+	trie.root = trie.del(trie.root, []rune(key), 0)
 }
