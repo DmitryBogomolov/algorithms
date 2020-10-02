@@ -82,3 +82,13 @@ func TestKeysWithPrefix(t *testing.T) {
 	assert.Equal(t, []string{"she", "shells"}, trie.KeysWithPrefix("she"))
 	assert.Equal(t, []string(nil), trie.KeysWithPrefix("tt"))
 }
+
+func TestKeysThatMatch(t *testing.T) {
+	trie := makeTestTrie()
+
+	assert.Equal(t, []string(nil), trie.KeysThatMatch(""))
+	assert.Equal(t, []string{"by"}, trie.KeysThatMatch("by"))
+	assert.Equal(t, []string{"by"}, trie.KeysThatMatch(".y"))
+	assert.Equal(t, []string{"by"}, trie.KeysThatMatch("b."))
+	assert.Equal(t, []string{"sea", "she", "the"}, trie.KeysThatMatch("..."))
+}

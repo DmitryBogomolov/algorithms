@@ -6,7 +6,7 @@ type trieNode struct {
 }
 
 // Trie is search struct.
-// https://algs4.cs.princeton.edu/52trie
+// https://algs4.cs.princeton.edu/52trie/TrieST.java.html
 type Trie struct {
 	root     *trieNode
 	alphabet Alphabet
@@ -141,4 +141,29 @@ func (trie *Trie) KeysWithPrefix(prefix string) []string {
 // Keys returns all keys.
 func (trie *Trie) Keys() []string {
 	return trie.KeysWithPrefix("")
+}
+
+func (trie *Trie) keysThatMatch(node *trieNode, prefix string, pattern string, collection *[]string) {
+	if node == nil {
+		return
+	}
+	if len(prefix) == len(pattern) {
+		if node.value != NoValue {
+			*collection = append(*collection, prefix)
+		}
+		return
+	}
+	nextSymbol := rune(pattern[len(prefix)])
+	for i := 0; i < trie.alphabet.Size(); i++ {
+		if nextSymbol == '.' || nextSymbol == trie.alphabet.ToSymbol(i) {
+			trie.keysThatMatch(node.nodes[i], prefix+string(trie.alphabet.ToSymbol(i)), pattern, collection)
+		}
+	}
+}
+
+// KeysThatMatch collects keys matching *pattern*.
+func (trie *Trie) KeysThatMatch(pattern string) []string {
+	var collection []string
+	trie.keysThatMatch(trie.root, "", pattern, &collection)
+	return collection
 }
