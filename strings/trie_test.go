@@ -92,3 +92,12 @@ func TestKeysThatMatch(t *testing.T) {
 	assert.Equal(t, []string{"by"}, trie.KeysThatMatch("b."))
 	assert.Equal(t, []string{"sea", "she", "the"}, trie.KeysThatMatch("..."))
 }
+
+func TestLongestPrefix(t *testing.T) {
+	trie := makeTestTrie()
+
+	assert.Equal(t, "she", trie.LongestPrefix("she"))
+	assert.Equal(t, "she", trie.LongestPrefix("shell"))
+	assert.Equal(t, "shells", trie.LongestPrefix("shellsort"))
+	assert.Equal(t, "she", trie.LongestPrefix("shelters"))
+}

@@ -167,3 +167,23 @@ func (trie *Trie) KeysThatMatch(pattern string) []string {
 	trie.keysThatMatch(trie.root, "", pattern, &collection)
 	return collection
 }
+
+func (trie *Trie) longestPrefix(node *trieNode, str string, symbolIdx int, length int) int {
+	if node == nil {
+		return length
+	}
+	if node.value != NoValue {
+		length = symbolIdx
+	}
+	if symbolIdx == len(str) {
+		return length
+	}
+	nodeIdx := trie.alphabet.ToIndex([]rune(str)[symbolIdx])
+	return trie.longestPrefix(node.nodes[nodeIdx], str, symbolIdx+1, length)
+}
+
+// LongestPrefix returns longest key that is prefix for *str*.
+func (trie *Trie) LongestPrefix(str string) string {
+	len := trie.longestPrefix(trie.root, str, 0, 0)
+	return str[:len]
+}
