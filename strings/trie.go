@@ -118,3 +118,27 @@ func (trie *Trie) del(node *trieNode, key []rune, symbolIdx int) *trieNode {
 func (trie *Trie) Del(key string) {
 	trie.root = trie.del(trie.root, []rune(key), 0)
 }
+
+func (trie *Trie) keysWithPrefix(node *trieNode, prefix string, collection *[]string) {
+	if node == nil {
+		return
+	}
+	if node.value != NoValue {
+		*collection = append(*collection, prefix)
+	}
+	for i := 0; i < trie.alphabet.Size(); i++ {
+		trie.keysWithPrefix(node.nodes[i], prefix+string(trie.alphabet.ToSymbol(i)), collection)
+	}
+}
+
+// KeysWithPrefix collects keys with *prefix*.
+func (trie *Trie) KeysWithPrefix(prefix string) []string {
+	var collection []string
+	trie.keysWithPrefix(trie.get(trie.root, []rune(prefix), 0), prefix, &collection)
+	return collection
+}
+
+// Keys returns all keys.
+func (trie *Trie) Keys() []string {
+	return trie.KeysWithPrefix("")
+}
