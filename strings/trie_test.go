@@ -36,6 +36,8 @@ func TestTrie(t *testing.T) {
 		trie.Put(str, i)
 	}
 
+	assert.Equal(t, 7, trie.Size())
+
 	assert.Equal(t, 0, trie.Get("she"))
 	assert.Equal(t, 1, trie.Get("sells"))
 	assert.Equal(t, 3, trie.Get("shells"))

@@ -32,6 +32,25 @@ func NewTrie(alphabet Alphabet) *Trie {
 	return &trie
 }
 
+func size(node *trieNode, alphabet Alphabet) int {
+	if node == nil {
+		return 0
+	}
+	count := 0
+	if node.value != NoValue {
+		count++
+	}
+	for i := 0; i < alphabet.Size(); i++ {
+		count += size(node.nodes[i], alphabet)
+	}
+	return count
+}
+
+// Size returns amount of elements.
+func (trie *Trie) Size() int {
+	return size(trie.root, trie.alphabet)
+}
+
 func get(node *trieNode, key []rune, symbolIdx int, alphabet Alphabet) *trieNode {
 	if node == nil {
 		return nil
