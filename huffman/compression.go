@@ -3,12 +3,17 @@ package huffman
 import (
 	"container/heap"
 	"fmt"
+	"strings"
 )
 
 type node struct {
 	ch          byte
 	freq        int
 	left, right *node
+}
+
+func (n node) isLeaf() bool {
+	return n.left == nil && n.right == nil
 }
 
 type nodesPriorityQueue []*node
@@ -67,19 +72,36 @@ func buildTrie(frequencies map[byte]int) *node {
 	return heap.Pop(&queue).(*node)
 }
 
-func walkTrie(node *node, table map[byte]string, value string) {
-	if node.left == nil && node.right == nil {
+func buildTableCore(node *node, table map[byte]string, value string) {
+	if node.isLeaf() {
 		table[node.ch] = value
 	} else {
-		walkTrie(node.left, table, value+"0")
-		walkTrie(node.right, table, value+"1")
+		buildTableCore(node.left, table, value+"0")
+		buildTableCore(node.right, table, value+"1")
 	}
 }
 
 func buildTable(root *node) map[byte]string {
 	table := make(map[byte]string)
-	walkTrie(root, table, "")
+	buildTableCore(root, table, "")
 	return table
+}
+
+func saveTrieCore(node *node, builder *strings.Builder) {
+	if node.isLeaf() {
+		builder.WriteString("1")
+		builder.WriteByte(node.ch)
+	} else {
+		builder.WriteString("0")
+		saveTrieCore(node.left, builder)
+		saveTrieCore(node.right, builder)
+	}
+}
+
+func saveTrie(root *node) string {
+	builder := new(strings.Builder)
+	saveTrieCore(root, builder)
+	return builder.String()
 }
 
 func compressCore(data []byte, table map[byte]string) string {
@@ -97,6 +119,8 @@ func Compress(data []byte) {
 	frequencies := collectFrequencies(data)
 	root := buildTrie(frequencies)
 	table := buildTable(root)
-	compressed := compressCore(data, table)
-	fmt.Printf("compressed: %d, original: %d\n", len(compressed), len(data)*8)
+	compressedTrie := saveTrie(root)
+	compressedData := compressCore(data, table)
+	fmt.Printf("trie: %s\n", compressedTrie)
+	fmt.Printf("compressed: %d, original: %d\n", len(compressedData), len(data)*8)
 }
