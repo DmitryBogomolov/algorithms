@@ -115,12 +115,58 @@ func compressCore(data []byte, table map[byte]string) string {
 
 // Compress compresses *data*.
 // https://algs4.cs.princeton.edu/55compression/Huffman.java.html
-func Compress(data []byte) {
+func Compress(data []byte) string {
 	frequencies := collectFrequencies(data)
 	root := buildTrie(frequencies)
 	table := buildTable(root)
 	compressedTrie := saveTrie(root)
+	len := fmt.Sprintf("%08d", len(data))
 	compressedData := compressCore(data, table)
-	fmt.Printf("trie: %s\n", compressedTrie)
-	fmt.Printf("compressed: %d, original: %d\n", len(compressedData), len(data)*8)
+	return compressedTrie + len + compressedData
+}
+
+func loadTrie(data string, idx int) (*node, int) {
+	if data[idx] == byte('1') {
+		ch := data[idx+1]
+		return &node{ch: ch}, 2
+	}
+	node := &node{}
+	left, leftCnt := loadTrie(data, idx+1)
+	right, rightCng := loadTrie(data, idx+1+leftCnt)
+	node.left = left
+	node.right = right
+	return node, 1 + leftCnt + rightCng
+}
+
+func decompressCore(data string, len int, root *node) []byte {
+	ret := make([]byte, len, len)
+	i := 0
+	idx := 0
+	for i < len {
+		node := root
+		for !node.isLeaf() {
+			ch := data[idx]
+			idx++
+			if ch == byte('1') {
+				node = node.right
+			} else {
+				node = node.left
+			}
+		}
+		ret[i] = node.ch
+		i++
+	}
+	return ret
+}
+
+// Decompress decompressed *data*.
+func Decompress(data string) []byte {
+	root, cnt := loadTrie(data, 0)
+	if root == nil {
+		return nil
+	}
+	var len int
+	fmt.Sscanf(data[cnt:cnt+8], "%d", &len)
+	ret := decompressCore(data[cnt+8:], len, root)
+	return ret
 }

@@ -1,7 +1,15 @@
 package huffman
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestCompress(t *testing.T) {
-	Compress([]byte("it was the best of times it was the worst of times"))
+	str := "it was the best of times it was the worst of times"
+	tmp := Compress([]byte(str))
+	x := Decompress(tmp)
+	s := string(x)
+	assert.Equal(t, str, s)
 }
