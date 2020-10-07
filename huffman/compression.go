@@ -72,17 +72,17 @@ func buildTrie(frequencies map[byte]int) *node {
 	return heap.Pop(&queue).(*node)
 }
 
-func buildTableCore(node *node, table map[byte]string, value string) {
+func buildTableCore(node *node, table byteCodeTable, value string) {
 	if node.isLeaf() {
-		table[node.ch] = value
+		table.set(node.ch, value)
 	} else {
 		buildTableCore(node.left, table, value+"0")
 		buildTableCore(node.right, table, value+"1")
 	}
 }
 
-func buildTable(root *node) map[byte]string {
-	table := make(map[byte]string)
+func buildTable(root *node) byteCodeTable {
+	table := newByteCodeTable()
 	buildTableCore(root, table, "")
 	return table
 }
@@ -104,10 +104,10 @@ func saveTrie(root *node) string {
 	return builder.String()
 }
 
-func compressCore(data []byte, table map[byte]string) string {
+func compressCore(data []byte, table byteCodeTable) string {
 	result := ""
 	for _, ch := range data {
-		coded := table[ch]
+		coded := table.get(ch)
 		result += coded
 	}
 	return result
