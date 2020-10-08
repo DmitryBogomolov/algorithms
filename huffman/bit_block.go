@@ -18,14 +18,17 @@ func makeBuffer(bits int) []byte {
 }
 
 func (bb *bitBlock) grow(bits int) {
-	if bits < 1 {
-		panic("grow size must be positive")
-	}
 	size := bb.size + bits
 	buffer := makeBuffer(size)
 	copy(buffer, bb.buffer)
 	bb.buffer = buffer
 	bb.size = size
+}
+
+func (bb *bitBlock) clone() bitBlock {
+	buffer := makeBuffer(bb.size)
+	copy(buffer, bb.buffer)
+	return bitBlock{buffer, bb.size}
 }
 
 func (bb *bitBlock) align() {

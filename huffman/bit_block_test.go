@@ -38,6 +38,14 @@ func TestBitBlockGrow(t *testing.T) {
 	)
 }
 
+func TestBitBlockClone(t *testing.T) {
+	block := makeBitBlock(21, 10, 20, 0b00011011)
+	assert.Equal(t,
+		block,
+		block.clone(),
+	)
+}
+
 func TestBitBlockAlign(t *testing.T) {
 	check := func(block, expected bitBlock) {
 		block.align()
