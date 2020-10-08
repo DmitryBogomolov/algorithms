@@ -49,3 +49,23 @@ func (bb *bitBlock) append(block bitBlock) {
 		bb.buffer[byteIdx+len(block.buffer)] = residue
 	}
 }
+
+var bitBlock0 = bitBlock{size: 1, buffer: []byte{0}}
+var bitBlock1 = bitBlock{size: 1, buffer: []byte{1}}
+
+func (bb *bitBlock) appendBit(bit bool) {
+	var block bitBlock
+	if bit {
+		block = bitBlock1
+	} else {
+		block = bitBlock0
+	}
+	bb.append(block)
+}
+
+func (bb *bitBlock) appendByte(bt byte) {
+	var block bitBlock
+	block.grow(8)
+	block.buffer[0] = bt
+	bb.append(block)
+}

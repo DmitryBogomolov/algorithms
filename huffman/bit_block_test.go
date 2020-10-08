@@ -102,3 +102,41 @@ func TestBitBlockAppend(t *testing.T) {
 		makeBitBlock(30, 10, 20, 0b00111101, 0b00101110),
 	)
 }
+
+func TestBitBlockAppendBit(t *testing.T) {
+	check := func(block bitBlock, b bool, expected bitBlock) {
+		block.appendBit(b)
+		assert.Equal(t, expected, block)
+	}
+
+	check(
+		makeBitBlock(4, 0b00001100),
+		false,
+		makeBitBlock(5, 0b00001100),
+	)
+
+	check(
+		makeBitBlock(4, 0b00001100),
+		true,
+		makeBitBlock(5, 0b00011100),
+	)
+}
+
+func TestBitBlockAppendByte(t *testing.T) {
+	check := func(block bitBlock, b byte, expected bitBlock) {
+		block.appendByte(b)
+		assert.Equal(t, expected, block)
+	}
+
+	check(
+		makeBitBlock(4, 0b00001001),
+		0b11001010,
+		makeBitBlock(12, 0b10101001, 0b00001100),
+	)
+
+	check(
+		makeBitBlock(7, 0b01101001),
+		0b10010010,
+		makeBitBlock(15, 0b01101001, 0b01001001),
+	)
+}
