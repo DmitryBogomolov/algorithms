@@ -9,33 +9,43 @@ func getBytesBits(bits int) (int, int) {
 	return bits / 8, bits % 8
 }
 
-func getBufferSize(bits int) int {
+func makeBuffer(bits int) []byte {
 	byteCnt, bitCnt := getBytesBits(bits)
 	if bitCnt > 0 {
 		byteCnt++
 	}
-	return byteCnt
+	return make([]byte, byteCnt)
 }
 
-func (bb bitBlock) shift(step int) bitBlock {
-	if step < 1 {
-		panic("shift step must be positive")
+func (bb *bitBlock) grow(bits int) {
+	if bits < 1 {
+		panic("grow size must be positive")
 	}
-	size := bb.size + step
-	buffer := make([]byte, getBufferSize(size))
-	byteIdx, bitShift := getBytesBits(step)
+	size := bb.size + bits
+	buffer := makeBuffer(size)
+	copy(buffer, bb.buffer)
+	bb.buffer = buffer
+	bb.size = size
+}
+
+func (bb *bitBlock) align() {
+	_, bits := getBytesBits(bb.size)
+	if bits > 0 {
+		bb.size += 8 - bits
+	}
+}
+
+func (bb *bitBlock) append(block bitBlock) {
+	byteIdx, bitShift := getBytesBits(bb.size)
+	bb.grow(block.size)
 	var residue byte
-	for i := 0; i < len(bb.buffer); i++ {
-		srcByte := bb.buffer[i]
+	for i := 0; i < len(block.buffer); i++ {
+		srcByte := block.buffer[i]
 		dstByte := (srcByte << bitShift) | residue
 		residue = srcByte >> (8 - bitShift)
-		buffer[byteIdx+i] = dstByte
+		bb.buffer[byteIdx+i] |= dstByte
 	}
 	if residue > 0 {
-		buffer[byteIdx+len(bb.buffer)] = residue
-	}
-	return bitBlock{
-		buffer: buffer,
-		size:   size,
+		bb.buffer[byteIdx+len(block.buffer)] = residue
 	}
 }
