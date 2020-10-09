@@ -2,8 +2,6 @@ package huffman
 
 import (
 	"container/heap"
-	"fmt"
-	"strings"
 )
 
 type node struct {
@@ -72,107 +70,124 @@ func buildTrie(frequencies map[byte]int) *node {
 	return heap.Pop(&queue).(*node)
 }
 
-func buildTableCore(node *node, table byteCodeTable, value string) {
+func buildTableCore(node *node, table byteCodeTable, code bitBlock) {
 	if node.isLeaf() {
-		table.set(node.ch, value)
+		table.set(node.ch, code)
 	} else {
-		buildTableCore(node.left, table, value+"0")
-		buildTableCore(node.right, table, value+"1")
+		leftCode := code.clone()
+		leftCode.appendBit(false)
+		rightCode := code.clone()
+		rightCode.appendBit(true)
+		buildTableCore(node.left, table, leftCode)
+		buildTableCore(node.right, table, rightCode)
 	}
 }
 
 func buildTable(root *node) byteCodeTable {
 	table := newByteCodeTable()
-	buildTableCore(root, table, "")
+	buildTableCore(root, table, bitBlock{})
 	return table
 }
 
-func compressTrieCore(node *node, builder *strings.Builder) {
+func compressTrieCore(node *node, block *bitBlock) {
 	if node.isLeaf() {
-		builder.WriteString("1")
-		builder.WriteByte(node.ch)
+		block.appendBit(true)
+		block.appendByte(node.ch)
 	} else {
-		builder.WriteString("0")
-		compressTrieCore(node.left, builder)
-		compressTrieCore(node.right, builder)
+		block.appendBit(false)
+		compressTrieCore(node.left, block)
+		compressTrieCore(node.right, block)
 	}
 }
 
-func compressTrie(root *node) string {
-	builder := new(strings.Builder)
-	compressTrieCore(root, builder)
-	return builder.String()
+func compressTrie(root *node) bitBlock {
+	var block bitBlock
+	compressTrieCore(root, &block)
+	return block
 }
 
-func compressLength(length int) string {
-	return fmt.Sprintf("%08d", length)
+func compressLength(length int) bitBlock {
+	var block bitBlock
+	// TODO: Use 4 bytes.
+	block.appendByte(byte(length))
+	return block
 }
 
-func compressData(data []byte, table byteCodeTable) string {
-	result := ""
+func compressData(data []byte, table byteCodeTable) bitBlock {
+	var block bitBlock
 	for _, ch := range data {
-		coded := table.get(ch)
-		result += coded
+		code := table.get(ch)
+		block.append(code)
 	}
-	return result
+	return block
 }
 
 // Compress compresses *data*.
 // https://algs4.cs.princeton.edu/55compression/Huffman.java.html
-func Compress(data []byte) string {
+func Compress(data []byte) []byte {
 	frequencies := collectFrequencies(data)
 	root := buildTrie(frequencies)
 	table := buildTable(root)
-	return compressTrie(root) + compressLength(len(data)) + compressData(data, table)
+	trieBlock := compressTrie(root)
+	lengthBlock := compressLength(len(data))
+	dataBlock := compressData(data, table)
+	var block bitBlock
+	block.append(trieBlock)
+	block.align()
+	block.append(lengthBlock)
+	block.align()
+	block.append(dataBlock)
+	return block.buffer
 }
 
-func expandTrie(data string, idx int) (*node, int) {
-	if data[idx] == byte('1') {
-		ch := data[idx+1]
-		return &node{ch: ch}, 2
+func expandTrie(scanner *bitScanner) *node {
+	bit := scanner.readBit()
+	if bit {
+		ch := scanner.readByte()
+		return &node{ch: ch}
 	}
 	node := &node{}
-	left, leftCnt := expandTrie(data, idx+1)
-	right, rightCng := expandTrie(data, idx+1+leftCnt)
+	left := expandTrie(scanner)
+	right := expandTrie(scanner)
 	node.left = left
 	node.right = right
-	return node, 1 + leftCnt + rightCng
+	return node
 }
 
-func expandLength(data string) int {
-	var length int
-	fmt.Sscanf(data[0:8], "%d", &length)
-	return length
+func expandLength(scanner *bitScanner) int {
+	// TODO: Use 4 bytes.
+	length := scanner.readByte()
+	return int(length)
 }
 
-func expandData(data string, len int, root *node) []byte {
-	ret := make([]byte, len, len)
+func expandData(scanner *bitScanner, length int, root *node) []byte {
+	buffer := make([]byte, length)
 	i := 0
 	idx := 0
-	for i < len {
+	for i < length {
 		node := root
 		for !node.isLeaf() {
-			ch := data[idx]
+			bit := scanner.readBit()
 			idx++
-			if ch == byte('1') {
+			if bit {
 				node = node.right
 			} else {
 				node = node.left
 			}
 		}
-		ret[i] = node.ch
+		buffer[i] = node.ch
 		i++
 	}
-	return ret
+	return buffer
 }
 
 // Expand expands *data*.
-func Expand(data string) []byte {
-	root, cnt := expandTrie(data, 0)
-	if root == nil {
-		return nil
-	}
-	length := expandLength(data[cnt:])
-	ret := expandData(data[cnt+8:], length, root)
-	return ret
+func Expand(data []byte) []byte {
+	scanner := newBitScanner(data)
+	root := expandTrie(scanner)
+	scanner.align()
+	length := expandLength(scanner)
+	scanner.align()
+	buffer := expandData(scanner, length, root)
+	return buffer
 }

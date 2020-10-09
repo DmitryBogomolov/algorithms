@@ -7,9 +7,8 @@ import (
 )
 
 func TestCompress(t *testing.T) {
-	str := "it was the best of times it was the worst of times"
-	tmp := Compress([]byte(str))
+	sample := []byte("it was the best of times it was the worst of times")
+	tmp := Compress(sample)
 	x := Expand(tmp)
-	s := string(x)
-	assert.Equal(t, str, s)
+	assert.Equal(t, sample, x)
 }
