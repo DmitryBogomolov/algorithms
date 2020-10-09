@@ -87,24 +87,28 @@ func buildTable(root *node) byteCodeTable {
 	return table
 }
 
-func saveTrieCore(node *node, builder *strings.Builder) {
+func compressTrieCore(node *node, builder *strings.Builder) {
 	if node.isLeaf() {
 		builder.WriteString("1")
 		builder.WriteByte(node.ch)
 	} else {
 		builder.WriteString("0")
-		saveTrieCore(node.left, builder)
-		saveTrieCore(node.right, builder)
+		compressTrieCore(node.left, builder)
+		compressTrieCore(node.right, builder)
 	}
 }
 
-func saveTrie(root *node) string {
+func compressTrie(root *node) string {
 	builder := new(strings.Builder)
-	saveTrieCore(root, builder)
+	compressTrieCore(root, builder)
 	return builder.String()
 }
 
-func compressCore(data []byte, table byteCodeTable) string {
+func compressLength(length int) string {
+	return fmt.Sprintf("%08d", length)
+}
+
+func compressData(data []byte, table byteCodeTable) string {
 	result := ""
 	for _, ch := range data {
 		coded := table.get(ch)
@@ -119,26 +123,29 @@ func Compress(data []byte) string {
 	frequencies := collectFrequencies(data)
 	root := buildTrie(frequencies)
 	table := buildTable(root)
-	compressedTrie := saveTrie(root)
-	len := fmt.Sprintf("%08d", len(data))
-	compressedData := compressCore(data, table)
-	return compressedTrie + len + compressedData
+	return compressTrie(root) + compressLength(len(data)) + compressData(data, table)
 }
 
-func loadTrie(data string, idx int) (*node, int) {
+func expandTrie(data string, idx int) (*node, int) {
 	if data[idx] == byte('1') {
 		ch := data[idx+1]
 		return &node{ch: ch}, 2
 	}
 	node := &node{}
-	left, leftCnt := loadTrie(data, idx+1)
-	right, rightCng := loadTrie(data, idx+1+leftCnt)
+	left, leftCnt := expandTrie(data, idx+1)
+	right, rightCng := expandTrie(data, idx+1+leftCnt)
 	node.left = left
 	node.right = right
 	return node, 1 + leftCnt + rightCng
 }
 
-func decompressCore(data string, len int, root *node) []byte {
+func expandLength(data string) int {
+	var length int
+	fmt.Sscanf(data[0:8], "%d", &length)
+	return length
+}
+
+func expandData(data string, len int, root *node) []byte {
 	ret := make([]byte, len, len)
 	i := 0
 	idx := 0
@@ -159,14 +166,13 @@ func decompressCore(data string, len int, root *node) []byte {
 	return ret
 }
 
-// Decompress decompressed *data*.
-func Decompress(data string) []byte {
-	root, cnt := loadTrie(data, 0)
+// Expand expands *data*.
+func Expand(data string) []byte {
+	root, cnt := expandTrie(data, 0)
 	if root == nil {
 		return nil
 	}
-	var len int
-	fmt.Sscanf(data[cnt:cnt+8], "%d", &len)
-	ret := decompressCore(data[cnt+8:], len, root)
+	length := expandLength(data[cnt:])
+	ret := expandData(data[cnt+8:], length, root)
 	return ret
 }
