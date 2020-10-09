@@ -108,8 +108,10 @@ func compressTrie(root *node) bitBlock {
 
 func compressLength(length int) bitBlock {
 	var block bitBlock
-	// TODO: Use 4 bytes.
 	block.appendByte(byte(length))
+	block.appendByte(byte(length >> 8))
+	block.appendByte(byte(length >> 16))
+	block.appendByte(byte(length >> 24))
 	return block
 }
 
@@ -155,9 +157,12 @@ func expandTrie(scanner *bitScanner) *node {
 }
 
 func expandLength(scanner *bitScanner) int {
-	// TODO: Use 4 bytes.
-	length := scanner.readByte()
-	return int(length)
+	var length int
+	length |= int(scanner.readByte())
+	length |= int(scanner.readByte()) << 8
+	length |= int(scanner.readByte()) << 16
+	length |= int(scanner.readByte()) << 24
+	return length
 }
 
 func expandData(scanner *bitScanner, length int, root *node) []byte {
