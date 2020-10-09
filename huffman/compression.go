@@ -52,7 +52,7 @@ func collectFrequencies(data []byte) map[byte]int {
 }
 
 func buildTrie(frequencies map[byte]int) *node {
-	nodes := make([]*node, len(frequencies), len(frequencies))
+	nodes := make([]*node, len(frequencies))
 	i := 0
 	for ch, freq := range frequencies {
 		nodes[i] = &node{ch: ch, freq: freq}
@@ -103,6 +103,7 @@ func compressTrieCore(node *node, block *bitBlock) {
 func compressTrie(root *node) bitBlock {
 	var block bitBlock
 	compressTrieCore(root, &block)
+	block.align()
 	return block
 }
 
@@ -121,6 +122,7 @@ func compressData(data []byte, table byteCodeTable) bitBlock {
 		code := table.get(ch)
 		block.append(code)
 	}
+	block.align()
 	return block
 }
 
@@ -135,25 +137,26 @@ func Compress(data []byte) []byte {
 	dataBlock := compressData(data, table)
 	var block bitBlock
 	block.append(trieBlock)
-	block.align()
 	block.append(lengthBlock)
-	block.align()
 	block.append(dataBlock)
 	return block.buffer
 }
 
-func expandTrie(scanner *bitScanner) *node {
-	bit := scanner.readBit()
-	if bit {
-		ch := scanner.readByte()
-		return &node{ch: ch}
+func expandTrieCore(scanner *bitScanner) *node {
+	var n node
+	if scanner.readBit() {
+		n.ch = scanner.readByte()
+	} else {
+		n.left = expandTrieCore(scanner)
+		n.right = expandTrieCore(scanner)
 	}
-	node := &node{}
-	left := expandTrie(scanner)
-	right := expandTrie(scanner)
-	node.left = left
-	node.right = right
-	return node
+	return &n
+}
+
+func expandTrie(scanner *bitScanner) *node {
+	root := expandTrieCore(scanner)
+	scanner.align()
+	return root
 }
 
 func expandLength(scanner *bitScanner) int {
@@ -167,22 +170,18 @@ func expandLength(scanner *bitScanner) int {
 
 func expandData(scanner *bitScanner, length int, root *node) []byte {
 	buffer := make([]byte, length)
-	i := 0
-	idx := 0
-	for i < length {
+	for i := 0; i < length; i++ {
 		node := root
 		for !node.isLeaf() {
-			bit := scanner.readBit()
-			idx++
-			if bit {
+			if scanner.readBit() {
 				node = node.right
 			} else {
 				node = node.left
 			}
 		}
 		buffer[i] = node.ch
-		i++
 	}
+	scanner.align()
 	return buffer
 }
 
@@ -190,9 +189,7 @@ func expandData(scanner *bitScanner, length int, root *node) []byte {
 func Expand(data []byte) []byte {
 	scanner := newBitScanner(data)
 	root := expandTrie(scanner)
-	scanner.align()
 	length := expandLength(scanner)
-	scanner.align()
 	buffer := expandData(scanner, length, root)
 	return buffer
 }
