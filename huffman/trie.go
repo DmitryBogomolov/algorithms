@@ -41,25 +41,37 @@ func (pq *nodesPriorityQueue) Pop() interface{} {
 	return node
 }
 
-func buildTrie(frequencies map[byte]int) *node {
+func makeNodesQueue(frequencies map[byte]int) *nodesPriorityQueue {
 	nodes := make([]*node, len(frequencies))
 	i := 0
 	for item, frequency := range frequencies {
 		nodes[i] = &node{item: item, frequency: frequency}
 		i++
 	}
-
 	queue := nodesPriorityQueue(nodes)
 	heap.Init(&queue)
+	return &queue
+}
+
+func popQueueNode(queue *nodesPriorityQueue) *node {
+	return heap.Pop(queue).(*node)
+}
+
+func pushQueueNode(queue *nodesPriorityQueue, n *node) {
+	heap.Push(queue, n)
+}
+
+func buildTrie(frequencies map[byte]int) *node {
+	queue := makeNodesQueue(frequencies)
 	for queue.Len() > 1 {
-		lNode := heap.Pop(&queue).(*node)
-		rNode := heap.Pop(&queue).(*node)
-		node := node{
+		lNode := popQueueNode(queue)
+		rNode := popQueueNode(queue)
+		n := &node{
 			frequency: lNode.frequency + rNode.frequency,
 			lNode:     lNode,
 			rNode:     rNode,
 		}
-		heap.Push(&queue, &node)
+		pushQueueNode(queue, n)
 	}
-	return heap.Pop(&queue).(*node)
+	return popQueueNode(queue)
 }
