@@ -3,8 +3,8 @@ package huffman
 import "container/heap"
 
 type node struct {
-	ch           byte
-	freq         int
+	item         byte
+	frequency    int
 	lNode, rNode *node
 }
 
@@ -19,7 +19,7 @@ func (pq nodesPriorityQueue) Len() int {
 }
 
 func (pq nodesPriorityQueue) Less(i, j int) bool {
-	return pq[i].freq < pq[j].freq
+	return pq[i].frequency < pq[j].frequency
 }
 
 func (pq nodesPriorityQueue) Swap(i, j int) {
@@ -44,17 +44,21 @@ func (pq *nodesPriorityQueue) Pop() interface{} {
 func buildTrie(frequencies map[byte]int) *node {
 	nodes := make([]*node, len(frequencies))
 	i := 0
-	for ch, freq := range frequencies {
-		nodes[i] = &node{ch: ch, freq: freq}
+	for item, frequency := range frequencies {
+		nodes[i] = &node{item: item, frequency: frequency}
 		i++
 	}
 
 	queue := nodesPriorityQueue(nodes)
 	heap.Init(&queue)
 	for queue.Len() > 1 {
-		left := heap.Pop(&queue).(*node)
-		right := heap.Pop(&queue).(*node)
-		node := node{freq: left.freq + right.freq, lNode: left, rNode: right}
+		lNode := heap.Pop(&queue).(*node)
+		rNode := heap.Pop(&queue).(*node)
+		node := node{
+			frequency: lNode.frequency + rNode.frequency,
+			lNode:     lNode,
+			rNode:     rNode,
+		}
 		heap.Push(&queue, &node)
 	}
 	return heap.Pop(&queue).(*node)

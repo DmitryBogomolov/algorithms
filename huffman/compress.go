@@ -2,15 +2,15 @@ package huffman
 
 func collectFrequencies(data []byte) map[byte]int {
 	frequencies := make(map[byte]int)
-	for _, ch := range data {
-		frequencies[ch]++
+	for _, item := range data {
+		frequencies[item]++
 	}
 	return frequencies
 }
 
 func buildTableCore(node *node, table byteCodeTable, code bitBlock) {
 	if node.isLeaf() {
-		table.set(node.ch, code)
+		table.set(node.item, code)
 	} else {
 		lCode := code.clone()
 		lCode.appendBit(false)
@@ -30,7 +30,7 @@ func buildTable(root *node) byteCodeTable {
 func compressTrieCore(node *node, block *bitBlock) {
 	if node.isLeaf() {
 		block.appendBit(true)
-		block.appendByte(node.ch)
+		block.appendByte(node.item)
 	} else {
 		block.appendBit(false)
 		compressTrieCore(node.lNode, block)
@@ -56,8 +56,8 @@ func compressLength(length int) bitBlock {
 
 func compressData(data []byte, table byteCodeTable) bitBlock {
 	var block bitBlock
-	for _, ch := range data {
-		code := table.get(ch)
+	for _, item := range data {
+		code := table.get(item)
 		block.append(code)
 	}
 	block.align()

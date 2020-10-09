@@ -3,7 +3,7 @@ package huffman
 func expandTrieCore(scanner *bitScanner) *node {
 	var n node
 	if scanner.readBit() {
-		n.ch = scanner.readByte()
+		n.item = scanner.readByte()
 	} else {
 		n.lNode = expandTrieCore(scanner)
 		n.rNode = expandTrieCore(scanner)
@@ -37,7 +37,7 @@ func expandData(scanner *bitScanner, length int, root *node) []byte {
 				node = node.lNode
 			}
 		}
-		buffer[i] = node.ch
+		buffer[i] = node.item
 	}
 	scanner.align()
 	return buffer
