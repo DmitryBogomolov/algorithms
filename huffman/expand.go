@@ -49,6 +49,7 @@ func expandData(scanner *bitScanner, length int, root *node) []byte {
 var ErrDataCorrupted = errors.New("data is corrupted")
 
 // Expand expands *data*.
+// https://algs4.cs.princeton.edu/55compression/Huffman.java.html
 func Expand(data []byte) (buffer []byte, err error) {
 	if len(data) == 0 {
 		err = ErrEmptyData
