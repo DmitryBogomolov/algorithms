@@ -73,5 +73,5 @@ func Compress(data []byte) []byte {
 	compressTrie(root, block)
 	compressLength(len(data), block)
 	compressData(data, table, block)
-	return block.buffer
+	return block.getBuffer()
 }

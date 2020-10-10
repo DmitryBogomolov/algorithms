@@ -77,3 +77,10 @@ func (bb *bitBlock) appendByte(bt byte) {
 	var buffer = [1]byte{bt}
 	bb.append(&bitBlock{size: 8, buffer: buffer[:]})
 }
+
+func (bb *bitBlock) getBuffer() []byte {
+	bufferSize := getBufferSize(bb.size)
+	buffer := make([]byte, bufferSize)
+	copy(buffer, bb.buffer)
+	return buffer
+}
