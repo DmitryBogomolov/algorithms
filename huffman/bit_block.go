@@ -5,8 +5,8 @@ type bitBlock struct {
 	size   int
 }
 
-func newBitBlock(bufferSize int) *bitBlock {
-	return &bitBlock{size: 0, buffer: make([]byte, bufferSize)}
+func newBitBlock(bits int) *bitBlock {
+	return &bitBlock{size: 0, buffer: make([]byte, getBufferSize(bits))}
 }
 
 func getBytesBits(bits int) (int, int) {

@@ -8,23 +8,28 @@ func collectFrequencies(data []byte) map[byte]int {
 	return frequencies
 }
 
-func buildTableCore(node *node, table byteCodeTable, code *bitBlock) {
+func buildTableCore(node *node, table byteCodeTable, code *bitBlock, trieBits *int, dataBits *int) {
+	*trieBits++
 	if node.isLeaf() {
+		*dataBits += node.frequency * code.size
+		*trieBits += 8
 		table.set(node.item, code)
 	} else {
 		lCode := code.clone()
 		lCode.appendBit(false)
 		rCode := code.clone()
 		rCode.appendBit(true)
-		buildTableCore(node.lNode, table, lCode)
-		buildTableCore(node.rNode, table, rCode)
+		buildTableCore(node.lNode, table, lCode, trieBits, dataBits)
+		buildTableCore(node.rNode, table, rCode, trieBits, dataBits)
 	}
 }
 
-func buildTable(root *node) byteCodeTable {
+func buildTable(root *node) (byteCodeTable, int) {
 	table := newByteCodeTable()
-	buildTableCore(root, table, newBitBlock(0))
-	return table
+	trieBits, dataBits := 0, 0
+	buildTableCore(root, table, newBitBlock(0), &trieBits, &dataBits)
+	// 32 - is for length, 14 - is a worst case of two alignments.
+	return table, trieBits + 32 + 14 + dataBits
 }
 
 func compressTrieCore(node *node, block *bitBlock) {
@@ -63,8 +68,8 @@ func compressData(data []byte, table byteCodeTable, block *bitBlock) {
 func Compress(data []byte) []byte {
 	frequencies := collectFrequencies(data)
 	root := buildTrie(frequencies)
-	table := buildTable(root)
-	block := newBitBlock(0)
+	table, blockSize := buildTable(root)
+	block := newBitBlock(blockSize)
 	compressTrie(root, block)
 	compressLength(len(data), block)
 	compressData(data, table, block)
