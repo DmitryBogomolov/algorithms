@@ -1,6 +1,7 @@
 package huffman
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,9 +9,27 @@ import (
 
 func TestCompressExpand(t *testing.T) {
 	sample := []byte("it was the best of times it was the worst of times")
-	tmp, _ := Compress(sample)
-	x, _ := Expand(tmp)
-	assert.Equal(t, sample, x)
+	compressed, compressErr := Compress(sample)
+	expanded, expandErr := Expand(compressed)
+	assert.Equal(t, sample, expanded)
+	assert.Equal(t, nil, compressErr)
+	assert.Equal(t, nil, expandErr)
+}
+
+func TestCompressExpandLarge(t *testing.T) {
+	sample := make([]byte, 9e6)
+	r := rand.New(rand.NewSource(1244123))
+
+	for i := 0; i < 5; i++ {
+		r.Read(sample)
+
+		compressed, compressErr := Compress(sample)
+		expanded, expandErr := Expand(compressed)
+
+		assert.Equal(t, sample, expanded)
+		assert.Equal(t, nil, compressErr)
+		assert.Equal(t, nil, expandErr)
+	}
 }
 
 func TestCompressEmptyBuffer(t *testing.T) {
