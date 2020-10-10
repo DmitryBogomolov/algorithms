@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCompress(t *testing.T) {
+func TestCompressExpand(t *testing.T) {
 	sample := []byte("it was the best of times it was the worst of times")
 	tmp := Compress(sample)
 	x := Expand(tmp)

@@ -23,7 +23,7 @@ func buildTableCore(node *node, table byteCodeTable, code *bitBlock) {
 
 func buildTable(root *node) byteCodeTable {
 	table := newByteCodeTable()
-	buildTableCore(root, table, newBitBlock())
+	buildTableCore(root, table, newBitBlock(0))
 	return table
 }
 
@@ -64,7 +64,7 @@ func Compress(data []byte) []byte {
 	frequencies := collectFrequencies(data)
 	root := buildTrie(frequencies)
 	table := buildTable(root)
-	block := newBitBlock()
+	block := newBitBlock(0)
 	compressTrie(root, block)
 	compressLength(len(data), block)
 	compressData(data, table, block)

@@ -5,32 +5,35 @@ type bitBlock struct {
 	size   int
 }
 
-func newBitBlock() *bitBlock {
-	return &bitBlock{}
+func newBitBlock(bufferSize int) *bitBlock {
+	return &bitBlock{size: 0, buffer: make([]byte, bufferSize)}
 }
 
 func getBytesBits(bits int) (int, int) {
 	return bits / 8, bits % 8
 }
 
-func makeBuffer(bits int) []byte {
+func getBufferSize(bits int) int {
 	byteCnt, bitCnt := getBytesBits(bits)
 	if bitCnt > 0 {
 		byteCnt++
 	}
-	return make([]byte, byteCnt)
+	return byteCnt
 }
 
 func (bb *bitBlock) grow(bits int) {
 	size := bb.size + bits
-	buffer := makeBuffer(size)
-	copy(buffer, bb.buffer)
-	bb.buffer = buffer
+	bufferSize := getBufferSize(size)
+	if bufferSize > len(bb.buffer) {
+		buffer := make([]byte, bufferSize)
+		copy(buffer, bb.buffer)
+		bb.buffer = buffer
+	}
 	bb.size = size
 }
 
 func (bb *bitBlock) clone() *bitBlock {
-	buffer := makeBuffer(bb.size)
+	buffer := make([]byte, getBufferSize(bb.size))
 	copy(buffer, bb.buffer)
 	return &bitBlock{buffer, bb.size}
 }
@@ -46,7 +49,7 @@ func (bb *bitBlock) append(block *bitBlock) {
 	byteIdx, bitShift := getBytesBits(bb.size)
 	bb.grow(block.size)
 	var residue byte
-	for i := 0; i < len(block.buffer); i++ {
+	for i := range block.buffer {
 		srcByte := block.buffer[i]
 		dstByte := (srcByte << bitShift) | residue
 		residue = srcByte >> (8 - bitShift)
@@ -71,8 +74,6 @@ func (bb *bitBlock) appendBit(bit bool) {
 }
 
 func (bb *bitBlock) appendByte(bt byte) {
-	var block bitBlock
-	block.grow(8)
-	block.buffer[0] = bt
-	bb.append(&block)
+	var buffer = [1]byte{bt}
+	bb.append(&bitBlock{size: 8, buffer: buffer[:]})
 }
