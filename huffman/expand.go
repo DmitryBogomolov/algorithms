@@ -1,5 +1,7 @@
 package huffman
 
+import "errors"
+
 func expandTrieCore(scanner *bitScanner) *node {
 	var n node
 	if scanner.readBit() {
@@ -43,11 +45,23 @@ func expandData(scanner *bitScanner, length int, root *node) []byte {
 	return buffer
 }
 
+// ErrDataCorrupted tells that data is corrupted.
+var ErrDataCorrupted = errors.New("data is corrupted")
+
 // Expand expands *data*.
-func Expand(data []byte) []byte {
+func Expand(data []byte) (buffer []byte, err error) {
+	if len(data) == 0 {
+		err = ErrEmptyData
+		return
+	}
+	defer func() {
+		if innerErr := recover(); innerErr != nil {
+			err = ErrDataCorrupted
+		}
+	}()
 	scanner := newBitScanner(data)
 	root := expandTrie(scanner)
 	length := expandLength(scanner)
-	buffer := expandData(scanner, length, root)
-	return buffer
+	buffer = expandData(scanner, length, root)
+	return
 }

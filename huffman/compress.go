@@ -1,5 +1,7 @@
 package huffman
 
+import "errors"
+
 func collectFrequencies(data []byte) map[byte]int {
 	frequencies := make(map[byte]int)
 	for _, item := range data {
@@ -63,9 +65,15 @@ func compressData(data []byte, table byteCodeTable, block *bitBlock) {
 	block.align()
 }
 
+// ErrEmptyData tells that data is nil or empty.
+var ErrEmptyData = errors.New("data is nil or empty")
+
 // Compress compresses *data*.
 // https://algs4.cs.princeton.edu/55compression/Huffman.java.html
-func Compress(data []byte) []byte {
+func Compress(data []byte) ([]byte, error) {
+	if len(data) == 0 {
+		return nil, ErrEmptyData
+	}
 	frequencies := collectFrequencies(data)
 	root := buildTrie(frequencies)
 	table, blockSize := buildTable(root)
@@ -73,5 +81,5 @@ func Compress(data []byte) []byte {
 	compressTrie(root, block)
 	compressLength(len(data), block)
 	compressData(data, table, block)
-	return block.getBuffer()
+	return block.getBuffer(), nil
 }
