@@ -8,7 +8,7 @@ func collectFrequencies(data []byte) map[byte]int {
 	return frequencies
 }
 
-func buildTableCore(node *node, table byteCodeTable, code bitBlock) {
+func buildTableCore(node *node, table byteCodeTable, code *bitBlock) {
 	if node.isLeaf() {
 		table.set(node.item, code)
 	} else {
@@ -23,7 +23,7 @@ func buildTableCore(node *node, table byteCodeTable, code bitBlock) {
 
 func buildTable(root *node) byteCodeTable {
 	table := newByteCodeTable()
-	buildTableCore(root, table, bitBlock{})
+	buildTableCore(root, table, newBitBlock())
 	return table
 }
 
@@ -38,30 +38,24 @@ func compressTrieCore(node *node, block *bitBlock) {
 	}
 }
 
-func compressTrie(root *node) bitBlock {
-	var block bitBlock
-	compressTrieCore(root, &block)
+func compressTrie(root *node, block *bitBlock) {
+	compressTrieCore(root, block)
 	block.align()
-	return block
 }
 
-func compressLength(length int) bitBlock {
-	var block bitBlock
+func compressLength(length int, block *bitBlock) {
 	block.appendByte(byte(length))
 	block.appendByte(byte(length >> 8))
 	block.appendByte(byte(length >> 16))
 	block.appendByte(byte(length >> 24))
-	return block
 }
 
-func compressData(data []byte, table byteCodeTable) bitBlock {
-	var block bitBlock
+func compressData(data []byte, table byteCodeTable, block *bitBlock) {
 	for _, item := range data {
 		code := table.get(item)
 		block.append(code)
 	}
 	block.align()
-	return block
 }
 
 // Compress compresses *data*.
@@ -70,12 +64,9 @@ func Compress(data []byte) []byte {
 	frequencies := collectFrequencies(data)
 	root := buildTrie(frequencies)
 	table := buildTable(root)
-	trieBlock := compressTrie(root)
-	lengthBlock := compressLength(len(data))
-	dataBlock := compressData(data, table)
-	var block bitBlock
-	block.append(trieBlock)
-	block.append(lengthBlock)
-	block.append(dataBlock)
+	block := newBitBlock()
+	compressTrie(root, block)
+	compressLength(len(data), block)
+	compressData(data, table, block)
 	return block.buffer
 }

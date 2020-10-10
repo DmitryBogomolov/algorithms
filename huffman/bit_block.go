@@ -5,6 +5,10 @@ type bitBlock struct {
 	size   int
 }
 
+func newBitBlock() *bitBlock {
+	return &bitBlock{}
+}
+
 func getBytesBits(bits int) (int, int) {
 	return bits / 8, bits % 8
 }
@@ -25,10 +29,10 @@ func (bb *bitBlock) grow(bits int) {
 	bb.size = size
 }
 
-func (bb *bitBlock) clone() bitBlock {
+func (bb *bitBlock) clone() *bitBlock {
 	buffer := makeBuffer(bb.size)
 	copy(buffer, bb.buffer)
-	return bitBlock{buffer, bb.size}
+	return &bitBlock{buffer, bb.size}
 }
 
 func (bb *bitBlock) align() {
@@ -38,7 +42,7 @@ func (bb *bitBlock) align() {
 	}
 }
 
-func (bb *bitBlock) append(block bitBlock) {
+func (bb *bitBlock) append(block *bitBlock) {
 	byteIdx, bitShift := getBytesBits(bb.size)
 	bb.grow(block.size)
 	var residue byte
@@ -53,11 +57,11 @@ func (bb *bitBlock) append(block bitBlock) {
 	}
 }
 
-var bitBlock0 = bitBlock{size: 1, buffer: []byte{0}}
-var bitBlock1 = bitBlock{size: 1, buffer: []byte{1}}
+var bitBlock0 = &bitBlock{size: 1, buffer: []byte{0}}
+var bitBlock1 = &bitBlock{size: 1, buffer: []byte{1}}
 
 func (bb *bitBlock) appendBit(bit bool) {
-	var block bitBlock
+	var block *bitBlock
 	if bit {
 		block = bitBlock1
 	} else {
@@ -70,5 +74,5 @@ func (bb *bitBlock) appendByte(bt byte) {
 	var block bitBlock
 	block.grow(8)
 	block.buffer[0] = bt
-	bb.append(block)
+	bb.append(&block)
 }

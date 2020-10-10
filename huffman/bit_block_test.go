@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func makeBitBlock(size int, bytes ...byte) bitBlock {
-	return bitBlock{buffer: bytes, size: size}
+func makeBitBlock(size int, bytes ...byte) *bitBlock {
+	return &bitBlock{buffer: bytes, size: size}
 }
 
 func TestBitBlockGrow(t *testing.T) {
@@ -47,7 +47,7 @@ func TestBitBlockClone(t *testing.T) {
 }
 
 func TestBitBlockAlign(t *testing.T) {
-	check := func(block, expected bitBlock) {
+	check := func(block, expected *bitBlock) {
 		block.align()
 		assert.Equal(t, expected, block)
 	}
@@ -69,7 +69,7 @@ func TestBitBlockAlign(t *testing.T) {
 }
 
 func TestBitBlockAppend(t *testing.T) {
-	check := func(block, appendee, expected bitBlock) {
+	check := func(block, appendee, expected *bitBlock) {
 		block.append(appendee)
 		assert.Equal(t, expected, block)
 	}
@@ -112,7 +112,7 @@ func TestBitBlockAppend(t *testing.T) {
 }
 
 func TestBitBlockAppendBit(t *testing.T) {
-	check := func(block bitBlock, b bool, expected bitBlock) {
+	check := func(block *bitBlock, b bool, expected *bitBlock) {
 		block.appendBit(b)
 		assert.Equal(t, expected, block)
 	}
@@ -131,7 +131,7 @@ func TestBitBlockAppendBit(t *testing.T) {
 }
 
 func TestBitBlockAppendByte(t *testing.T) {
-	check := func(block bitBlock, b byte, expected bitBlock) {
+	check := func(block *bitBlock, b byte, expected *bitBlock) {
 		block.appendByte(b)
 		assert.Equal(t, expected, block)
 	}
