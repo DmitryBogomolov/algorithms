@@ -18,7 +18,12 @@ type EdgeWeightedGraph interface {
 }
 
 // Edge is a pair of connected vertices in a graph.
-type Edge = [2]int
+type Edge struct {
+	// Vertex1 is one of edge vertices.
+	Vertex1 int
+	// Vertex2 is one of edge vertices.
+	Vertex2 int
+}
 
 // AllGraphEdges returns all edges of a graph.
 func AllGraphEdges(graph Graph) []Edge {
