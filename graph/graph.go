@@ -1,19 +1,23 @@
 package graph
 
-// Graph represents a graph.
+// Graph is a set of vertices and edges.
 type Graph interface {
+	// NumVertices gets number of graph vertices.
 	NumVertices() int
+	// NumEdges gets number of graph edges.
 	NumEdges() int
+	// AdjacentVertices returns vertices adjacent to the vertex.
 	AdjacentVertices(vertex int) []int
 }
 
-// EdgeWeightedGraph represents an edge-weighted graph.
+// EdgeWeightedGraph is a graph where each edge has an associated weight.
 type EdgeWeightedGraph interface {
 	Graph
+	// AdjacentWeights returns weights of edges adjacent to the vertex.
 	AdjacentWeights(vertex int) []float64
 }
 
-// Edge represents cut-edge in a graph.
+// Edge is a pair of connected vertices in a graph.
 type Edge = [2]int
 
 // AllGraphEdges returns all edges of a graph.
