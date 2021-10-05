@@ -1,35 +1,36 @@
 package graph
 
-// ConnectedComponents represents connected components of a graph.
+// ConnectedComponents is a collection of connected components in a graph.
+// Connected component is a set of vertices connected by edges.
 type ConnectedComponents struct {
 	count      int
 	components []int
 }
 
-// Count returns number of connected components.
-func (cc ConnectedComponents) Count() int {
-	return cc.count
+// Count gets number of connected components.
+func (connectedComponents ConnectedComponents) Count() int {
+	return connectedComponents.count
 }
 
 // Connected tells if two vertices are connected.
-func (cc ConnectedComponents) Connected(vertex1 int, vertex2 int) bool {
-	return cc.ComponentID(vertex1) == cc.ComponentID(vertex2)
+func (connectedComponents ConnectedComponents) Connected(vertexID1 int, vertexID2 int) bool {
+	return connectedComponents.ComponentID(vertexID1) == connectedComponents.ComponentID(vertexID2)
 }
 
-// ComponentID returns the component to which vertex belongs.
-func (cc ConnectedComponents) ComponentID(vertex int) int {
-	return cc.components[vertex]
+// ComponentID returns component to which vertex belongs.
+func (connectedComponents ConnectedComponents) ComponentID(vertexID int) int {
+	return connectedComponents.components[vertexID]
 }
 
-// Component returns vertices of connected component.
-func (cc ConnectedComponents) Component(component int) []int {
-	var ret []int
-	for i := 0; i < len(cc.components); i++ {
-		if cc.ComponentID(i) == component {
-			ret = append(ret, i)
+// Component returns vertices of a connected component.
+func (connectedComponents ConnectedComponents) Component(componentID int) []int {
+	var vertices []int
+	for i := 0; i < len(connectedComponents.components); i++ {
+		if connectedComponents.ComponentID(i) == componentID {
+			vertices = append(vertices, i)
 		}
 	}
-	return ret
+	return vertices
 }
 
 func newConnectedComponents(numVertices int) ConnectedComponents {
@@ -38,27 +39,29 @@ func newConnectedComponents(numVertices int) ConnectedComponents {
 	}
 }
 
-func findConnectedComponentsCore(cc *ConnectedComponents, marked []bool, graph Graph, current int) {
-	marked[current] = true
-	cc.components[current] = cc.count
-	for _, child := range graph.AdjacentVertices(current) {
-		if !marked[child] {
-			findConnectedComponentsCore(cc, marked, graph, child)
+func findConnectedComponentsCore(
+	connectedComponents *ConnectedComponents, marked []bool, graph Graph, vertexID int,
+) {
+	marked[vertexID] = true
+	connectedComponents.components[vertexID] = connectedComponents.count
+	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
+		if !marked[adjacentVertexID] {
+			findConnectedComponentsCore(connectedComponents, marked, graph, adjacentVertexID)
 		}
 	}
 }
 
-// FindConnectedComponents finds connected components in a graph.
+// FindConnectedComponents returns connected components in a graph.
 // https://algs4.cs.princeton.edu/41graph/CC.java.html
 func FindConnectedComponents(graph Graph) ConnectedComponents {
 	numVertices := graph.NumVertices()
-	result := newConnectedComponents(numVertices)
+	connectedComponents := newConnectedComponents(numVertices)
 	marked := make([]bool, numVertices)
-	for v := 0; v < numVertices; v++ {
-		if !marked[v] {
-			findConnectedComponentsCore(&result, marked, graph, v)
-			result.count++
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		if !marked[vertexID] {
+			findConnectedComponentsCore(&connectedComponents, marked, graph, vertexID)
+			connectedComponents.count++
 		}
 	}
-	return result
+	return connectedComponents
 }

@@ -19,7 +19,7 @@ func TestFindPathsDepthFirst(t *testing.T) {
 	)
 
 	t.Run("Count", func(t *testing.T) {
-		var ret VertexPaths
+		var ret Paths
 
 		ret = FindPathsDepthFirst(graph, 0)
 		assert.Equal(t, ret.Count(), 6, "vertex 0")
@@ -32,7 +32,7 @@ func TestFindPathsDepthFirst(t *testing.T) {
 	})
 
 	t.Run("Marked", func(t *testing.T) {
-		var ret VertexPaths
+		var ret Paths
 
 		allMarked := func() []bool {
 			all := make([]bool, graph.NumVertices())
@@ -65,7 +65,7 @@ func TestFindPathsDepthFirst(t *testing.T) {
 	})
 
 	t.Run("PathTo", func(t *testing.T) {
-		var ret VertexPaths
+		var ret Paths
 
 		ret = FindPathsDepthFirst(graph, 0)
 		assert.Equal(t, []int{0}, ret.PathTo(0), "0 -> 0")
@@ -96,7 +96,7 @@ func TestFindPathsBreadthFirst(t *testing.T) {
 	)
 
 	t.Run("Count", func(t *testing.T) {
-		var ret VertexPaths
+		var ret Paths
 
 		ret = FindPathsBreadthFirst(graph, 0)
 		assert.Equal(t, ret.Count(), 6, "vertex 0")
@@ -109,7 +109,7 @@ func TestFindPathsBreadthFirst(t *testing.T) {
 	})
 
 	t.Run("Marked", func(t *testing.T) {
-		var ret VertexPaths
+		var ret Paths
 
 		allMarked := func() []bool {
 			all := make([]bool, graph.NumVertices())
@@ -142,7 +142,7 @@ func TestFindPathsBreadthFirst(t *testing.T) {
 	})
 
 	t.Run("PathTo", func(t *testing.T) {
-		var ret VertexPaths
+		var ret Paths
 
 		ret = FindPathsBreadthFirst(graph, 0)
 		assert.Equal(t, []int{0}, ret.PathTo(0), "0 -> 0")

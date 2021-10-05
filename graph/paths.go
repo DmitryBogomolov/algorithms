@@ -4,49 +4,47 @@ import (
 	"container/list"
 )
 
-// VertexPaths represents paths from a vertex.
-type VertexPaths struct {
+// Paths is a collection of paths from the selected vertex to other vertices.
+// A path is a sequence of vertices connected by edges.
+type Paths struct {
 	origin int
 	count  int
 	edgeTo []int
 }
 
-func newVertexPaths(graph Graph, vertex int) (VertexPaths, []bool) {
+func initGraphPaths(graph Graph, vertexID int) (Paths, []bool) {
 	count := graph.NumVertices()
 	edgeTo := make([]int, count)
 	marked := make([]bool, count)
 	for i := range edgeTo {
 		edgeTo[i] = -1
 	}
-	return VertexPaths{
-		origin: vertex,
-		edgeTo: edgeTo,
-	}, marked
+	return Paths{origin: vertexID, edgeTo: edgeTo}, marked
 }
 
-// Origin shows initial vertex.
-func (r VertexPaths) Origin() int {
-	return r.origin
+// Origin gets initial vertex.
+func (paths Paths) Origin() int {
+	return paths.origin
 }
 
-// HasPathTo shows if *vertex* is connected with initial vertex.
-func (r VertexPaths) HasPathTo(vertex int) bool {
-	return r.edgeTo[vertex] >= 0 || vertex == r.origin
+// Count gets number of vertices connected with initial vertex.
+func (paths Paths) Count() int {
+	return paths.count
 }
 
-// Count shows number of vertices connected with initial vertex.
-func (r VertexPaths) Count() int {
-	return r.count
+// HasPathTo tells if a vertex is connected with initial vertex.
+func (paths Paths) HasPathTo(targetVertexID int) bool {
+	return paths.edgeTo[targetVertexID] >= 0 || targetVertexID == paths.origin
 }
 
-// PathTo shows a path from source vertex to *vertex*.
-func (r VertexPaths) PathTo(vertex int) []int {
-	if !r.HasPathTo(vertex) {
+// PathTo returns a path from initial vertex to a vertex.
+func (paths Paths) PathTo(targetVertexID int) []int {
+	if !paths.HasPathTo(targetVertexID) {
 		return nil
 	}
 	var stack []int
-	for v := vertex; v >= 0; v = r.edgeTo[v] {
-		stack = append(stack, v)
+	for vertexID := targetVertexID; vertexID >= 0; vertexID = paths.edgeTo[vertexID] {
+		stack = append(stack, vertexID)
 	}
 	reverseList(stack)
 	return stack
@@ -58,48 +56,48 @@ func reverseList(list []int) {
 	}
 }
 
-func findPathsDepthFirstCore(r *VertexPaths, marked []bool, graph Graph, vertex int) {
-	marked[vertex] = true
-	r.count++
-	for _, v := range graph.AdjacentVertices(vertex) {
-		if !marked[v] {
-			r.edgeTo[v] = vertex
-			findPathsDepthFirstCore(r, marked, graph, v)
+func findPathsDepthFirstCore(paths *Paths, marked []bool, graph Graph, vertexID int) {
+	marked[vertexID] = true
+	paths.count++
+	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
+		if !marked[adjacentVertexID] {
+			paths.edgeTo[adjacentVertexID] = vertexID
+			findPathsDepthFirstCore(paths, marked, graph, adjacentVertexID)
 		}
 	}
 }
 
-// FindPathsDepthFirst finds paths from *vertex* using depth-first search.
+// FindPathsDepthFirst finds paths from a vertex using depth-first search.
 // https://algs4.cs.princeton.edu/41graph/DepthFirstSearch.java.html
-func FindPathsDepthFirst(graph Graph, vertex int) VertexPaths {
-	result, marked := newVertexPaths(graph, vertex)
-	findPathsDepthFirstCore(&result, marked, graph, vertex)
-	return result
+func FindPathsDepthFirst(graph Graph, vertexID int) Paths {
+	paths, marked := initGraphPaths(graph, vertexID)
+	findPathsDepthFirstCore(&paths, marked, graph, vertexID)
+	return paths
 }
 
-func findPathsBreadthFirstCore(r *VertexPaths, marked []bool, graph Graph, vertex int) {
+func findPathsBreadthFirstCore(paths *Paths, marked []bool, graph Graph, vertexID int) {
 	queue := list.New()
-	queue.PushBack(vertex)
-	marked[vertex] = true
-	r.count++
+	queue.PushBack(vertexID)
+	marked[vertexID] = true
+	paths.count++
 	for queue.Len() > 0 {
-		current := queue.Front().Value.(int)
+		currentVertexID := queue.Front().Value.(int)
 		queue.Remove(queue.Front())
-		for _, v := range graph.AdjacentVertices(current) {
-			if !marked[v] {
-				marked[v] = true
-				r.count++
-				r.edgeTo[v] = current
-				queue.PushBack(v)
+		for _, adjacentVertexID := range graph.AdjacentVertices(currentVertexID) {
+			if !marked[adjacentVertexID] {
+				marked[adjacentVertexID] = true
+				paths.count++
+				paths.edgeTo[adjacentVertexID] = currentVertexID
+				queue.PushBack(adjacentVertexID)
 			}
 		}
 	}
 }
 
-// FindPathsBreadthFirst finds paths from *vertex* using breadth-first search.
+// FindPathsBreadthFirst finds paths from a vertex using breadth-first search.
 // https://algs4.cs.princeton.edu/41graph/BreadthFirstPaths.java.html
-func FindPathsBreadthFirst(graph Graph, vertex int) VertexPaths {
-	result, marked := newVertexPaths(graph, vertex)
-	findPathsBreadthFirstCore(&result, marked, graph, vertex)
+func FindPathsBreadthFirst(graph Graph, vertexID int) Paths {
+	result, marked := initGraphPaths(graph, vertexID)
+	findPathsBreadthFirstCore(&result, marked, graph, vertexID)
 	return result
 }

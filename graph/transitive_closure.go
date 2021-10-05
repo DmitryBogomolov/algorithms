@@ -4,7 +4,7 @@ package graph
 // It is another digraph with the same set of vertices but with an edge from *v* to *w*
 // if and only if *w* is reachable from *v*.
 type TransitiveClosure struct {
-	data []VertexPaths
+	data []Paths
 }
 
 // Reachable tells if there is a directed path from *vertex1* to *vertex2*.
@@ -16,7 +16,7 @@ func (tc TransitiveClosure) Reachable(vertex1 int, vertex2 int) bool {
 // https://algs4.cs.princeton.edu/42digraph/TransitiveClosure.java.html
 func BuildTransitiveClosure(graph Graph) TransitiveClosure {
 	numVertices := graph.NumVertices()
-	data := make([]VertexPaths, numVertices)
+	data := make([]Paths, numVertices)
 	for v := 0; v < numVertices; v++ {
 		data[v] = FindPathsDepthFirst(graph, v)
 	}

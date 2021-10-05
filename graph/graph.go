@@ -19,60 +19,68 @@ type EdgeWeightedGraph interface {
 
 // Edge is a pair of connected vertices in a graph.
 type Edge struct {
-	// Vertex1 is one of edge vertices.
-	Vertex1 int
-	// Vertex2 is one of edge vertices.
-	Vertex2 int
+	vertex1 int
+	vertex2 int
+}
+
+// Vertex1 gets one of edge vertices.
+func (edge Edge) Vertex1() int {
+	return edge.vertex1
+}
+
+// Vertex2 gets one of edge vertices.
+func (edge Edge) Vertex2() int {
+	return edge.vertex2
 }
 
 // AllGraphEdges returns all edges of a graph.
 func AllGraphEdges(graph Graph) []Edge {
-	var ret []Edge
-	for v := 0; v < graph.NumVertices(); v++ {
-		for _, w := range graph.AdjacentVertices(v) {
-			if w > v {
-				ret = append(ret, Edge{v, w})
+	var edges []Edge
+	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
+		for _, otherVertexID := range graph.AdjacentVertices(vertexID) {
+			if otherVertexID > vertexID {
+				edges = append(edges, Edge{vertexID, otherVertexID})
 			}
 		}
 	}
-	return ret
+	return edges
 }
 
 // AllDigraphEdges returns all edges of a digraph.
 func AllDigraphEdges(digraph Graph) []Edge {
-	var ret []Edge
-	for v := 0; v < digraph.NumVertices(); v++ {
-		for _, w := range digraph.AdjacentVertices(v) {
-			ret = append(ret, Edge{v, w})
+	var edges []Edge
+	for vertexID := 0; vertexID < digraph.NumVertices(); vertexID++ {
+		for _, otherVertexID := range digraph.AdjacentVertices(vertexID) {
+			edges = append(edges, Edge{vertexID, otherVertexID})
 		}
 	}
-	return ret
+	return edges
 }
 
 // AllGraphWeights returns all edge weights of an edge-weighted graph.
 func AllGraphWeights(graph EdgeWeightedGraph) []float64 {
-	var ret []float64
-	for v := 0; v < graph.NumVertices(); v++ {
-		weights := graph.AdjacentWeights(v)
-		for i, w := range graph.AdjacentVertices(v) {
-			if w > v {
-				ret = append(ret, weights[i])
+	var list []float64
+	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
+		weights := graph.AdjacentWeights(vertexID)
+		for i, otherVertexID := range graph.AdjacentVertices(vertexID) {
+			if otherVertexID > vertexID {
+				list = append(list, weights[i])
 			}
 		}
 	}
-	return ret
+	return list
 }
 
 // AllDigraphWeights returns all edges of an edge-weighted digraph.
 func AllDigraphWeights(digraph EdgeWeightedGraph) []float64 {
-	var ret []float64
-	for v := 0; v < digraph.NumVertices(); v++ {
-		weights := digraph.AdjacentWeights(v)
-		for i := range digraph.AdjacentVertices(v) {
-			ret = append(ret, weights[i])
+	var list []float64
+	for vertexID := 0; vertexID < digraph.NumVertices(); vertexID++ {
+		weights := digraph.AdjacentWeights(vertexID)
+		for i := range digraph.AdjacentVertices(vertexID) {
+			list = append(list, weights[i])
 		}
 	}
-	return ret
+	return list
 }
 
 func sumList(list []float64) float64 {
