@@ -130,22 +130,22 @@ func MinimumSpanningTreePrim(graph EdgeWeightedGraph) EdgeWeightedGraph {
 	edgeTo := make([]int, numVertices)
 	distTo := make([]float64, numVertices)
 	pq := newVerticesIndexPQ(numVertices)
-	for v := 0; v < numVertices; v++ {
-		edgeTo[v] = -1
-		distTo[v] = math.MaxFloat64
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		edgeTo[vertexID] = -1
+		distTo[vertexID] = math.MaxFloat64
 	}
-	for v := 0; v < numVertices; v++ {
-		if !marked[v] {
-			processMinimumSpanningTree(pq, marked, edgeTo, distTo, graph, v)
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		if !marked[vertexID] {
+			processMinimumSpanningTree(pq, marked, edgeTo, distTo, graph, vertexID)
 		}
 	}
 	adjacency := make([][]int, numVertices)
 	weights := make([][]float64, numVertices)
 	numEdges := 0
-	for v := 0; v < numVertices; v++ {
-		w := edgeTo[v]
-		if w != -1 {
-			addWeightedEdge(adjacency, weights, v, w, distTo[v])
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		otherVertexID := edgeTo[vertexID]
+		if otherVertexID != -1 {
+			addWeightedEdge(adjacency, weights, vertexID, otherVertexID, distTo[vertexID])
 			numEdges++
 		}
 	}

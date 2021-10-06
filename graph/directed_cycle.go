@@ -1,18 +1,18 @@
 package graph
 
-func hasDirectedCycleCore(marked []bool, stack []bool, digraph Graph, current int) bool {
-	marked[current] = true
-	stack[current] = true
-	for _, child := range digraph.AdjacentVertices(current) {
-		if !marked[child] {
-			if hasDirectedCycleCore(marked, stack, digraph, child) {
+func hasDirectedCycleCore(marked []bool, stack []bool, digraph Graph, vertexID int) bool {
+	marked[vertexID] = true
+	stack[vertexID] = true
+	for _, adjacentVertexID := range digraph.AdjacentVertices(vertexID) {
+		if !marked[adjacentVertexID] {
+			if hasDirectedCycleCore(marked, stack, digraph, adjacentVertexID) {
 				return true
 			}
-		} else if stack[child] {
+		} else if stack[adjacentVertexID] {
 			return true
 		}
 	}
-	stack[current] = false
+	stack[vertexID] = false
 	return false
 }
 
@@ -22,9 +22,9 @@ func HasDirectedCycle(digraph Graph) bool {
 	numVertices := digraph.NumVertices()
 	marked := make([]bool, numVertices)
 	stack := make([]bool, numVertices)
-	for v := 0; v < numVertices; v++ {
-		if !marked[v] {
-			if hasDirectedCycleCore(marked, stack, digraph, v) {
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		if !marked[vertexID] {
+			if hasDirectedCycleCore(marked, stack, digraph, vertexID) {
 				return true
 			}
 		}

@@ -1,11 +1,11 @@
 package graph
 
-func findStrongComponentsCore(cc *ConnectedComponents, marked []bool, digraph Graph, current int) {
-	marked[current] = true
-	cc.components[current] = cc.count
-	for _, child := range digraph.AdjacentVertices(current) {
-		if !marked[child] {
-			findStrongComponentsCore(cc, marked, digraph, child)
+func findStrongComponentsCore(cc *ConnectedComponents, marked []bool, digraph Graph, vertexID int) {
+	marked[vertexID] = true
+	cc.components[vertexID] = cc.count
+	for _, adjacentVertexID := range digraph.AdjacentVertices(vertexID) {
+		if !marked[adjacentVertexID] {
+			findStrongComponentsCore(cc, marked, digraph, adjacentVertexID)
 		}
 	}
 }
@@ -17,9 +17,9 @@ func FindStrongComponents(digraph Graph) ConnectedComponents {
 	result := newConnectedComponents(numVertices)
 	marked := make([]bool, numVertices)
 	reversedPostOrder := getReversedPostOrder(ReverseDigraph(digraph))
-	for _, v := range reversedPostOrder {
-		if !marked[v] {
-			findStrongComponentsCore(&result, marked, digraph, v)
+	for _, vertexID := range reversedPostOrder {
+		if !marked[vertexID] {
+			findStrongComponentsCore(&result, marked, digraph, vertexID)
 			result.count++
 		}
 	}

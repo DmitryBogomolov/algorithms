@@ -7,14 +7,14 @@ type Graph interface {
 	// NumEdges gets number of graph edges.
 	NumEdges() int
 	// AdjacentVertices returns vertices adjacent to the vertex.
-	AdjacentVertices(vertex int) []int
+	AdjacentVertices(vertexID int) []int
 }
 
 // EdgeWeightedGraph is a graph where each edge has an associated weight.
 type EdgeWeightedGraph interface {
 	Graph
 	// AdjacentWeights returns weights of edges adjacent to the vertex.
-	AdjacentWeights(vertex int) []float64
+	AdjacentWeights(vertexID int) []float64
 }
 
 // Edge is a pair of connected vertices in a graph.

@@ -8,27 +8,27 @@ package graph
 func findCutEdgesCore(
 	result *[]Edge,
 	pre []int, low []int, dist int,
-	graph Graph, parent int, current int,
+	graph Graph, parentVertexID int, currentVertexID int,
 ) {
-	pre[current] = dist
-	low[current] = pre[current]
-	for _, child := range graph.AdjacentVertices(current) {
+	pre[currentVertexID] = dist
+	low[currentVertexID] = pre[currentVertexID]
+	for _, child := range graph.AdjacentVertices(currentVertexID) {
 		if pre[child] == -1 {
-			findCutEdgesCore(result, pre, low, dist+1, graph, current, child)
+			findCutEdgesCore(result, pre, low, dist+1, graph, currentVertexID, child)
 			// If *child* distance is less than *current* distance
 			// then there is back edge from *child* to ancestors of *current*.
-			if low[current] > low[child] {
-				low[current] = low[child]
+			if low[currentVertexID] > low[child] {
+				low[currentVertexID] = low[child]
 			}
 			// *child* has no back edges to ancestors of *current*.
 			// If *child* had back edge then its updated distance would be less
 			// then its original distance.
 			if low[child] == pre[child] {
-				*result = append(*result, Edge{current, child})
+				*result = append(*result, Edge{currentVertexID, child})
 			}
-		} else if child != parent && low[current] > pre[child] {
+		} else if child != parentVertexID && low[currentVertexID] > pre[child] {
 			// Update *current* distance - it can be reached faster going through *child*.
-			low[current] = pre[child]
+			low[currentVertexID] = pre[child]
 		}
 	}
 }
@@ -40,14 +40,14 @@ func FindCutEdges(graph Graph) []Edge {
 	numVertices := graph.NumVertices()
 	pre := make([]int, numVertices)
 	low := make([]int, numVertices)
-	for v := 0; v < numVertices; v++ {
-		pre[v] = -1
-		low[v] = -1
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		pre[vertexID] = -1
+		low[vertexID] = -1
 	}
 	var result []Edge
-	for v := 0; v < numVertices; v++ {
-		if pre[v] == -1 {
-			findCutEdgesCore(&result, pre, low, 0, graph, v, v)
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		if pre[vertexID] == -1 {
+			findCutEdgesCore(&result, pre, low, 0, graph, vertexID, vertexID)
 		}
 	}
 	return result

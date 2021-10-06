@@ -8,8 +8,8 @@ type TransitiveClosure struct {
 }
 
 // Reachable tells if there is a directed path from *vertex1* to *vertex2*.
-func (tc TransitiveClosure) Reachable(vertex1 int, vertex2 int) bool {
-	return tc.data[vertex1].HasPathTo(vertex2)
+func (tc TransitiveClosure) Reachable(vertexID1 int, vertexID2 int) bool {
+	return tc.data[vertexID1].HasPathTo(vertexID2)
 }
 
 // BuildTransitiveClosure computes transitive closure of a digraph by running depth-first search from each vertex.
@@ -17,8 +17,8 @@ func (tc TransitiveClosure) Reachable(vertex1 int, vertex2 int) bool {
 func BuildTransitiveClosure(graph Graph) TransitiveClosure {
 	numVertices := graph.NumVertices()
 	data := make([]Paths, numVertices)
-	for v := 0; v < numVertices; v++ {
-		data[v] = FindPathsDepthFirst(graph, v)
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		data[vertexID] = FindPathsDepthFirst(graph, vertexID)
 	}
 	return TransitiveClosure{data}
 }

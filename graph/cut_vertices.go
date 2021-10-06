@@ -10,34 +10,34 @@ package graph
 func findCutVerticesCore(
 	articulation []bool,
 	pre []int, low []int, dist int,
-	graph Graph, parent int, current int,
+	graph Graph, parentVertexID int, currentVertexID int,
 ) {
 	children := 0
-	pre[current] = dist
-	low[current] = pre[current]
-	for _, child := range graph.AdjacentVertices(current) {
+	pre[currentVertexID] = dist
+	low[currentVertexID] = pre[currentVertexID]
+	for _, child := range graph.AdjacentVertices(currentVertexID) {
 		if pre[child] == -1 {
 			children++
-			findCutVerticesCore(articulation, pre, low, dist+1, graph, current, child)
+			findCutVerticesCore(articulation, pre, low, dist+1, graph, currentVertexID, child)
 			// If *child* distance is less than *current* distance
 			// then there is back edge from *child* to ancestors of *current*.
-			if low[current] > low[child] {
-				low[current] = low[child]
+			if low[currentVertexID] > low[child] {
+				low[currentVertexID] = low[child]
 			}
 			// *current* is not root and *child* has no back edges to ancestors of *current*.
 			// If *child* had back edge then its updated distance would be less
 			// than *current* original distance.
-			if low[child] >= pre[current] && parent != current {
-				articulation[current] = true
+			if low[child] >= pre[currentVertexID] && parentVertexID != currentVertexID {
+				articulation[currentVertexID] = true
 			}
-		} else if child != parent && low[current] > pre[child] {
+		} else if child != parentVertexID && low[currentVertexID] > pre[child] {
 			// Update *current* distance - it can be reached faster going through *child*.
-			low[current] = pre[child]
+			low[currentVertexID] = pre[child]
 		}
 	}
 	// *current* is root and has at least two children.
-	if parent == current && children > 1 {
-		articulation[current] = true
+	if parentVertexID == currentVertexID && children > 1 {
+		articulation[currentVertexID] = true
 	}
 }
 
@@ -49,19 +49,19 @@ func FindCutVertices(graph Graph) []int {
 	pre := make([]int, numVertices)
 	low := make([]int, numVertices)
 	articulation := make([]bool, numVertices)
-	for v := 0; v < numVertices; v++ {
-		pre[v] = -1
-		low[v] = -1
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		pre[vertexID] = -1
+		low[vertexID] = -1
 	}
-	for v := 0; v < numVertices; v++ {
-		if pre[v] == -1 {
-			findCutVerticesCore(articulation, pre, low, 0, graph, v, v)
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		if pre[vertexID] == -1 {
+			findCutVerticesCore(articulation, pre, low, 0, graph, vertexID, vertexID)
 		}
 	}
 	var result []int
-	for v, flag := range articulation {
+	for vertexID, flag := range articulation {
 		if flag {
-			result = append(result, v)
+			result = append(result, vertexID)
 		}
 	}
 	return result

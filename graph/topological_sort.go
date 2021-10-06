@@ -1,22 +1,22 @@
 package graph
 
-func getReversedPostOrderCore(list *[]int, marked []bool, digraph Graph, current int) {
-	marked[current] = true
-	for _, child := range digraph.AdjacentVertices(current) {
-		if !marked[child] {
-			getReversedPostOrderCore(list, marked, digraph, child)
+func getReversedPostOrderCore(list *[]int, marked []bool, digraph Graph, vertexID int) {
+	marked[vertexID] = true
+	for _, adjacentVertexID := range digraph.AdjacentVertices(vertexID) {
+		if !marked[adjacentVertexID] {
+			getReversedPostOrderCore(list, marked, digraph, adjacentVertexID)
 		}
 	}
-	*list = append(*list, current)
+	*list = append(*list, vertexID)
 }
 
 func getReversedPostOrder(digraph Graph) []int {
 	numVertices := digraph.NumVertices()
 	marked := make([]bool, numVertices)
 	var list []int
-	for v := 0; v < numVertices; v++ {
-		if !marked[v] {
-			getReversedPostOrderCore(&list, marked, digraph, v)
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		if !marked[vertexID] {
+			getReversedPostOrderCore(&list, marked, digraph, vertexID)
 		}
 	}
 	reverseList(list)

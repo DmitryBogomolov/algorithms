@@ -22,9 +22,9 @@ func (rd reversedDigraph) Reverse() Graph {
 func reverseDigraph(digraph Graph) ReversibleDigraph {
 	numVertices := digraph.NumVertices()
 	adjacency := make([][]int, numVertices)
-	for v := 0; v < numVertices; v++ {
-		for _, w := range digraph.AdjacentVertices(v) {
-			adjacency[w] = append(adjacency[w], v)
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		for _, adjacentVertexID := range digraph.AdjacentVertices(vertexID) {
+			adjacency[adjacentVertexID] = append(adjacency[adjacentVertexID], vertexID)
 		}
 	}
 	return reversedDigraph{

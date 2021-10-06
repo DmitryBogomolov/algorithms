@@ -1,13 +1,13 @@
 package graph
 
-func hasCycleCore(marked []bool, graph Graph, parent int, current int) bool {
-	marked[current] = true
-	for _, child := range graph.AdjacentVertices(current) {
-		if !marked[child] {
-			if hasCycleCore(marked, graph, current, child) {
+func hasCycleCore(marked []bool, graph Graph, parentVertexID int, currentVertexID int) bool {
+	marked[currentVertexID] = true
+	for _, childVertexID := range graph.AdjacentVertices(currentVertexID) {
+		if !marked[childVertexID] {
+			if hasCycleCore(marked, graph, currentVertexID, childVertexID) {
 				return true
 			}
-		} else if child != parent {
+		} else if childVertexID != parentVertexID {
 			return true
 		}
 	}
@@ -19,9 +19,9 @@ func hasCycleCore(marked []bool, graph Graph, parent int, current int) bool {
 func HasCycle(graph Graph) bool {
 	numVertices := graph.NumVertices()
 	marked := make([]bool, numVertices)
-	for v := 0; v < numVertices; v++ {
-		if !marked[v] {
-			if hasCycleCore(marked, graph, -1, v) {
+	for vertexID := 0; vertexID < numVertices; vertexID++ {
+		if !marked[vertexID] {
+			if hasCycleCore(marked, graph, -1, vertexID) {
 				return true
 			}
 		}
