@@ -1,30 +1,36 @@
 package internals
 
+// TestEdgeWeightedGraph TEST
 type TestEdgeWeightedGraph struct {
 	TestGraph
 	Weights [][]float64
 }
 
+// TestWeightedEdge TEST
 type TestWeightedEdge struct {
 	V1, V2 int
 	Weight float64
 }
 
+// AddEdge TEST
 func (g *TestEdgeWeightedGraph) AddEdge(v1, v2 int, w float64) {
 	g.TestGraph.AddEdge(v1, v2)
 	g.Weights[v1] = append(g.Weights[v1], w)
 	g.Weights[v2] = append(g.Weights[v2], w)
 }
 
+// AddDirectedEdge TEST
 func (g *TestEdgeWeightedGraph) AddDirectedEdge(v1, v2 int, w float64) {
 	g.TestGraph.AddDirectedEdge(v1, v2)
 	g.Weights[v1] = append(g.Weights[v1], w)
 }
 
+// AdjacentWeights TEST
 func (g *TestEdgeWeightedGraph) AdjacentWeights(vertex int) []float64 {
 	return g.Weights[vertex]
 }
 
+// NewTestEdgeWeightedGraph TEST
 func NewTestEdgeWeightedGraph(numVertices int, edges []TestWeightedEdge) *TestEdgeWeightedGraph {
 	graph := TestEdgeWeightedGraph{
 		TestGraph: TestGraph{
@@ -40,6 +46,7 @@ func NewTestEdgeWeightedGraph(numVertices int, edges []TestWeightedEdge) *TestEd
 	return &graph
 }
 
+// NewTestEdgeWeightedDigraph TEST
 func NewTestEdgeWeightedDigraph(numVertices int, edges []TestWeightedEdge) *TestEdgeWeightedGraph {
 	digraph := TestEdgeWeightedGraph{
 		TestGraph: TestGraph{
