@@ -23,13 +23,13 @@ func TestFindPathsDepthFirst(t *testing.T) {
 		var ret Paths
 
 		ret = FindPathsDepthFirst(target, 0)
-		assert.Equal(t, ret.Count(), 6, "vertex 0")
+		assert.Equal(t, ret.VertexCount(), 5, "vertex 0")
 
 		ret = FindPathsDepthFirst(target, 5)
-		assert.Equal(t, ret.Count(), 6, "vertex 5")
+		assert.Equal(t, ret.VertexCount(), 5, "vertex 5")
 
 		ret = FindPathsDepthFirst(target, 6)
-		assert.Equal(t, ret.Count(), 1, "vertex 6")
+		assert.Equal(t, ret.VertexCount(), 0, "vertex 6")
 	})
 
 	t.Run("Marked", func(t *testing.T) {
@@ -100,13 +100,13 @@ func TestFindPathsBreadthFirst(t *testing.T) {
 		var ret Paths
 
 		ret = FindPathsBreadthFirst(target, 0)
-		assert.Equal(t, ret.Count(), 6, "vertex 0")
+		assert.Equal(t, ret.VertexCount(), 5, "vertex 0")
 
 		ret = FindPathsBreadthFirst(target, 5)
-		assert.Equal(t, ret.Count(), 6, "vertex 5")
+		assert.Equal(t, ret.VertexCount(), 5, "vertex 5")
 
 		ret = FindPathsBreadthFirst(target, 6)
-		assert.Equal(t, ret.Count(), 1, "vertex 6")
+		assert.Equal(t, ret.VertexCount(), 0, "vertex 6")
 	})
 
 	t.Run("Marked", func(t *testing.T) {

@@ -37,7 +37,7 @@ func AllGraphEdges(graph Graph) []Edge {
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		for _, otherVertexID := range graph.AdjacentVertices(vertexID) {
 			if otherVertexID > vertexID {
-				edges = append(edges, Edge{vertexID, otherVertexID})
+				edges = append(edges, NewEdge(vertexID, otherVertexID))
 			}
 		}
 	}
