@@ -6,49 +6,49 @@ package graph
 // *pre* - original distances
 // *low* - updated distances
 func findCutEdgesCore(
-	result *[]Edge,
-	pre []int, low []int, dist int,
-	graph Graph, parentVertexID int, currentVertexID int,
+	cutEdges *[]Edge,
+	distances []int, updatedDistances []int, distance int,
+	graph Graph, parentVertexID int, vertexID int,
 ) {
-	pre[currentVertexID] = dist
-	low[currentVertexID] = pre[currentVertexID]
-	for _, child := range graph.AdjacentVertices(currentVertexID) {
-		if pre[child] == -1 {
-			findCutEdgesCore(result, pre, low, dist+1, graph, currentVertexID, child)
+	distances[vertexID] = distance
+	updatedDistances[vertexID] = distances[vertexID]
+	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
+		if distances[adjacentVertexID] == -1 {
+			findCutEdgesCore(cutEdges, distances, updatedDistances, distance+1, graph, vertexID, adjacentVertexID)
 			// If *child* distance is less than *current* distance
 			// then there is back edge from *child* to ancestors of *current*.
-			if low[currentVertexID] > low[child] {
-				low[currentVertexID] = low[child]
+			if updatedDistances[vertexID] > updatedDistances[adjacentVertexID] {
+				updatedDistances[vertexID] = updatedDistances[adjacentVertexID]
 			}
 			// *child* has no back edges to ancestors of *current*.
 			// If *child* had back edge then its updated distance would be less
 			// then its original distance.
-			if low[child] == pre[child] {
-				*result = append(*result, Edge{currentVertexID, child})
+			if updatedDistances[adjacentVertexID] == distances[adjacentVertexID] {
+				*cutEdges = append(*cutEdges, Edge{vertexID, adjacentVertexID})
 			}
-		} else if child != parentVertexID && low[currentVertexID] > pre[child] {
+		} else if adjacentVertexID != parentVertexID && updatedDistances[vertexID] > distances[adjacentVertexID] {
 			// Update *current* distance - it can be reached faster going through *child*.
-			low[currentVertexID] = pre[child]
+			updatedDistances[vertexID] = distances[adjacentVertexID]
 		}
 	}
 }
 
 // FindCutEdges finds cut-edges in a graph.
 // Cut-edge is an edge whose deletion increases number of connected components.
+// An edge is a bridge iif it is not contained in any cycle.
 // https://algs4.cs.princeton.edu/41graph/Bridge.java.html
 func FindCutEdges(graph Graph) []Edge {
-	numVertices := graph.NumVertices()
-	pre := make([]int, numVertices)
-	low := make([]int, numVertices)
-	for vertexID := 0; vertexID < numVertices; vertexID++ {
-		pre[vertexID] = -1
-		low[vertexID] = -1
+	distances := make([]int, graph.NumVertices())
+	updatedDistances := make([]int, graph.NumVertices())
+	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
+		distances[vertexID] = -1
+		updatedDistances[vertexID] = -1
 	}
-	var result []Edge
-	for vertexID := 0; vertexID < numVertices; vertexID++ {
-		if pre[vertexID] == -1 {
-			findCutEdgesCore(&result, pre, low, 0, graph, vertexID, vertexID)
+	var cutEdges []Edge
+	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
+		if distances[vertexID] == -1 {
+			findCutEdgesCore(&cutEdges, distances, updatedDistances, 0, graph, vertexID, vertexID)
 		}
 	}
-	return result
+	return cutEdges
 }
