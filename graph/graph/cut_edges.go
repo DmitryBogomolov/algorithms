@@ -30,16 +30,6 @@ func findCutEdgesCore(
 	}
 }
 
-func min(lhs int, rhs int) int {
-	var ret int
-	if lhs < rhs {
-		ret = lhs
-	} else {
-		ret = rhs
-	}
-	return ret
-}
-
 // FindCutEdges finds cut-edges in a graph.
 // Cut-edge is an edge whose deletion increases number of connected components.
 // An edge is a bridge iif it is not contained in any cycle.
