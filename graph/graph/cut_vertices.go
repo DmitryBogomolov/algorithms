@@ -1,61 +1,57 @@
 package graph
 
-// In a DFS tree a vertex *v* is articulation point if:
-// - *v* is root and has at least two children
-// - *v* is not root and has subtree with no back edges to ancestors of *v*
-//
-// *dist* - distance from DFS root of *current* vertex
-// *pre* - original distances
-// *low* - updated distances
+// In a DFS tree a vertex is articulation point if:
+// - it is root and has at least two children
+// - it is not root and has subtree with no back edges to ancestors
 func findCutVerticesCore(
 	articulation []bool,
-	pre []int, low []int, dist int,
-	graph Graph, parentVertexID int, currentVertexID int,
+	// original vertex distances
+	distances []int,
+	// updated vertex distances
+	updatedDistances []int,
+	// distance from DFS root to current vertex
+	distance int,
+	graph Graph, parentVertexID int, vertexID int,
 ) {
 	children := 0
-	pre[currentVertexID] = dist
-	low[currentVertexID] = pre[currentVertexID]
-	for _, child := range graph.AdjacentVertices(currentVertexID) {
-		if pre[child] == -1 {
+	distances[vertexID] = distance
+	updatedDistances[vertexID] = distances[vertexID]
+	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
+		if distances[adjacentVertexID] == -1 {
 			children++
-			findCutVerticesCore(articulation, pre, low, dist+1, graph, currentVertexID, child)
-			// If *child* distance is less than *current* distance
-			// then there is back edge from *child* to ancestors of *current*.
-			if low[currentVertexID] > low[child] {
-				low[currentVertexID] = low[child]
+			findCutVerticesCore(articulation, distances, updatedDistances, distance+1, graph, vertexID, adjacentVertexID)
+			// If child vertex distance is less than current vertex distance
+			// then there is back edge from child vertex to ancestors of current vertex.
+			updatedDistances[vertexID] = min(updatedDistances[vertexID], updatedDistances[adjacentVertexID])
+			// If child vertex had back edge then its updated distance would be less
+			// than current vertex original distance.
+			if updatedDistances[adjacentVertexID] >= distances[vertexID] && parentVertexID != vertexID {
+				articulation[vertexID] = true
 			}
-			// *current* is not root and *child* has no back edges to ancestors of *current*.
-			// If *child* had back edge then its updated distance would be less
-			// than *current* original distance.
-			if low[child] >= pre[currentVertexID] && parentVertexID != currentVertexID {
-				articulation[currentVertexID] = true
-			}
-		} else if child != parentVertexID && low[currentVertexID] > pre[child] {
-			// Update *current* distance - it can be reached faster going through *child*.
-			low[currentVertexID] = pre[child]
+		} else if adjacentVertexID != parentVertexID {
+			// Update current vertex distance - it can be reached faster going through child vertex.
+			updatedDistances[vertexID] = min(updatedDistances[vertexID], distances[adjacentVertexID])
 		}
 	}
-	// *current* is root and has at least two children.
-	if parentVertexID == currentVertexID && children > 1 {
-		articulation[currentVertexID] = true
+	// Current vertex is root and has at least two children.
+	if parentVertexID == vertexID && children > 1 {
+		articulation[vertexID] = true
 	}
 }
 
 // FindCutVertices finds cut-vertices in a graph.
-// Cut-vertex is a vertex whose removal increases number of connected components.
+// Cut-vertex (articulation vertex) is a vertex whose removal increases number of connected components.
+// A graph is biconnected if it has no articulation vertices.
 // https://algs4.cs.princeton.edu/41graph/Biconnected.java.html
 func FindCutVertices(graph Graph) []int {
-	numVertices := graph.NumVertices()
-	pre := make([]int, numVertices)
-	low := make([]int, numVertices)
-	articulation := make([]bool, numVertices)
-	for vertexID := 0; vertexID < numVertices; vertexID++ {
-		pre[vertexID] = -1
-		low[vertexID] = -1
-	}
-	for vertexID := 0; vertexID < numVertices; vertexID++ {
-		if pre[vertexID] == -1 {
-			findCutVerticesCore(articulation, pre, low, 0, graph, vertexID, vertexID)
+	distances := make([]int, graph.NumVertices())
+	updatedDistances := make([]int, graph.NumVertices())
+	articulation := make([]bool, graph.NumVertices())
+	resetList(distances)
+	resetList(updatedDistances)
+	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
+		if distances[vertexID] == -1 {
+			findCutVerticesCore(articulation, distances, updatedDistances, 0, graph, vertexID, vertexID)
 		}
 	}
 	var result []int

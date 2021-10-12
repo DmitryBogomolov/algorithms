@@ -30,9 +30,7 @@ func findCycleCore(edgeTo []int, graph Graph, marked []bool, vertexID int, paren
 func FindCycle(graph Graph) []int {
 	marked := make([]bool, graph.NumVertices())
 	edgeTo := make([]int, graph.NumVertices())
-	for i := range edgeTo {
-		edgeTo[i] = -1
-	}
+	resetList(edgeTo)
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		if !marked[vertexID] {
 			cycle := findCycleCore(edgeTo, graph, marked, vertexID, -1)

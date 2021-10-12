@@ -61,9 +61,7 @@ func FindConnectedComponents(graph Graph) ConnectedComponents {
 		count:        0,
 		componentIDs: make([]int, graph.NumVertices()),
 	}
-	for i := range connectedComponents.componentIDs {
-		connectedComponents.componentIDs[i] = -1
-	}
+	resetList(connectedComponents.componentIDs)
 	marked := make([]bool, graph.NumVertices())
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		if !marked[vertexID] {

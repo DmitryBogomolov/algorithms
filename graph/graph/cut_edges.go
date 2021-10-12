@@ -1,13 +1,14 @@
 package graph
 
-// In a DFS tree edge *u-v* is bridge if *v* subtree has no back edges to ancestors of *u*.
-//
-// *dist* - distance from DFS root of *current* vertex
-// *pre* - original distances
-// *low* - updated distances
+// In a DFS tree edge "u-v" is bridge if "v" subtree has no back edges to ancestors of "u".
 func findCutEdgesCore(
 	cutEdges *[]Edge,
-	distances []int, updatedDistances []int, distance int,
+	// original vertex distances
+	distances []int,
+	// updated vertex distances
+	updatedDistances []int,
+	// distance from DFS root to current vertex
+	distance int,
 	graph Graph, parentVertexID int, vertexID int,
 ) {
 	distances[vertexID] = distance
@@ -15,22 +16,28 @@ func findCutEdgesCore(
 	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
 		if distances[adjacentVertexID] == -1 {
 			findCutEdgesCore(cutEdges, distances, updatedDistances, distance+1, graph, vertexID, adjacentVertexID)
-			// If *child* distance is less than *current* distance
-			// then there is back edge from *child* to ancestors of *current*.
-			if updatedDistances[vertexID] > updatedDistances[adjacentVertexID] {
-				updatedDistances[vertexID] = updatedDistances[adjacentVertexID]
-			}
-			// *child* has no back edges to ancestors of *current*.
-			// If *child* had back edge then its updated distance would be less
-			// then its original distance.
+			// If child vertex distance is less than current vertex distance
+			// then there is back edge from child vertex to ancestors of current vertex.
+			updatedDistances[vertexID] = min(updatedDistances[vertexID], updatedDistances[adjacentVertexID])
+			// If child vertex had back edge then its updated distance would be less then its original distance.
 			if updatedDistances[adjacentVertexID] == distances[adjacentVertexID] {
-				*cutEdges = append(*cutEdges, Edge{vertexID, adjacentVertexID})
+				*cutEdges = append(*cutEdges, NewEdge(vertexID, adjacentVertexID))
 			}
-		} else if adjacentVertexID != parentVertexID && updatedDistances[vertexID] > distances[adjacentVertexID] {
-			// Update *current* distance - it can be reached faster going through *child*.
-			updatedDistances[vertexID] = distances[adjacentVertexID]
+		} else if adjacentVertexID != parentVertexID {
+			// Update current vertex distance - it can be reached faster going through child vertex.
+			updatedDistances[vertexID] = min(updatedDistances[vertexID], distances[adjacentVertexID])
 		}
 	}
+}
+
+func min(lhs int, rhs int) int {
+	var ret int
+	if lhs < rhs {
+		ret = lhs
+	} else {
+		ret = rhs
+	}
+	return ret
 }
 
 // FindCutEdges finds cut-edges in a graph.
@@ -40,10 +47,8 @@ func findCutEdgesCore(
 func FindCutEdges(graph Graph) []Edge {
 	distances := make([]int, graph.NumVertices())
 	updatedDistances := make([]int, graph.NumVertices())
-	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
-		distances[vertexID] = -1
-		updatedDistances[vertexID] = -1
-	}
+	resetList(distances)
+	resetList(updatedDistances)
 	var cutEdges []Edge
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		if distances[vertexID] == -1 {

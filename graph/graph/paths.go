@@ -16,9 +16,7 @@ type Paths struct {
 func initPaths(graph Graph, vertexID int) Paths {
 	count := graph.NumVertices()
 	edgeTo := make([]int, count)
-	for i := range edgeTo {
-		edgeTo[i] = -1
-	}
+	resetList(edgeTo)
 	return Paths{sourceVertex: vertexID, edgeTo: edgeTo, vertexCount: 0}
 }
 
@@ -51,6 +49,12 @@ func (paths Paths) PathTo(vertexID int) []int {
 	}
 	reverseList(stack)
 	return stack
+}
+
+func resetList(list []int) {
+	for i := range list {
+		list[i] = -1
+	}
 }
 
 func reverseList(list []int) {
