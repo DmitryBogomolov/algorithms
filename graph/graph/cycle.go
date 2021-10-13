@@ -7,8 +7,7 @@ func findCycleCore(edgeTo []int, graph Graph, marked []bool, vertexID int, paren
 	edgeTo[vertexID] = parentVertexID
 	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
 		if !marked[adjacentVertexID] {
-			cycle := findCycleCore(edgeTo, graph, marked, adjacentVertexID, vertexID)
-			if cycle != nil {
+			if cycle := findCycleCore(edgeTo, graph, marked, adjacentVertexID, vertexID); cycle != nil {
 				return cycle
 			}
 		} else if adjacentVertexID != parentVertexID {
@@ -35,8 +34,7 @@ func FindCycle(graph Graph) []int {
 	internals.ResetList(edgeTo)
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		if !marked[vertexID] {
-			cycle := findCycleCore(edgeTo, graph, marked, vertexID, -1)
-			if cycle != nil {
+			if cycle := findCycleCore(edgeTo, graph, marked, vertexID, -1); cycle != nil {
 				return cycle
 			}
 		}
