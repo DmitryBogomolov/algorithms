@@ -1,6 +1,9 @@
 package graph
 
-import "fmt"
+import (
+	"algorithms/graph/internals"
+	"fmt"
+)
 
 // ConnectedComponents is a collection of connected components in a graph.
 // Connected component is a set of vertices connected by edges.
@@ -61,7 +64,7 @@ func FindConnectedComponents(graph Graph) ConnectedComponents {
 		count:        0,
 		componentIDs: make([]int, graph.NumVertices()),
 	}
-	resetList(connectedComponents.componentIDs)
+	internals.ResetList(connectedComponents.componentIDs)
 	marked := make([]bool, graph.NumVertices())
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		if !marked[vertexID] {

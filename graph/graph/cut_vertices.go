@@ -1,5 +1,7 @@
 package graph
 
+import "algorithms/graph/internals"
+
 // In a DFS tree a vertex is articulation point if:
 // - it is root and has at least two children
 // - it is not root and has subtree with no back edges to ancestors
@@ -22,7 +24,7 @@ func findCutVerticesCore(
 			findCutVerticesCore(articulation, distances, updatedDistances, distance+1, graph, vertexID, adjacentVertexID)
 			// If child vertex distance is less than current vertex distance
 			// then there is back edge from child vertex to ancestors of current vertex.
-			updatedDistances[vertexID] = min(updatedDistances[vertexID], updatedDistances[adjacentVertexID])
+			updatedDistances[vertexID] = internals.Min(updatedDistances[vertexID], updatedDistances[adjacentVertexID])
 			// If child vertex had back edge then its updated distance would be less
 			// than current vertex original distance.
 			if updatedDistances[adjacentVertexID] >= distances[vertexID] && parentVertexID != vertexID {
@@ -30,7 +32,7 @@ func findCutVerticesCore(
 			}
 		} else if adjacentVertexID != parentVertexID {
 			// Update current vertex distance - it can be reached faster going through child vertex.
-			updatedDistances[vertexID] = min(updatedDistances[vertexID], distances[adjacentVertexID])
+			updatedDistances[vertexID] = internals.Min(updatedDistances[vertexID], distances[adjacentVertexID])
 		}
 	}
 	// Current vertex is root and has at least two children.
@@ -47,8 +49,8 @@ func FindCutVertices(graph Graph) []int {
 	distances := make([]int, graph.NumVertices())
 	updatedDistances := make([]int, graph.NumVertices())
 	articulation := make([]bool, graph.NumVertices())
-	resetList(distances)
-	resetList(updatedDistances)
+	internals.ResetList(distances)
+	internals.ResetList(updatedDistances)
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		if distances[vertexID] == -1 {
 			findCutVerticesCore(articulation, distances, updatedDistances, 0, graph, vertexID, vertexID)

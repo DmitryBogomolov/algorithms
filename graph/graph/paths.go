@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"algorithms/graph/internals"
 	"container/list"
 	"fmt"
 )
@@ -16,7 +17,7 @@ type Paths struct {
 func initPaths(graph Graph, vertexID int) Paths {
 	count := graph.NumVertices()
 	edgeTo := make([]int, count)
-	resetList(edgeTo)
+	internals.ResetList(edgeTo)
 	return Paths{sourceVertex: vertexID, edgeTo: edgeTo, vertexCount: 0}
 }
 
@@ -47,7 +48,7 @@ func (paths Paths) PathTo(vertexID int) []int {
 	for currentVertexID := vertexID; currentVertexID >= 0; currentVertexID = paths.edgeTo[currentVertexID] {
 		stack = append(stack, currentVertexID)
 	}
-	reverseList(stack)
+	internals.ReverseList(stack)
 	return stack
 }
 
