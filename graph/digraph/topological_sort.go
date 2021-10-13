@@ -5,14 +5,26 @@ import (
 	"algorithms/graph/internals"
 )
 
-func topologicalSortCore(list *[]int, marked []bool, digraph graph.Graph, vertexID int) {
+func getReversedPostorderCore(list *[]int, marked []bool, digraph graph.Graph, vertexID int) {
 	marked[vertexID] = true
 	for _, adjacentVertexID := range digraph.AdjacentVertices(vertexID) {
 		if !marked[adjacentVertexID] {
-			topologicalSortCore(list, marked, digraph, adjacentVertexID)
+			getReversedPostorderCore(list, marked, digraph, adjacentVertexID)
 		}
 	}
 	*list = append(*list, vertexID)
+}
+
+func getReversedPostorder(digraph graph.Graph) []int {
+	marked := make([]bool, digraph.NumVertices())
+	var list []int
+	for vertexID := 0; vertexID < digraph.NumVertices(); vertexID++ {
+		if !marked[vertexID] {
+			getReversedPostorderCore(&list, marked, digraph, vertexID)
+		}
+	}
+	internals.ReverseList(list)
+	return list
 }
 
 // TopologicalSort puts the vertices in order such that all directed edges
@@ -22,14 +34,5 @@ func TopologicalSort(digraph graph.Graph) []int {
 	if FindDirectedCycle(digraph) != nil {
 		return nil
 	}
-
-	marked := make([]bool, digraph.NumVertices())
-	var list []int
-	for vertexID := 0; vertexID < digraph.NumVertices(); vertexID++ {
-		if !marked[vertexID] {
-			topologicalSortCore(&list, marked, digraph, vertexID)
-		}
-	}
-	internals.ReverseList(list)
-	return list
+	return getReversedPostorder(digraph)
 }

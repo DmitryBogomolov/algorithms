@@ -44,15 +44,20 @@ func (connectedComponents ConnectedComponents) Component(componentID int) []int 
 	return vertices
 }
 
+// NewConnectedComponents creates instance.
+func NewConnectedComponents(count int, componentIDs []int) ConnectedComponents {
+	return ConnectedComponents{count: count, componentIDs: componentIDs}
+}
+
 func findConnectedComponentsCore(
-	connectedComponents *ConnectedComponents,
+	componentCount *int, componentIDs []int,
 	graph Graph, marked []bool, vertexID int,
 ) {
 	marked[vertexID] = true
-	connectedComponents.componentIDs[vertexID] = connectedComponents.count
+	componentIDs[vertexID] = *componentCount
 	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
 		if !marked[adjacentVertexID] {
-			findConnectedComponentsCore(connectedComponents, graph, marked, adjacentVertexID)
+			findConnectedComponentsCore(componentCount, componentIDs, graph, marked, adjacentVertexID)
 		}
 	}
 }
@@ -60,17 +65,15 @@ func findConnectedComponentsCore(
 // FindConnectedComponents returns connected components in a graph.
 // https://algs4.cs.princeton.edu/41graph/CC.java.html
 func FindConnectedComponents(graph Graph) ConnectedComponents {
-	connectedComponents := ConnectedComponents{
-		count:        0,
-		componentIDs: make([]int, graph.NumVertices()),
-	}
-	internals.ResetList(connectedComponents.componentIDs)
+	componentCount := 0
+	componentIDs := make([]int, graph.NumVertices())
+	internals.ResetList(componentIDs)
 	marked := make([]bool, graph.NumVertices())
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		if !marked[vertexID] {
-			findConnectedComponentsCore(&connectedComponents, graph, marked, vertexID)
-			connectedComponents.count++
+			findConnectedComponentsCore(&componentCount, componentIDs, graph, marked, vertexID)
+			componentCount++
 		}
 	}
-	return connectedComponents
+	return NewConnectedComponents(componentCount, componentIDs)
 }
