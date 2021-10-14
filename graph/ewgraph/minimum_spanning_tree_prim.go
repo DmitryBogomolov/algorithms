@@ -32,9 +32,9 @@ func processMinimumSpanningTreePrim(
 	}
 }
 
-// MinimumSpanningTreePrim computes minimum spanning tree using Prim's algorithm.
+// BuildMinimumSpanningTreePrim computes minimum spanning tree using Prim's algorithm.
 // https://algs4.cs.princeton.edu/43mst/PrimMST.java.html
-func MinimumSpanningTreePrim(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
+func BuildMinimumSpanningTreePrim(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
 	numVertices := ewgraph.NumVertices()
 	marked := make([]bool, numVertices)
 	edgeTo := make([]int, numVertices)

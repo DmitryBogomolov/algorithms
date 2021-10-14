@@ -5,9 +5,9 @@ import (
 	"algorithms/unionfind"
 )
 
-// MinimumSpanningTreeKruskal computes minimum spanning tree using Kruskal's algorithm.
+// BuildMinimumSpanningTreeKruskal computes minimum spanning tree using Kruskal's algorithm.
 // https://algs4.cs.princeton.edu/43mst/KruskalMST.java.html
-func MinimumSpanningTreeKruskal(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
+func BuildMinimumSpanningTreeKruskal(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
 	edgesPriorityQueue := newEdgesPriorityQueue()
 	allWeights := AllGraphWeights(ewgraph)
 	for i, edge := range graph.AllGraphEdges(ewgraph) {

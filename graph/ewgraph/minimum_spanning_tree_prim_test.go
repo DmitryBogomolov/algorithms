@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMinimumSpanningTreePrim(t *testing.T) {
+func TestBuildMinimumSpanningTreePrim(t *testing.T) {
 	target := tests.NewTestEdgeWeightedGraph(8, []tests.TestWeightedEdge{
 		{V1: 4, V2: 5, Weight: 0.35},
 		{V1: 4, V2: 7, Weight: 0.37},
@@ -28,7 +28,7 @@ func TestMinimumSpanningTreePrim(t *testing.T) {
 		{V1: 6, V2: 4, Weight: 0.93},
 	})
 
-	ret := MinimumSpanningTreePrim(target)
+	ret := BuildMinimumSpanningTreePrim(target)
 
 	assert.Equal(t, 8, ret.NumVertices(), "vertices")
 	assert.Equal(t, 7, ret.NumEdges(), "edges")
