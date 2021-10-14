@@ -2,55 +2,9 @@ package ewgraph
 
 import (
 	"algorithms/graph/graph"
+	"algorithms/unionfind"
 	"container/heap"
 )
-
-type unionFind struct {
-	parent []int
-	rank   []byte
-}
-
-func (uf *unionFind) find(p int) int {
-	i := p
-	parent := uf.parent
-	for i != parent[i] {
-		i = parent[i]
-	}
-	return i
-}
-
-func (uf *unionFind) union(p, q int) {
-	pRoot, qRoot := uf.find(p), uf.find(q)
-	if pRoot == qRoot {
-		return
-	}
-	pRank, qRank := uf.rank[pRoot], uf.rank[qRoot]
-	if pRank < qRank {
-		uf.parent[pRoot] = qRoot
-	} else {
-		uf.parent[qRoot] = pRoot
-	}
-	if pRank == qRank {
-		uf.rank[pRoot]++
-	}
-}
-
-func (uf *unionFind) connected(p, q int) bool {
-	return uf.find(p) == uf.find(q)
-}
-
-func newUnionFind(size int) *unionFind {
-	parent := make([]int, size)
-	rank := make([]byte, size)
-	for i := 0; i < size; i++ {
-		parent[i] = i
-		rank[i] = 0
-	}
-	return &unionFind{
-		parent: parent,
-		rank:   rank,
-	}
-}
 
 type edgesPQ struct {
 	edges   []graph.Edge
@@ -101,15 +55,15 @@ func MinimumSpanningTreeKruskal(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
 		pq.push(edge, allWeights[i])
 	}
 	numVertices := ewgraph.NumVertices()
-	uf := newUnionFind(numVertices)
+	uf := unionfind.New(numVertices)
 	adjacency := make([][]int, numVertices)
 	weights := make([][]float64, numVertices)
 	numEdges := 0
 	for pq.Len() > 0 {
 		edge, weight := pq.pop()
 		vertexID1, vertexID2 := edge.Vertex1(), edge.Vertex2()
-		if !uf.connected(vertexID1, vertexID2) {
-			uf.union(vertexID1, vertexID2)
+		if !uf.Connected(vertexID1, vertexID2) {
+			uf.Union(vertexID1, vertexID2)
 			addWeightedEdge(adjacency, weights, vertexID1, vertexID2, weight)
 			numEdges++
 		}

@@ -8,22 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUnionFind(t *testing.T) {
-	uf := newUnionFind(10)
-
-	uf.union(0, 1)
-	uf.union(4, 5)
-	uf.union(5, 7)
-	uf.union(5, 8)
-	uf.union(4, 9)
-
-	assert.True(t, uf.connected(1, 0), "1 - 0")
-	assert.False(t, uf.connected(0, 2), "0 - 2")
-	assert.True(t, uf.connected(5, 9), "5 - 9")
-	assert.True(t, uf.connected(4, 8), "4 - 8")
-	assert.False(t, uf.connected(2, 7), "2 - 7")
-}
-
 func TestEdgesPQ(t *testing.T) {
 	pq := newEdgesPQ()
 
