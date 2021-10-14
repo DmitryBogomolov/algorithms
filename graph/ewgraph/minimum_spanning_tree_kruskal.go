@@ -27,10 +27,10 @@ func MinimumSpanningTreeKruskal(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
 			numEdges++
 		}
 	}
-	return minimumSpanningTree{
-		origin:    ewgraph,
-		numEdges:  numEdges,
-		adjacency: adjacency,
-		weights:   weights,
+	return _MinimumSpanningTree{
+		numVertices: numVertices,
+		numEdges:    numEdges,
+		adjacency:   adjacency,
+		weights:     weights,
 	}
 }
