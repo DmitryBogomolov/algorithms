@@ -1,6 +1,9 @@
-package graph
+package ewgraph
 
-import "container/heap"
+import (
+	"algorithms/graph/graph"
+	"container/heap"
+)
 
 type unionFind struct {
 	parent []int
@@ -50,7 +53,7 @@ func newUnionFind(size int) *unionFind {
 }
 
 type edgesPQ struct {
-	edges   []Edge
+	edges   []graph.Edge
 	weights []float64
 }
 
@@ -71,12 +74,12 @@ func (pq *edgesPQ) Pop() interface{} {
 	return nil
 }
 
-func (pq *edgesPQ) push(edge Edge, weight float64) {
+func (pq *edgesPQ) push(edge graph.Edge, weight float64) {
 	pq.edges = append(pq.edges, edge)
 	pq.weights = append(pq.weights, weight)
 	heap.Push(pq, nil)
 }
-func (pq *edgesPQ) pop() (Edge, float64) {
+func (pq *edgesPQ) pop() (graph.Edge, float64) {
 	edge, weight := pq.edges[0], pq.weights[0]
 	heap.Pop(pq)
 	n := pq.Len() - 1
@@ -91,13 +94,13 @@ func newEdgesPQ() *edgesPQ {
 
 // MinimumSpanningTreeKruskal computes minimum spanning tree using Kruskal's algorithm.
 // https://algs4.cs.princeton.edu/43mst/KruskalMST.java.html
-func MinimumSpanningTreeKruskal(graph EdgeWeightedGraph) EdgeWeightedGraph {
+func MinimumSpanningTreeKruskal(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
 	pq := newEdgesPQ()
-	allWeights := AllGraphWeights(graph)
-	for i, edge := range AllGraphEdges(graph) {
+	allWeights := AllGraphWeights(ewgraph)
+	for i, edge := range graph.AllGraphEdges(ewgraph) {
 		pq.push(edge, allWeights[i])
 	}
-	numVertices := graph.NumVertices()
+	numVertices := ewgraph.NumVertices()
 	uf := newUnionFind(numVertices)
 	adjacency := make([][]int, numVertices)
 	weights := make([][]float64, numVertices)
@@ -112,7 +115,7 @@ func MinimumSpanningTreeKruskal(graph EdgeWeightedGraph) EdgeWeightedGraph {
 		}
 	}
 	return minimumSpanningTree{
-		origin:    graph,
+		origin:    ewgraph,
 		numEdges:  numEdges,
 		adjacency: adjacency,
 		weights:   weights,

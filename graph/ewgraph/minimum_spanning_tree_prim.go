@@ -1,4 +1,4 @@
-package graph
+package ewgraph
 
 import (
 	"container/heap"
