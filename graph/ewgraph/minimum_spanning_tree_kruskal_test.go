@@ -8,37 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEdgesPQ(t *testing.T) {
-	pq := newEdgesPQ()
-
-	pq.push(graph.NewEdge(1, 2), 1.2)
-	pq.push(graph.NewEdge(2, 0), 2.4)
-	pq.push(graph.NewEdge(4, 1), 0.4)
-	pq.push(graph.NewEdge(3, 4), 1.5)
-	pq.push(graph.NewEdge(2, 4), 1.9)
-
-	assert.Equal(t, 5, pq.Len())
-	var edges []graph.Edge
-	var weights []float64
-	for pq.Len() > 0 {
-		edge, weight := pq.pop()
-		edges = append(edges, edge)
-		weights = append(weights, weight)
-	}
-	assert.Equal(
-		t,
-		[]graph.Edge{
-			graph.NewEdge(4, 1),
-			graph.NewEdge(1, 2),
-			graph.NewEdge(3, 4),
-			graph.NewEdge(2, 4),
-			graph.NewEdge(2, 0),
-		},
-		edges,
-	)
-	assert.Equal(t, []float64{0.4, 1.2, 1.5, 1.9, 2.4}, weights)
-}
-
 func TestMinimumSpanningTreeKruskal(t *testing.T) {
 	target := tests.NewTestEdgeWeightedGraph(8, []tests.TestWeightedEdge{
 		{V1: 4, V2: 5, Weight: 0.35},
