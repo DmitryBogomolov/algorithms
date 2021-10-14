@@ -1,4 +1,4 @@
-package internals
+package tests
 
 // TestGraph TEST
 type TestGraph struct {

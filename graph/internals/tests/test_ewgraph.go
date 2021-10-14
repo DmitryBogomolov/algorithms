@@ -1,4 +1,4 @@
-package internals
+package tests
 
 // TestEdgeWeightedGraph TEST
 type TestEdgeWeightedGraph struct {

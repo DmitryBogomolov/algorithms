@@ -2,7 +2,7 @@ package ewgraph
 
 import (
 	"algorithms/graph/graph"
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/utils"
 )
 
 // EdgeWeightedGraph is a graph where each edge has an associated weight.
@@ -28,5 +28,5 @@ func AllGraphWeights(graph EdgeWeightedGraph) []float64 {
 
 // TotalGraphWeight returns total weight of a graph.
 func TotalGraphWeight(graph EdgeWeightedGraph) float64 {
-	return internals.SumList(AllGraphWeights(graph))
+	return utils.SumList(AllGraphWeights(graph))
 }

@@ -1,14 +1,14 @@
 package digraph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestReverseDigraph(t *testing.T) {
-	graph := internals.NewTestDigraph(4,
+	graph := tests.NewTestDigraph(4,
 		0, 1,
 		0, 2,
 		2, 1,
@@ -27,7 +27,7 @@ func TestReverseDigraph(t *testing.T) {
 }
 
 func TestReverseReversedDigraph(t *testing.T) {
-	graph := internals.NewTestDigraph(4,
+	graph := tests.NewTestDigraph(4,
 		0, 1,
 		0, 2,
 		2, 1,

@@ -2,7 +2,7 @@ package ewdigraph
 
 import (
 	"algorithms/graph/ewgraph"
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/utils"
 )
 
 // AllDigraphWeights returns all edges of an edge-weighted digraph.
@@ -19,5 +19,5 @@ func AllDigraphWeights(digraph ewgraph.EdgeWeightedGraph) []float64 {
 
 // TotalDigraphWeight returns total weight of a digraph.
 func TotalDigraphWeight(digraph ewgraph.EdgeWeightedGraph) float64 {
-	return internals.SumList(AllDigraphWeights(digraph))
+	return utils.SumList(AllDigraphWeights(digraph))
 }

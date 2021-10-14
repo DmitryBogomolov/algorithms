@@ -1,14 +1,14 @@
 package graph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFindPathsDepthFirst(t *testing.T) {
-	target := internals.NewTestGraph(7,
+	target := tests.NewTestGraph(7,
 		0, 5,
 		2, 4,
 		2, 3,
@@ -85,7 +85,7 @@ func TestFindPathsDepthFirst(t *testing.T) {
 }
 
 func TestFindPathsBreadthFirst(t *testing.T) {
-	target := internals.NewTestGraph(7,
+	target := tests.NewTestGraph(7,
 		0, 5,
 		2, 4,
 		2, 3,

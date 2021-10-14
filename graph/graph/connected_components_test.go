@@ -1,14 +1,14 @@
 package graph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFindConnectedComponents(t *testing.T) {
-	target := internals.NewTestGraph(8,
+	target := tests.NewTestGraph(8,
 		0, 1,
 		1, 4,
 		4, 7,

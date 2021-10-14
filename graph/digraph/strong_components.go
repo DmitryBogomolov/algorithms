@@ -2,7 +2,7 @@ package digraph
 
 import (
 	"algorithms/graph/graph"
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/utils"
 )
 
 func findStrongComponentsCore(componentCount *int, componendIDs []int, marked []bool, digraph graph.Graph, vertexID int) {
@@ -22,7 +22,7 @@ func findStrongComponentsCore(componentCount *int, componendIDs []int, marked []
 func FindStrongComponents(digraph graph.Graph) graph.ConnectedComponents {
 	componentCount := 0
 	componendIDs := make([]int, digraph.NumVertices())
-	internals.ResetList(componendIDs)
+	utils.ResetList(componendIDs)
 	marked := make([]bool, digraph.NumVertices())
 	reversedPostorder := getReversedPostorder(ReverseDigraph(digraph))
 	for _, vertexID := range reversedPostorder {

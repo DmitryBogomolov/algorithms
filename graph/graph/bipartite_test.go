@@ -1,16 +1,16 @@
 package graph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestIsBipartite(t *testing.T) {
-	var target *internals.TestGraph
+	var target *tests.TestGraph
 
-	target = internals.NewTestGraph(6,
+	target = tests.NewTestGraph(6,
 		0, 1,
 		0, 3,
 		1, 2,
@@ -21,7 +21,7 @@ func TestIsBipartite(t *testing.T) {
 	)
 	assert.Equal(t, true, IsBipartite(target))
 
-	target = internals.NewTestGraph(6,
+	target = tests.NewTestGraph(6,
 		0, 1,
 		0, 3,
 		1, 2,

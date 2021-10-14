@@ -2,7 +2,7 @@ package digraph
 
 import (
 	"algorithms/graph/graph"
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/utils"
 )
 
 func findDirectedCycleCore(marked []bool, stack []bool, edgeTo []int, digraph graph.Graph, vertexID int, parentVertexID int) []int {
@@ -20,7 +20,7 @@ func findDirectedCycleCore(marked []bool, stack []bool, edgeTo []int, digraph gr
 				cycle = append(cycle, id)
 			}
 			cycle = append(cycle, adjacentVertexID, vertexID)
-			internals.ReverseList(cycle)
+			utils.ReverseList(cycle)
 			return cycle
 		}
 	}
@@ -35,7 +35,7 @@ func FindDirectedCycle(digraph graph.Graph) []int {
 	marked := make([]bool, digraph.NumVertices())
 	stack := make([]bool, digraph.NumVertices())
 	edgeTo := make([]int, digraph.NumVertices())
-	internals.ResetList(edgeTo)
+	utils.ResetList(edgeTo)
 	for vertexID := 0; vertexID < digraph.NumVertices(); vertexID++ {
 		if !marked[vertexID] {
 			if cycle := findDirectedCycleCore(marked, stack, edgeTo, digraph, vertexID, -1); cycle != nil {

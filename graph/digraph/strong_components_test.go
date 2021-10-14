@@ -1,14 +1,14 @@
 package digraph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFindStrongComponents(t *testing.T) {
-	graph := internals.NewTestDigraph(13,
+	graph := tests.NewTestDigraph(13,
 		4, 2,
 		2, 3,
 		3, 2,

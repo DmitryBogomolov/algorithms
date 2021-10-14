@@ -2,14 +2,14 @@ package digraph
 
 import (
 	"algorithms/graph/graph"
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAllDigraphEdges(t *testing.T) {
-	target := internals.NewTestDigraph(6,
+	target := tests.NewTestDigraph(6,
 		0, 1,
 		1, 2,
 		0, 3,

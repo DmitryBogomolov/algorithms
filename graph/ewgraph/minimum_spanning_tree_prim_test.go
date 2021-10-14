@@ -2,7 +2,7 @@ package ewgraph
 
 import (
 	"algorithms/graph/graph"
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -29,7 +29,7 @@ func TestVerticesIndexPQ(t *testing.T) {
 }
 
 func TestMinimumSpanningTreePrim(t *testing.T) {
-	target := internals.NewTestEdgeWeightedGraph(8, []internals.TestWeightedEdge{
+	target := tests.NewTestEdgeWeightedGraph(8, []tests.TestWeightedEdge{
 		{V1: 4, V2: 5, Weight: 0.35},
 		{V1: 4, V2: 7, Weight: 0.37},
 		{V1: 5, V2: 7, Weight: 0.28},

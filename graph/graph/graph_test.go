@@ -1,14 +1,14 @@
 package graph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAllGraphEdges(t *testing.T) {
-	target := internals.NewTestGraph(6,
+	target := tests.NewTestGraph(6,
 		0, 1,
 		1, 2,
 		0, 3,

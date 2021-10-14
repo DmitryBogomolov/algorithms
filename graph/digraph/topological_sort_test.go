@@ -1,7 +1,7 @@
 package digraph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,7 +9,7 @@ import (
 
 func TestTopologicalSort(t *testing.T) {
 	var ret []int
-	graph := internals.NewTestDigraph(16,
+	graph := tests.NewTestDigraph(16,
 		0, 1,
 		0, 5,
 		0, 6,

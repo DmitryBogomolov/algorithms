@@ -2,7 +2,7 @@ package digraph
 
 import (
 	"algorithms/graph/graph"
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/utils"
 )
 
 func getReversedPostorderCore(list *[]int, marked []bool, digraph graph.Graph, vertexID int) {
@@ -23,7 +23,7 @@ func getReversedPostorder(digraph graph.Graph) []int {
 			getReversedPostorderCore(&list, marked, digraph, vertexID)
 		}
 	}
-	internals.ReverseList(list)
+	utils.ReverseList(list)
 	return list
 }
 

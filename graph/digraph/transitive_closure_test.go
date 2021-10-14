@@ -1,14 +1,14 @@
 package digraph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTransitiveClosure(t *testing.T) {
-	target := internals.NewTestDigraph(6,
+	target := tests.NewTestDigraph(6,
 		0, 1,
 		1, 2,
 		0, 3,

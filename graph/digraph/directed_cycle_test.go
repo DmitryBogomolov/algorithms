@@ -1,16 +1,16 @@
 package digraph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestHasDirectedCycle(t *testing.T) {
-	var target *internals.TestGraph
+	var target *tests.TestGraph
 
-	target = internals.NewTestDigraph(4,
+	target = tests.NewTestDigraph(4,
 		0, 1,
 		0, 2,
 		2, 3,

@@ -1,14 +1,14 @@
 package ewgraph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAllGraphWeights(t *testing.T) {
-	target := internals.NewTestEdgeWeightedGraph(6, []internals.TestWeightedEdge{
+	target := tests.NewTestEdgeWeightedGraph(6, []tests.TestWeightedEdge{
 		{V1: 0, V2: 1, Weight: 1.2},
 		{V1: 1, V2: 2, Weight: 2.3},
 		{V1: 0, V2: 3, Weight: 3.1},

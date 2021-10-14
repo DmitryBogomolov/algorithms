@@ -1,6 +1,8 @@
 package graph
 
-import "algorithms/graph/internals"
+import (
+	"algorithms/graph/internals/utils"
+)
 
 func findCycleCore(edgeTo []int, graph Graph, marked []bool, vertexID int, parentVertexID int) []int {
 	marked[vertexID] = true
@@ -18,7 +20,7 @@ func findCycleCore(edgeTo []int, graph Graph, marked []bool, vertexID int, paren
 				cycle = append(cycle, id)
 			}
 			cycle = append(cycle, adjacentVertexID, vertexID)
-			internals.ReverseList(cycle)
+			utils.ReverseList(cycle)
 			return cycle
 		}
 	}
@@ -31,7 +33,7 @@ func findCycleCore(edgeTo []int, graph Graph, marked []bool, vertexID int, paren
 func FindCycle(graph Graph) []int {
 	marked := make([]bool, graph.NumVertices())
 	edgeTo := make([]int, graph.NumVertices())
-	internals.ResetList(edgeTo)
+	utils.ResetList(edgeTo)
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		if !marked[vertexID] {
 			if cycle := findCycleCore(edgeTo, graph, marked, vertexID, -1); cycle != nil {

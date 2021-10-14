@@ -1,7 +1,7 @@
 package graph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/utils"
 	"fmt"
 )
 
@@ -67,7 +67,7 @@ func findConnectedComponentsCore(
 func FindConnectedComponents(graph Graph) ConnectedComponents {
 	componentCount := 0
 	componentIDs := make([]int, graph.NumVertices())
-	internals.ResetList(componentIDs)
+	utils.ResetList(componentIDs)
 	marked := make([]bool, graph.NumVertices())
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		if !marked[vertexID] {

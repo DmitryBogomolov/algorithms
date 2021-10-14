@@ -1,6 +1,8 @@
 package graph
 
-import "algorithms/graph/internals"
+import (
+	"algorithms/graph/internals/utils"
+)
 
 // In a DFS tree edge "u-v" is bridge if "v" subtree has no back edges to ancestors of "u".
 func findCutEdgesCore(
@@ -20,14 +22,14 @@ func findCutEdgesCore(
 			findCutEdgesCore(cutEdges, distances, updatedDistances, distance+1, graph, vertexID, adjacentVertexID)
 			// If child vertex distance is less than current vertex distance
 			// then there is back edge from child vertex to ancestors of current vertex.
-			updatedDistances[vertexID] = internals.Min(updatedDistances[vertexID], updatedDistances[adjacentVertexID])
+			updatedDistances[vertexID] = utils.Min(updatedDistances[vertexID], updatedDistances[adjacentVertexID])
 			// If child vertex had back edge then its updated distance would be less then its original distance.
 			if updatedDistances[adjacentVertexID] == distances[adjacentVertexID] {
 				*cutEdges = append(*cutEdges, NewEdge(vertexID, adjacentVertexID))
 			}
 		} else if adjacentVertexID != parentVertexID {
 			// Update current vertex distance - it can be reached faster going through child vertex.
-			updatedDistances[vertexID] = internals.Min(updatedDistances[vertexID], distances[adjacentVertexID])
+			updatedDistances[vertexID] = utils.Min(updatedDistances[vertexID], distances[adjacentVertexID])
 		}
 	}
 }
@@ -39,8 +41,8 @@ func findCutEdgesCore(
 func FindCutEdges(graph Graph) []Edge {
 	distances := make([]int, graph.NumVertices())
 	updatedDistances := make([]int, graph.NumVertices())
-	internals.ResetList(distances)
-	internals.ResetList(updatedDistances)
+	utils.ResetList(distances)
+	utils.ResetList(updatedDistances)
 	var cutEdges []Edge
 	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
 		if distances[vertexID] == -1 {

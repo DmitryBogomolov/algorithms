@@ -1,17 +1,17 @@
 package graph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFindCutVertices(t *testing.T) {
-	var target *internals.TestGraph
+	var target *tests.TestGraph
 	var ret []int
 
-	target = internals.NewTestGraph(7,
+	target = tests.NewTestGraph(7,
 		0, 1,
 		0, 2,
 		1, 3,

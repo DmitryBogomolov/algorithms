@@ -1,16 +1,16 @@
 package graph
 
 import (
-	"algorithms/graph/internals"
+	"algorithms/graph/internals/tests"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFindCycle(t *testing.T) {
-	var target *internals.TestGraph
+	var target *tests.TestGraph
 
-	target = internals.NewTestGraph(3,
+	target = tests.NewTestGraph(3,
 		0, 1,
 		1, 2,
 	)
@@ -19,7 +19,7 @@ func TestFindCycle(t *testing.T) {
 	target.AddEdge(2, 0)
 	assert.Equal(t, []int{2, 0, 1, 2}, FindCycle(target))
 
-	target = internals.NewTestGraph(5,
+	target = tests.NewTestGraph(5,
 		0, 1,
 		0, 2,
 		1, 3,
