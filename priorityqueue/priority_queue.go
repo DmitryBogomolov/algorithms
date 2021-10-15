@@ -9,13 +9,11 @@ func (queue _PriorityQueue) Len() int {
 }
 
 func (queue _PriorityQueue) Swap(i, j int) {
-	items := queue.items
-	items[i], items[j] = items[j], items[i]
+	queue.items[i], queue.items[j] = queue.items[j], queue.items[i]
 }
 
 func (queue _PriorityQueue) Less(i, j int) bool {
-	items := queue.items
-	return queue.less(items[i], items[j])
+	return queue.less(queue.items[i], queue.items[j])
 }
 
 func (queue *_PriorityQueue) Push(item interface{}) {
@@ -24,10 +22,10 @@ func (queue *_PriorityQueue) Push(item interface{}) {
 
 func (queue *_PriorityQueue) Pop() interface{} {
 	last := queue.Len() - 1
-	value := queue.items[last]
+	item := queue.items[last]
 	queue.items[last] = nil
 	queue.items = queue.items[0:last]
-	return value
+	return item
 }
 
 // LessFunc is an ordering function.
@@ -47,10 +45,16 @@ func (queue *_PriorityQueue) Insert(element interface{}) {
 }
 
 func (queue *_PriorityQueue) Remove() interface{} {
+	if queue.Len() == 0 {
+		panic("queue is empty")
+	}
 	return heap.Pop(queue)
 }
 
 func (queue _PriorityQueue) Peek() interface{} {
+	if queue.Len() == 0 {
+		panic("queue is empty")
+	}
 	return queue.items[0]
 }
 
@@ -68,9 +72,11 @@ type PriorityQueue interface {
 
 // New create instance of PriorityQueue.
 func New(less LessFunc) PriorityQueue {
-	queue := _PriorityQueue{
+	if less == nil {
+		panic("less func is nil")
+	}
+	return &_PriorityQueue{
 		less:  less,
 		items: nil,
 	}
-	return &queue
 }
