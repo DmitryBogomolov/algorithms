@@ -1,11 +1,12 @@
 package ewgraph
 
 import (
+	"algorithms/indexpriorityqueue"
 	"math"
 )
 
 func scanMinimumSpanningTreeVertexPrim(
-	verticesIndexPriorityQueue *_VerticesIndexPriorityQueue, marked []bool, edgeTo []int, distTo []float64,
+	verticesIndexPriorityQueue indexpriorityqueue.IndexPriorityQueue, marked []bool, edgeTo []int, distTo []float64,
 	ewgraph EdgeWeightedGraph, vertexID int,
 ) {
 	marked[vertexID] = true
@@ -15,19 +16,19 @@ func scanMinimumSpanningTreeVertexPrim(
 		if !marked[adjacentVertexID] && weight < distTo[adjacentVertexID] {
 			edgeTo[adjacentVertexID] = vertexID
 			distTo[adjacentVertexID] = weight
-			verticesIndexPriorityQueue.updateVertex(adjacentVertexID, weight)
+			verticesIndexPriorityQueue.Insert(adjacentVertexID, weight)
 		}
 	}
 }
 
 func processMinimumSpanningTreePrim(
-	verticesIndexPriorityQueue *_VerticesIndexPriorityQueue, marked []bool, edgeTo []int, distTo []float64,
+	verticesIndexPriorityQueue indexpriorityqueue.IndexPriorityQueue, marked []bool, edgeTo []int, distTo []float64,
 	ewgraph EdgeWeightedGraph, startVertexID int,
 ) {
 	distTo[startVertexID] = 0
-	verticesIndexPriorityQueue.updateVertex(startVertexID, 0)
-	for verticesIndexPriorityQueue.Len() > 0 {
-		vertexID := verticesIndexPriorityQueue.popVertex()
+	verticesIndexPriorityQueue.Insert(startVertexID, 0)
+	for verticesIndexPriorityQueue.Size() > 0 {
+		_, vertexID := verticesIndexPriorityQueue.Remove()
 		scanMinimumSpanningTreeVertexPrim(verticesIndexPriorityQueue, marked, edgeTo, distTo, ewgraph, vertexID)
 	}
 }
@@ -39,7 +40,9 @@ func BuildMinimumSpanningTreePrim(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
 	marked := make([]bool, numVertices)
 	edgeTo := make([]int, numVertices)
 	distTo := make([]float64, numVertices)
-	verticesIndexPriorityQueue := newVerticesIndexPriorityQueue(numVertices)
+	verticesIndexPriorityQueue := indexpriorityqueue.New(func(lhs, rhs interface{}) bool {
+		return lhs.(float64) < rhs.(float64)
+	})
 	for vertexID := 0; vertexID < numVertices; vertexID++ {
 		edgeTo[vertexID] = -1
 		distTo[vertexID] = math.MaxFloat64
