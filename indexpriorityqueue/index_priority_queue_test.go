@@ -33,22 +33,32 @@ func TestMinIndexPriorityQueue(t *testing.T) {
 	assert.Equal(t, queue.Peek().(int), 4)
 	assert.Equal(t, queue.PeekKey(), 14)
 
-	assert.Equal(t, queue.Remove().(int), 4)
+	var element interface{}
+	var key int
+	element, key = queue.Remove()
+	assert.Equal(t, element.(int), 4)
+	assert.Equal(t, key, 14)
 	assert.Equal(t, queue.Size(), 3)
 	assert.Equal(t, queue.Peek().(int), 5)
 	assert.Equal(t, queue.PeekKey(), 12)
 
-	assert.Equal(t, queue.Remove().(int), 5)
+	element, key = queue.Remove()
+	assert.Equal(t, element.(int), 5)
+	assert.Equal(t, key, 12)
 	assert.Equal(t, queue.Size(), 2)
 	assert.Equal(t, queue.Peek().(int), 8)
 	assert.Equal(t, queue.PeekKey(), 11)
 
-	assert.Equal(t, queue.Remove().(int), 8)
+	element, key = queue.Remove()
+	assert.Equal(t, element.(int), 8)
+	assert.Equal(t, key, 11)
 	assert.Equal(t, queue.Size(), 1)
 	assert.Equal(t, queue.Peek().(int), 9)
 	assert.Equal(t, queue.PeekKey(), 13)
 
-	assert.Equal(t, queue.Remove().(int), 9)
+	element, key = queue.Remove()
+	assert.Equal(t, element.(int), 9)
+	assert.Equal(t, key, 13)
 	assert.Equal(t, queue.Size(), 0)
 }
 
@@ -79,22 +89,32 @@ func TestMaxIndexPriorityQueue(t *testing.T) {
 	assert.Equal(t, queue.Peek().(float64), 4.4)
 	assert.Equal(t, queue.PeekKey(), 104)
 
-	assert.Equal(t, queue.Remove().(float64), 4.4)
+	var element interface{}
+	var key int
+	element, key = queue.Remove()
+	assert.Equal(t, element.(float64), 4.4)
+	assert.Equal(t, key, 104)
 	assert.Equal(t, queue.Size(), 3)
 	assert.Equal(t, queue.Peek().(float64), 4.1)
 	assert.Equal(t, queue.PeekKey(), 102)
 
-	assert.Equal(t, queue.Remove().(float64), 4.1)
+	element, key = queue.Remove()
+	assert.Equal(t, element.(float64), 4.1)
+	assert.Equal(t, key, 102)
 	assert.Equal(t, queue.Size(), 2)
 	assert.Equal(t, queue.Peek().(float64), 3.5)
 	assert.Equal(t, queue.PeekKey(), 103)
 
-	assert.Equal(t, queue.Remove().(float64), 3.5)
+	element, key = queue.Remove()
+	assert.Equal(t, element.(float64), 3.5)
+	assert.Equal(t, key, 103)
 	assert.Equal(t, queue.Size(), 1)
 	assert.Equal(t, queue.Peek().(float64), 3.2)
 	assert.Equal(t, queue.PeekKey(), 101)
 
-	assert.Equal(t, queue.Remove().(float64), 3.2)
+	element, key = queue.Remove()
+	assert.Equal(t, element.(float64), 3.2)
+	assert.Equal(t, key, 101)
 	assert.Equal(t, queue.Size(), 0)
 }
 

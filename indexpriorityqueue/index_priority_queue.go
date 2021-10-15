@@ -58,15 +58,21 @@ func (queue *_IndexPriorityQueue) Insert(key int, element interface{}) {
 	}
 }
 
-func (queue *_IndexPriorityQueue) Remove() interface{} {
+func (queue *_IndexPriorityQueue) Remove() (interface{}, int) {
+	if queue.Len() == 0 {
+		panic("queue is empty")
+	}
 	key := queue.idxToKey[0]
 	element := heap.Pop(queue)
 	delete(queue.idxToKey, queue.keyToIdx[key])
 	delete(queue.keyToIdx, key)
-	return element
+	return element, key
 }
 
 func (queue _IndexPriorityQueue) Peek() interface{} {
+	if queue.Len() == 0 {
+		panic("queue is empty")
+	}
 	return queue.items[0]
 }
 
@@ -94,7 +100,7 @@ type IndexPriorityQueue interface {
 	// Insert adds element to a queue.
 	Insert(key int, element interface{})
 	// Remove removes element from a queue.
-	Remove() interface{}
+	Remove() (interface{}, int)
 	// Peek returns first element of a queue.
 	Peek() interface{}
 	// RemoveByKey removes element by key.
@@ -107,6 +113,9 @@ type IndexPriorityQueue interface {
 
 // New creates instance of IndexPriorityQueue
 func New(less LessFunc) IndexPriorityQueue {
+	if less == nil {
+		panic("less func is nil")
+	}
 	return &_IndexPriorityQueue{
 		items:    nil,
 		keyToIdx: map[int]int{},
