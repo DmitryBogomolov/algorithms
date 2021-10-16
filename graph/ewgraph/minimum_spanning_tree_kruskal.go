@@ -2,7 +2,7 @@ package ewgraph
 
 import (
 	"algorithms/graph/graph"
-	"algorithms/priorityqueue"
+	pq "algorithms/priorityqueue"
 	"algorithms/unionfind"
 )
 
@@ -14,7 +14,7 @@ type _EdgesQueueItem struct {
 // BuildMinimumSpanningTreeKruskal computes minimum spanning tree using Kruskal's algorithm.
 // https://algs4.cs.princeton.edu/43mst/KruskalMST.java.html
 func BuildMinimumSpanningTreeKruskal(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
-	edgesPriorityQueue := priorityqueue.New(func(lhs, rhs interface{}) bool {
+	edgesPriorityQueue := pq.New(func(lhs, rhs interface{}) bool {
 		return lhs.(_EdgesQueueItem).weight < rhs.(_EdgesQueueItem).weight
 	})
 	allWeights := AllGraphWeights(ewgraph)

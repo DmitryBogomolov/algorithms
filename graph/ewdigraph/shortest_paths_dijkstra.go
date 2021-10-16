@@ -3,7 +3,7 @@ package ewdigraph
 import (
 	"algorithms/graph/ewgraph"
 	"algorithms/graph/internals/utils"
-	"algorithms/indexpriorityqueue"
+	ipq "algorithms/indexpriorityqueue"
 	"fmt"
 	"math"
 )
@@ -22,7 +22,7 @@ func FindShortedPathsDijkstra(ewdigraph ewgraph.EdgeWeightedGraph, vertexID int)
 		distTo[i] = math.MaxFloat64
 	}
 	distTo[vertexID] = 0.0
-	verticesPriorityQueue := indexpriorityqueue.New(func(lhs, rhs interface{}) bool {
+	verticesPriorityQueue := ipq.New(func(lhs, rhs interface{}) bool {
 		return lhs.(float64) < rhs.(float64)
 	})
 	verticesPriorityQueue.Insert(vertexID, distTo[vertexID])
@@ -43,7 +43,7 @@ func FindShortedPathsDijkstra(ewdigraph ewgraph.EdgeWeightedGraph, vertexID int)
 
 func relaxVerticesDijkstra(
 	ewdigraph ewgraph.EdgeWeightedGraph,
-	verticesPriorityQueue indexpriorityqueue.IndexPriorityQueue,
+	verticesPriorityQueue ipq.IndexPriorityQueue,
 	distTo []float64, edgeTo []int,
 ) {
 	for verticesPriorityQueue.Size() > 0 {
@@ -57,7 +57,7 @@ func relaxVerticesDijkstra(
 
 func relaxEdgeDijkstra(
 	ewdigraph ewgraph.EdgeWeightedGraph,
-	verticesPriorityQueue indexpriorityqueue.IndexPriorityQueue,
+	verticesPriorityQueue ipq.IndexPriorityQueue,
 	distTo []float64, edgeTo []int,
 	fromVertexID int, toVertexID int, weight float64,
 ) {
