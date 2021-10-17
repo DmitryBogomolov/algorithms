@@ -13,26 +13,26 @@ type TestWeightedEdge struct {
 }
 
 // AddEdge TEST
-func (g *TestEdgeWeightedGraph) AddEdge(v1, v2 int, w float64) {
-	g.TestGraph.AddEdge(v1, v2)
-	g.Weights[v1] = append(g.Weights[v1], w)
-	g.Weights[v2] = append(g.Weights[v2], w)
+func (gr *TestEdgeWeightedGraph) AddEdge(v1, v2 int, w float64) {
+	gr.TestGraph.AddEdge(v1, v2)
+	gr.Weights[v1] = append(gr.Weights[v1], w)
+	gr.Weights[v2] = append(gr.Weights[v2], w)
 }
 
 // AddDirectedEdge TEST
-func (g *TestEdgeWeightedGraph) AddDirectedEdge(v1, v2 int, w float64) {
-	g.TestGraph.AddDirectedEdge(v1, v2)
-	g.Weights[v1] = append(g.Weights[v1], w)
+func (gr *TestEdgeWeightedGraph) AddDirectedEdge(v1, v2 int, w float64) {
+	gr.TestGraph.AddDirectedEdge(v1, v2)
+	gr.Weights[v1] = append(gr.Weights[v1], w)
 }
 
 // AdjacentWeights TEST
-func (g *TestEdgeWeightedGraph) AdjacentWeights(vertex int) []float64 {
-	return g.Weights[vertex]
+func (gr *TestEdgeWeightedGraph) AdjacentWeights(vertex int) []float64 {
+	return gr.Weights[vertex]
 }
 
 // NewTestEdgeWeightedGraph TEST
 func NewTestEdgeWeightedGraph(numVertices int, edges []TestWeightedEdge) *TestEdgeWeightedGraph {
-	graph := TestEdgeWeightedGraph{
+	wgr := TestEdgeWeightedGraph{
 		TestGraph: TestGraph{
 			numVertices: numVertices,
 			numEdges:    len(edges),
@@ -41,14 +41,14 @@ func NewTestEdgeWeightedGraph(numVertices int, edges []TestWeightedEdge) *TestEd
 		Weights: make([][]float64, numVertices),
 	}
 	for _, edge := range edges {
-		graph.AddEdge(edge.V1, edge.V2, edge.Weight)
+		wgr.AddEdge(edge.V1, edge.V2, edge.Weight)
 	}
-	return &graph
+	return &wgr
 }
 
 // NewTestEdgeWeightedDigraph TEST
 func NewTestEdgeWeightedDigraph(numVertices int, edges []TestWeightedEdge) *TestEdgeWeightedGraph {
-	digraph := TestEdgeWeightedGraph{
+	wdgr := TestEdgeWeightedGraph{
 		TestGraph: TestGraph{
 			numVertices: numVertices,
 			numEdges:    len(edges),
@@ -57,7 +57,7 @@ func NewTestEdgeWeightedDigraph(numVertices int, edges []TestWeightedEdge) *Test
 		Weights: make([][]float64, numVertices),
 	}
 	for _, edge := range edges {
-		digraph.AddDirectedEdge(edge.V1, edge.V2, edge.Weight)
+		wdgr.AddDirectedEdge(edge.V1, edge.V2, edge.Weight)
 	}
-	return &digraph
+	return &wdgr
 }

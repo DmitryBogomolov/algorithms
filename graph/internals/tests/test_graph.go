@@ -9,52 +9,52 @@ type TestGraph struct {
 
 // NewTestGraph TEST
 func NewTestGraph(numVertices int, connections ...int) *TestGraph {
-	graph := TestGraph{
+	gr := TestGraph{
 		numVertices: numVertices,
 		numEdges:    len(connections) / 2,
 		adjacency:   make([][]int, numVertices),
 	}
 	for i := 0; i < len(connections)/2; i++ {
-		graph.AddEdge(connections[2*i], connections[2*i+1])
+		gr.AddEdge(connections[2*i], connections[2*i+1])
 	}
-	return &graph
+	return &gr
 }
 
 // NewTestDigraph TEST
 func NewTestDigraph(numVertices int, connections ...int) *TestGraph {
-	digraph := TestGraph{
+	dgr := TestGraph{
 		numVertices: numVertices,
 		numEdges:    len(connections) / 2,
 		adjacency:   make([][]int, numVertices),
 	}
 	for i := 0; i < len(connections)/2; i++ {
-		digraph.AddDirectedEdge(connections[2*i], connections[2*i+1])
+		dgr.AddDirectedEdge(connections[2*i], connections[2*i+1])
 	}
-	return &digraph
+	return &dgr
 }
 
 // AddEdge TEST
-func (g *TestGraph) AddEdge(v1, v2 int) {
-	g.adjacency[v1] = append(g.adjacency[v1], v2)
-	g.adjacency[v2] = append(g.adjacency[v2], v1)
+func (gr *TestGraph) AddEdge(vertexID1, vertexID2 int) {
+	gr.adjacency[vertexID1] = append(gr.adjacency[vertexID1], vertexID2)
+	gr.adjacency[vertexID2] = append(gr.adjacency[vertexID2], vertexID1)
 }
 
 // AddDirectedEdge TEST
-func (g *TestGraph) AddDirectedEdge(v1, v2 int) {
-	g.adjacency[v1] = append(g.adjacency[v1], v2)
+func (gr *TestGraph) AddDirectedEdge(vertexID1, vertexID2 int) {
+	gr.adjacency[vertexID1] = append(gr.adjacency[vertexID1], vertexID2)
 }
 
 // NumVertices TEST
-func (g *TestGraph) NumVertices() int {
-	return g.numVertices
+func (gr *TestGraph) NumVertices() int {
+	return gr.numVertices
 }
 
 // NumEdges TEST
-func (g *TestGraph) NumEdges() int {
-	return g.numEdges
+func (gr *TestGraph) NumEdges() int {
+	return gr.numEdges
 }
 
 // AdjacentVertices TEST
-func (g *TestGraph) AdjacentVertices(vertex int) []int {
-	return g.adjacency[vertex]
+func (gr *TestGraph) AdjacentVertices(vertexID int) []int {
+	return gr.adjacency[vertexID]
 }

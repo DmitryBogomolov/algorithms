@@ -6,41 +6,41 @@ import (
 )
 
 func scanMinimumSpanningTreeVertexPrim(
-	verticesIndexPriorityQueue ipq.IndexPriorityQueue, marked []bool, edgeTo []int, distTo []float64,
-	ewgraph EdgeWeightedGraph, vertexID int,
+	wgr EdgeWeightedGraph, marked []bool, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue,
+	vertexID int,
 ) {
 	marked[vertexID] = true
-	weights := ewgraph.AdjacentWeights(vertexID)
-	for i, adjacentVertexID := range ewgraph.AdjacentVertices(vertexID) {
+	weights := wgr.AdjacentWeights(vertexID)
+	for i, adjacentVertexID := range wgr.AdjacentVertices(vertexID) {
 		weight := weights[i]
 		if !marked[adjacentVertexID] && weight < distTo[adjacentVertexID] {
 			edgeTo[adjacentVertexID] = vertexID
 			distTo[adjacentVertexID] = weight
-			verticesIndexPriorityQueue.Insert(adjacentVertexID, weight)
+			verticesQueue.Insert(adjacentVertexID, weight)
 		}
 	}
 }
 
 func processMinimumSpanningTreePrim(
-	verticesIndexPriorityQueue ipq.IndexPriorityQueue, marked []bool, edgeTo []int, distTo []float64,
-	ewgraph EdgeWeightedGraph, startVertexID int,
+	wgr EdgeWeightedGraph, marked []bool, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue,
+	startVertexID int,
 ) {
 	distTo[startVertexID] = 0
-	verticesIndexPriorityQueue.Insert(startVertexID, 0)
-	for verticesIndexPriorityQueue.Size() > 0 {
-		_, vertexID := verticesIndexPriorityQueue.Remove()
-		scanMinimumSpanningTreeVertexPrim(verticesIndexPriorityQueue, marked, edgeTo, distTo, ewgraph, vertexID)
+	verticesQueue.Insert(startVertexID, 0)
+	for verticesQueue.Size() > 0 {
+		_, vertexID := verticesQueue.Remove()
+		scanMinimumSpanningTreeVertexPrim(wgr, marked, edgeTo, distTo, verticesQueue, vertexID)
 	}
 }
 
 // BuildMinimumSpanningTreePrim computes minimum spanning tree using Prim's algorithm.
 // https://algs4.cs.princeton.edu/43mst/PrimMST.java.html
-func BuildMinimumSpanningTreePrim(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
-	numVertices := ewgraph.NumVertices()
+func BuildMinimumSpanningTreePrim(wgr EdgeWeightedGraph) EdgeWeightedGraph {
+	numVertices := wgr.NumVertices()
 	marked := make([]bool, numVertices)
 	edgeTo := make([]int, numVertices)
 	distTo := make([]float64, numVertices)
-	verticesIndexPriorityQueue := ipq.New(func(lhs, rhs interface{}) bool {
+	verticesQueue := ipq.New(func(lhs, rhs interface{}) bool {
 		return lhs.(float64) < rhs.(float64)
 	})
 	for vertexID := 0; vertexID < numVertices; vertexID++ {
@@ -49,7 +49,7 @@ func BuildMinimumSpanningTreePrim(ewgraph EdgeWeightedGraph) EdgeWeightedGraph {
 	}
 	for vertexID := 0; vertexID < numVertices; vertexID++ {
 		if !marked[vertexID] {
-			processMinimumSpanningTreePrim(verticesIndexPriorityQueue, marked, edgeTo, distTo, ewgraph, vertexID)
+			processMinimumSpanningTreePrim(wgr, marked, edgeTo, distTo, verticesQueue, vertexID)
 		}
 	}
 	adjacency := make([][]int, numVertices)

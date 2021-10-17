@@ -16,7 +16,7 @@ func readLine(reader *bufio.Reader) (string, error) {
 	return strings.TrimRight(line, "\n"), nil
 }
 
-func loadGraph(filename string) (g *TestGraph, err error) {
+func loadGraph(filename string) (gr *TestGraph, err error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return
@@ -66,6 +66,6 @@ func loadGraph(filename string) (g *TestGraph, err error) {
 		}
 		ret.AddEdge(v1, v2)
 	}
-	g = &ret
+	gr = &ret
 	return
 }

@@ -4,12 +4,15 @@ import (
 	"algorithms/graph/internals/utils"
 )
 
-func findCycleCore(edgeTo []int, graph Graph, marked []bool, vertexID int, parentVertexID int) []int {
+func findCycleCore(
+	gr Graph, marked []bool, edgeTo []int,
+	vertexID int, parentVertexID int,
+) []int {
 	marked[vertexID] = true
 	edgeTo[vertexID] = parentVertexID
-	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
+	for _, adjacentVertexID := range gr.AdjacentVertices(vertexID) {
 		if !marked[adjacentVertexID] {
-			if cycle := findCycleCore(edgeTo, graph, marked, adjacentVertexID, vertexID); cycle != nil {
+			if cycle := findCycleCore(gr, marked, edgeTo, adjacentVertexID, vertexID); cycle != nil {
 				return cycle
 			}
 		} else if adjacentVertexID != parentVertexID {
@@ -30,13 +33,13 @@ func findCycleCore(edgeTo []int, graph Graph, marked []bool, vertexID int, paren
 // FindCycle returns cycle in a graph (if such cycle exists).
 // Cycle is a path whose first and last vertices are the same.
 // https://algs4.cs.princeton.edu/41graph/Cycle.java.html
-func FindCycle(graph Graph) []int {
-	marked := make([]bool, graph.NumVertices())
-	edgeTo := make([]int, graph.NumVertices())
+func FindCycle(gr Graph) []int {
+	marked := make([]bool, gr.NumVertices())
+	edgeTo := make([]int, gr.NumVertices())
 	utils.ResetList(edgeTo)
-	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
+	for vertexID := 0; vertexID < gr.NumVertices(); vertexID++ {
 		if !marked[vertexID] {
-			if cycle := findCycleCore(edgeTo, graph, marked, vertexID, -1); cycle != nil {
+			if cycle := findCycleCore(gr, marked, edgeTo, vertexID, -1); cycle != nil {
 				return cycle
 			}
 		}

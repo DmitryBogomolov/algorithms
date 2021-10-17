@@ -5,12 +5,15 @@ import (
 	"algorithms/graph/internals/utils"
 )
 
-func findStrongComponentsCore(componentCount *int, componendIDs []int, marked []bool, digraph graph.Graph, vertexID int) {
+func findStrongComponentsCore(
+	dgr graph.Graph, marked []bool, componentCount *int, componendIDs []int,
+	vertexID int,
+) {
 	marked[vertexID] = true
 	componendIDs[vertexID] = *componentCount
-	for _, adjacentVertexID := range digraph.AdjacentVertices(vertexID) {
+	for _, adjacentVertexID := range dgr.AdjacentVertices(vertexID) {
 		if !marked[adjacentVertexID] {
-			findStrongComponentsCore(componentCount, componendIDs, marked, digraph, adjacentVertexID)
+			findStrongComponentsCore(dgr, marked, componentCount, componendIDs, adjacentVertexID)
 		}
 	}
 }
@@ -19,15 +22,15 @@ func findStrongComponentsCore(componentCount *int, componendIDs []int, marked []
 // This implementation uses the Kosaraju-Sharir algorithm.
 // In a digraph vertices are strongly connected if they are mutually reachable.
 // https://algs4.cs.princeton.edu/42digraph/KosarajuSharirSCC.java.html
-func FindStrongComponents(digraph graph.Graph) graph.ConnectedComponents {
+func FindStrongComponents(dgr graph.Graph) graph.ConnectedComponents {
+	marked := make([]bool, dgr.NumVertices())
 	componentCount := 0
-	componendIDs := make([]int, digraph.NumVertices())
+	componendIDs := make([]int, dgr.NumVertices())
 	utils.ResetList(componendIDs)
-	marked := make([]bool, digraph.NumVertices())
-	reversedPostorder := getReversedPostorder(ReverseDigraph(digraph))
+	reversedPostorder := getReversedPostorder(ReverseDigraph(dgr))
 	for _, vertexID := range reversedPostorder {
 		if !marked[vertexID] {
-			findStrongComponentsCore(&componentCount, componendIDs, marked, digraph, vertexID)
+			findStrongComponentsCore(dgr, marked, &componentCount, componendIDs, vertexID)
 			componentCount++
 		}
 	}

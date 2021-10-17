@@ -6,20 +6,21 @@ import (
 
 // In a DFS tree edge "u-v" is bridge if "v" subtree has no back edges to ancestors of "u".
 func findCutEdgesCore(
-	cutEdges *[]Edge,
+	gr Graph,
 	// original vertex distances
 	distances []int,
 	// updated vertex distances
 	updatedDistances []int,
+	cutEdges *[]Edge,
 	// distance from DFS root to current vertex
 	distance int,
-	graph Graph, parentVertexID int, vertexID int,
+	parentVertexID int, vertexID int,
 ) {
 	distances[vertexID] = distance
 	updatedDistances[vertexID] = distances[vertexID]
-	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
+	for _, adjacentVertexID := range gr.AdjacentVertices(vertexID) {
 		if distances[adjacentVertexID] == -1 {
-			findCutEdgesCore(cutEdges, distances, updatedDistances, distance+1, graph, vertexID, adjacentVertexID)
+			findCutEdgesCore(gr, distances, updatedDistances, cutEdges, distance+1, vertexID, adjacentVertexID)
 			// If child vertex distance is less than current vertex distance
 			// then there is back edge from child vertex to ancestors of current vertex.
 			updatedDistances[vertexID] = utils.Min(updatedDistances[vertexID], updatedDistances[adjacentVertexID])
@@ -38,15 +39,15 @@ func findCutEdgesCore(
 // Cut-edge is an edge whose deletion increases number of connected components.
 // An edge is a bridge iif it is not contained in any cycle.
 // https://algs4.cs.princeton.edu/41graph/Bridge.java.html
-func FindCutEdges(graph Graph) []Edge {
-	distances := make([]int, graph.NumVertices())
-	updatedDistances := make([]int, graph.NumVertices())
+func FindCutEdges(gr Graph) []Edge {
+	distances := make([]int, gr.NumVertices())
+	updatedDistances := make([]int, gr.NumVertices())
 	utils.ResetList(distances)
 	utils.ResetList(updatedDistances)
 	var cutEdges []Edge
-	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
+	for vertexID := 0; vertexID < gr.NumVertices(); vertexID++ {
 		if distances[vertexID] == -1 {
-			findCutEdgesCore(&cutEdges, distances, updatedDistances, 0, graph, vertexID, vertexID)
+			findCutEdgesCore(gr, distances, updatedDistances, &cutEdges, 0, vertexID, vertexID)
 		}
 	}
 	return cutEdges

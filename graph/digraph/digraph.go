@@ -3,10 +3,10 @@ package digraph
 import "algorithms/graph/graph"
 
 // AllDigraphEdges returns all edges of a digraph.
-func AllDigraphEdges(digraph graph.Graph) []graph.Edge {
+func AllDigraphEdges(dgr graph.Graph) []graph.Edge {
 	var edges []graph.Edge
-	for vertexID := 0; vertexID < digraph.NumVertices(); vertexID++ {
-		for _, otherVertexID := range digraph.AdjacentVertices(vertexID) {
+	for vertexID := 0; vertexID < dgr.NumVertices(); vertexID++ {
+		for _, otherVertexID := range dgr.AdjacentVertices(vertexID) {
 			edges = append(edges, graph.NewEdge(vertexID, otherVertexID))
 		}
 	}

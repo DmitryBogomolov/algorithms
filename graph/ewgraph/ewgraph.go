@@ -13,12 +13,12 @@ type EdgeWeightedGraph interface {
 }
 
 // AllGraphWeights returns all edge weights of an edge-weighted graph.
-func AllGraphWeights(graph EdgeWeightedGraph) []float64 {
+func AllGraphWeights(wgr EdgeWeightedGraph) []float64 {
 	var list []float64
-	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
-		weights := graph.AdjacentWeights(vertexID)
-		for i, otherVertexID := range graph.AdjacentVertices(vertexID) {
-			if otherVertexID > vertexID {
+	for vertexID := 0; vertexID < wgr.NumVertices(); vertexID++ {
+		weights := wgr.AdjacentWeights(vertexID)
+		for i, adjacentVertexID := range wgr.AdjacentVertices(vertexID) {
+			if adjacentVertexID > vertexID {
 				list = append(list, weights[i])
 			}
 		}
@@ -26,7 +26,7 @@ func AllGraphWeights(graph EdgeWeightedGraph) []float64 {
 	return list
 }
 
-// TotalGraphWeight returns total weight of a graph.
-func TotalGraphWeight(graph EdgeWeightedGraph) float64 {
-	return utils.SumList(AllGraphWeights(graph))
+// TotalGraphWeight returns total weight of a grapgrh.
+func TotalGraphWeight(wgr EdgeWeightedGraph) float64 {
+	return utils.SumList(AllGraphWeights(wgr))
 }

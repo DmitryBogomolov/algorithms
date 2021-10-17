@@ -14,11 +14,15 @@ type Paths struct {
 	edgeTo       []int
 }
 
-func initPaths(graph Graph, vertexID int) Paths {
-	count := graph.NumVertices()
+func initPaths(gr Graph, vertexID int) Paths {
+	count := gr.NumVertices()
 	edgeTo := make([]int, count)
 	utils.ResetList(edgeTo)
-	return Paths{sourceVertex: vertexID, edgeTo: edgeTo, vertexCount: 0}
+	return Paths{
+		sourceVertex: vertexID,
+		vertexCount:  0,
+		edgeTo:       edgeTo,
+	}
 }
 
 // SourceVertex gets source vertex.
@@ -56,19 +60,19 @@ type _SearchPathsVisitor interface {
 	searchPathsVisit(vertexID int, parentVertexID int)
 }
 
-func searchPathsDepthFirstCore(graph Graph, vertexID int, marked []bool, visitor _SearchPathsVisitor) {
+func searchPathsDepthFirstCore(gr Graph, marked []bool, visitor _SearchPathsVisitor, vertexID int) {
 	marked[vertexID] = true
-	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
+	for _, adjacentVertexID := range gr.AdjacentVertices(vertexID) {
 		if !marked[adjacentVertexID] {
 			visitor.searchPathsVisit(adjacentVertexID, vertexID)
-			searchPathsDepthFirstCore(graph, adjacentVertexID, marked, visitor)
+			searchPathsDepthFirstCore(gr, marked, visitor, adjacentVertexID)
 		}
 	}
 }
 
-func searchPathsDepthFirst(graph Graph, vertexID int, visitor _SearchPathsVisitor) {
-	marked := make([]bool, graph.NumVertices())
-	searchPathsDepthFirstCore(graph, vertexID, marked, visitor)
+func searchPathsDepthFirst(gr Graph, visitor _SearchPathsVisitor, vertexID int) {
+	marked := make([]bool, gr.NumVertices())
+	searchPathsDepthFirstCore(gr, marked, visitor, vertexID)
 }
 
 func (paths *Paths) searchPathsVisit(vertexID int, parentVertexID int) {
@@ -78,17 +82,17 @@ func (paths *Paths) searchPathsVisit(vertexID int, parentVertexID int) {
 
 // FindPathsDepthFirst returns paths from a vertex using depth-first search.
 // https://algs4.cs.princeton.edu/41graph/DepthFirstSearch.java.html
-func FindPathsDepthFirst(graph Graph, vertexID int) Paths {
-	paths := initPaths(graph, vertexID)
-	searchPathsDepthFirst(graph, vertexID, &paths)
+func FindPathsDepthFirst(gr Graph, vertexID int) Paths {
+	paths := initPaths(gr, vertexID)
+	searchPathsDepthFirst(gr, &paths, vertexID)
 	return paths
 }
 
-func searchPathsBreadthFirstCore(graph Graph, queue *list.List, marked []bool, visitor _SearchPathsVisitor) {
+func searchPathsBreadthFirstCore(gr Graph, marked []bool, queue *list.List, visitor _SearchPathsVisitor) {
 	for queue.Len() > 0 {
 		vertexID := queue.Front().Value.(int)
 		queue.Remove(queue.Front())
-		for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
+		for _, adjacentVertexID := range gr.AdjacentVertices(vertexID) {
 			if !marked[adjacentVertexID] {
 				marked[adjacentVertexID] = true
 				queue.PushBack(adjacentVertexID)
@@ -98,18 +102,18 @@ func searchPathsBreadthFirstCore(graph Graph, queue *list.List, marked []bool, v
 	}
 }
 
-func searchPathsBreadthFirst(graph Graph, vertexID int, visitor _SearchPathsVisitor) {
-	marked := make([]bool, graph.NumVertices())
+func searchPathsBreadthFirst(gr Graph, visitor _SearchPathsVisitor, vertexID int) {
+	marked := make([]bool, gr.NumVertices())
 	queue := list.New()
 	queue.PushBack(vertexID)
 	marked[vertexID] = true
-	searchPathsBreadthFirstCore(graph, queue, marked, visitor)
+	searchPathsBreadthFirstCore(gr, marked, queue, visitor)
 }
 
 // FindPathsBreadthFirst returns paths from a vertex using breadth-first search.
 // https://algs4.cs.princeton.edu/41graph/BreadthFirstPaths.java.html
-func FindPathsBreadthFirst(graph Graph, vertexID int) Paths {
-	paths := initPaths(graph, vertexID)
-	searchPathsBreadthFirst(graph, vertexID, &paths)
+func FindPathsBreadthFirst(gr Graph, vertexID int) Paths {
+	paths := initPaths(gr, vertexID)
+	searchPathsBreadthFirst(gr, &paths, vertexID)
 	return paths
 }

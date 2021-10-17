@@ -32,12 +32,12 @@ func NewEdge(vertexID1 int, vertexID2 int) Edge {
 }
 
 // AllGraphEdges returns all edges of a graph.
-func AllGraphEdges(graph Graph) []Edge {
+func AllGraphEdges(gr Graph) []Edge {
 	var edges []Edge
-	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
-		for _, otherVertexID := range graph.AdjacentVertices(vertexID) {
-			if otherVertexID > vertexID {
-				edges = append(edges, NewEdge(vertexID, otherVertexID))
+	for vertexID := 0; vertexID < gr.NumVertices(); vertexID++ {
+		for _, adjacentVertexID := range gr.AdjacentVertices(vertexID) {
+			if adjacentVertexID > vertexID {
+				edges = append(edges, NewEdge(vertexID, adjacentVertexID))
 			}
 		}
 	}

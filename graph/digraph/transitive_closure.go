@@ -39,13 +39,13 @@ func (transitiveClosure TransitiveClosure) Reachable(fromVertexID int, toVertexI
 // BuildTransitiveClosure returns transitive closure of a digraph
 // by running depth-first search from each vertex.
 // https://algs4.cs.princeton.edu/42digraph/TransitiveClosure.java.html
-func BuildTransitiveClosure(digraph graph.Graph) TransitiveClosure {
+func BuildTransitiveClosure(dgr graph.Graph) TransitiveClosure {
 	numEdges := 0
-	adjacency := make([][]int, digraph.NumVertices())
-	for vertexID := 0; vertexID < digraph.NumVertices(); vertexID++ {
-		paths := graph.FindPathsDepthFirst(digraph, vertexID)
+	adjacency := make([][]int, dgr.NumVertices())
+	for vertexID := 0; vertexID < dgr.NumVertices(); vertexID++ {
+		paths := graph.FindPathsDepthFirst(dgr, vertexID)
 		var vertexAdjacency []int
-		for adjacentVertexID := 0; adjacentVertexID < digraph.NumVertices(); adjacentVertexID++ {
+		for adjacentVertexID := 0; adjacentVertexID < dgr.NumVertices(); adjacentVertexID++ {
 			if paths.HasPathTo(adjacentVertexID) {
 				vertexAdjacency = append(vertexAdjacency, adjacentVertexID)
 				numEdges++
@@ -54,7 +54,7 @@ func BuildTransitiveClosure(digraph graph.Graph) TransitiveClosure {
 		adjacency[vertexID] = vertexAdjacency
 	}
 	return TransitiveClosure{
-		numVertices: digraph.NumVertices(),
+		numVertices: dgr.NumVertices(),
 		numEdges:    numEdges,
 		adjacency:   adjacency,
 	}

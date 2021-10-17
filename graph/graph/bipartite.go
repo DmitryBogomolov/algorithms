@@ -1,13 +1,16 @@
 package graph
 
-func isBipartiteCore(marked []bool, colors []bool, graph Graph, vertexID int, parentColor bool) bool {
+func isBipartiteCore(
+	gr Graph, marked []bool, colors []bool,
+	vertexID int, parentColor bool,
+) bool {
 	marked[vertexID] = true
 	color := !parentColor
 	colors[vertexID] = color
-	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
+	for _, adjacentVertexID := range gr.AdjacentVertices(vertexID) {
 		if !marked[adjacentVertexID] {
 			colors[adjacentVertexID] = !colors[vertexID]
-			if !isBipartiteCore(marked, colors, graph, adjacentVertexID, color) {
+			if !isBipartiteCore(gr, marked, colors, adjacentVertexID, color) {
 				return false
 			}
 		} else if colors[adjacentVertexID] == colors[vertexID] {
@@ -21,12 +24,12 @@ func isBipartiteCore(marked []bool, colors []bool, graph Graph, vertexID int, pa
 // In a bipartite graph vertices can be divided into two sets such that all edges connect a vertex
 // in one set with a vertex in other set.
 // https://algs4.cs.princeton.edu/41graph/Bipartite.java.html
-func IsBipartite(graph Graph) bool {
-	marked := make([]bool, graph.NumVertices())
-	colors := make([]bool, graph.NumVertices())
-	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
+func IsBipartite(gr Graph) bool {
+	marked := make([]bool, gr.NumVertices())
+	colors := make([]bool, gr.NumVertices())
+	for vertexID := 0; vertexID < gr.NumVertices(); vertexID++ {
 		if !marked[vertexID] {
-			if !isBipartiteCore(marked, colors, graph, vertexID, true) {
+			if !isBipartiteCore(gr, marked, colors, vertexID, true) {
 				return false
 			}
 		}

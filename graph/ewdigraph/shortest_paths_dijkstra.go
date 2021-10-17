@@ -10,23 +10,23 @@ import (
 
 // FindShortedPathsDijkstra returns shortest paths from a vertex.
 // https://algs4.cs.princeton.edu/44sp/DijkstraSP.java.html
-func FindShortedPathsDijkstra(ewdigraph ewgraph.EdgeWeightedGraph, vertexID int) ShortestPaths {
-	if vertexID < 0 || vertexID > ewdigraph.NumVertices()-1 {
+func FindShortedPathsDijkstra(wdgr ewgraph.EdgeWeightedGraph, vertexID int) ShortestPaths {
+	if vertexID < 0 || vertexID > wdgr.NumVertices()-1 {
 		panic(fmt.Sprintf("vertex '%d' is out of range", vertexID))
 	}
-	numVertices := ewdigraph.NumVertices()
+	numVertices := wdgr.NumVertices()
 	edgeTo := make([]int, numVertices)
-	distTo := make([]float64, numVertices)
 	utils.ResetList(edgeTo)
+	distTo := make([]float64, numVertices)
 	for i := range distTo {
 		distTo[i] = math.MaxFloat64
 	}
 	distTo[vertexID] = 0.0
-	verticesPriorityQueue := ipq.New(func(lhs, rhs interface{}) bool {
+	verticesQueue := ipq.New(func(lhs, rhs interface{}) bool {
 		return lhs.(float64) < rhs.(float64)
 	})
-	verticesPriorityQueue.Insert(vertexID, distTo[vertexID])
-	relaxVerticesDijkstra(ewdigraph, verticesPriorityQueue, distTo, edgeTo)
+	verticesQueue.Insert(vertexID, distTo[vertexID])
+	relaxVerticesDijkstra(wdgr, edgeTo, distTo, verticesQueue)
 	vertexCount := 0
 	for _, edgeID := range edgeTo {
 		if edgeID >= 0 {
@@ -42,28 +42,24 @@ func FindShortedPathsDijkstra(ewdigraph ewgraph.EdgeWeightedGraph, vertexID int)
 }
 
 func relaxVerticesDijkstra(
-	ewdigraph ewgraph.EdgeWeightedGraph,
-	verticesPriorityQueue ipq.IndexPriorityQueue,
-	distTo []float64, edgeTo []int,
+	wdgr ewgraph.EdgeWeightedGraph, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue,
 ) {
-	for verticesPriorityQueue.Size() > 0 {
-		_, currentVertexID := verticesPriorityQueue.Remove()
-		weights := ewdigraph.AdjacentWeights(currentVertexID)
-		for i, adjacentVertexID := range ewdigraph.AdjacentVertices(currentVertexID) {
-			relaxEdgeDijkstra(ewdigraph, verticesPriorityQueue, distTo, edgeTo, currentVertexID, adjacentVertexID, weights[i])
+	for verticesQueue.Size() > 0 {
+		_, currentVertexID := verticesQueue.Remove()
+		weights := wdgr.AdjacentWeights(currentVertexID)
+		for i, adjacentVertexID := range wdgr.AdjacentVertices(currentVertexID) {
+			relaxEdgeDijkstra(wdgr, edgeTo, distTo, verticesQueue, currentVertexID, adjacentVertexID, weights[i])
 		}
 	}
 }
 
 func relaxEdgeDijkstra(
-	ewdigraph ewgraph.EdgeWeightedGraph,
-	verticesPriorityQueue ipq.IndexPriorityQueue,
-	distTo []float64, edgeTo []int,
+	wdgr ewgraph.EdgeWeightedGraph, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue,
 	fromVertexID int, toVertexID int, weight float64,
 ) {
 	if distTo[toVertexID] > distTo[fromVertexID]+weight {
 		distTo[toVertexID] = distTo[fromVertexID] + weight
 		edgeTo[toVertexID] = fromVertexID
-		verticesPriorityQueue.Insert(toVertexID, distTo[toVertexID])
+		verticesQueue.Insert(toVertexID, distTo[toVertexID])
 	}
 }

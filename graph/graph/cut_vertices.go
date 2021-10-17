@@ -8,22 +8,23 @@ import (
 // - it is root and has at least two children
 // - it is not root and has subtree with no back edges to ancestors
 func findCutVerticesCore(
-	articulation []bool,
+	gr Graph,
 	// original vertex distances
 	distances []int,
 	// updated vertex distances
 	updatedDistances []int,
+	articulation []bool,
 	// distance from DFS root to current vertex
 	distance int,
-	graph Graph, parentVertexID int, vertexID int,
+	parentVertexID int, vertexID int,
 ) {
 	children := 0
 	distances[vertexID] = distance
 	updatedDistances[vertexID] = distances[vertexID]
-	for _, adjacentVertexID := range graph.AdjacentVertices(vertexID) {
+	for _, adjacentVertexID := range gr.AdjacentVertices(vertexID) {
 		if distances[adjacentVertexID] == -1 {
 			children++
-			findCutVerticesCore(articulation, distances, updatedDistances, distance+1, graph, vertexID, adjacentVertexID)
+			findCutVerticesCore(gr, distances, updatedDistances, articulation, distance+1, vertexID, adjacentVertexID)
 			// If child vertex distance is less than current vertex distance
 			// then there is back edge from child vertex to ancestors of current vertex.
 			updatedDistances[vertexID] = utils.Min(updatedDistances[vertexID], updatedDistances[adjacentVertexID])
@@ -47,15 +48,15 @@ func findCutVerticesCore(
 // Cut-vertex (articulation vertex) is a vertex whose removal increases number of connected components.
 // A graph is biconnected if it has no articulation vertices.
 // https://algs4.cs.princeton.edu/41graph/Biconnected.java.html
-func FindCutVertices(graph Graph) []int {
-	distances := make([]int, graph.NumVertices())
-	updatedDistances := make([]int, graph.NumVertices())
-	articulation := make([]bool, graph.NumVertices())
+func FindCutVertices(gr Graph) []int {
+	distances := make([]int, gr.NumVertices())
+	updatedDistances := make([]int, gr.NumVertices())
+	articulation := make([]bool, gr.NumVertices())
 	utils.ResetList(distances)
 	utils.ResetList(updatedDistances)
-	for vertexID := 0; vertexID < graph.NumVertices(); vertexID++ {
+	for vertexID := 0; vertexID < gr.NumVertices(); vertexID++ {
 		if distances[vertexID] == -1 {
-			findCutVerticesCore(articulation, distances, updatedDistances, 0, graph, vertexID, vertexID)
+			findCutVerticesCore(gr, distances, updatedDistances, articulation, 0, vertexID, vertexID)
 		}
 	}
 	var result []int

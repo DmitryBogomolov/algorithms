@@ -5,34 +5,37 @@ import (
 	"algorithms/graph/internals/utils"
 )
 
-func getReversedPostorderCore(list *[]int, marked []bool, digraph graph.Graph, vertexID int) {
+func getReversedPostorderCore(
+	dgr graph.Graph, marked []bool, vertices *[]int,
+	vertexID int,
+) {
 	marked[vertexID] = true
-	for _, adjacentVertexID := range digraph.AdjacentVertices(vertexID) {
+	for _, adjacentVertexID := range dgr.AdjacentVertices(vertexID) {
 		if !marked[adjacentVertexID] {
-			getReversedPostorderCore(list, marked, digraph, adjacentVertexID)
+			getReversedPostorderCore(dgr, marked, vertices, adjacentVertexID)
 		}
 	}
-	*list = append(*list, vertexID)
+	*vertices = append(*vertices, vertexID)
 }
 
-func getReversedPostorder(digraph graph.Graph) []int {
-	marked := make([]bool, digraph.NumVertices())
-	var list []int
-	for vertexID := 0; vertexID < digraph.NumVertices(); vertexID++ {
+func getReversedPostorder(dgr graph.Graph) []int {
+	marked := make([]bool, dgr.NumVertices())
+	var vertices []int
+	for vertexID := 0; vertexID < dgr.NumVertices(); vertexID++ {
 		if !marked[vertexID] {
-			getReversedPostorderCore(&list, marked, digraph, vertexID)
+			getReversedPostorderCore(dgr, marked, &vertices, vertexID)
 		}
 	}
-	utils.ReverseList(list)
-	return list
+	utils.ReverseList(vertices)
+	return vertices
 }
 
 // TopologicalSort puts the vertices in order such that all directed edges
 // point from a vertex earlier in the order to a vertex later in the order.
 // https://algs4.cs.princeton.edu/42digraph/Topological.java.html
-func TopologicalSort(digraph graph.Graph) []int {
-	if FindDirectedCycle(digraph) != nil {
+func TopologicalSort(dgr graph.Graph) []int {
+	if FindDirectedCycle(dgr) != nil {
 		return nil
 	}
-	return getReversedPostorder(digraph)
+	return getReversedPostorder(dgr)
 }

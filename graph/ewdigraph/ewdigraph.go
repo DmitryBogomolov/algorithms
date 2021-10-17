@@ -6,11 +6,11 @@ import (
 )
 
 // AllDigraphWeights returns all edges of an edge-weighted digraph.
-func AllDigraphWeights(digraph ewgraph.EdgeWeightedGraph) []float64 {
+func AllDigraphWeights(wdgr ewgraph.EdgeWeightedGraph) []float64 {
 	var list []float64
-	for vertexID := 0; vertexID < digraph.NumVertices(); vertexID++ {
-		weights := digraph.AdjacentWeights(vertexID)
-		for i := range digraph.AdjacentVertices(vertexID) {
+	for vertexID := 0; vertexID < wdgr.NumVertices(); vertexID++ {
+		weights := wdgr.AdjacentWeights(vertexID)
+		for i := range wdgr.AdjacentVertices(vertexID) {
 			list = append(list, weights[i])
 		}
 	}
@@ -18,6 +18,6 @@ func AllDigraphWeights(digraph ewgraph.EdgeWeightedGraph) []float64 {
 }
 
 // TotalDigraphWeight returns total weight of a digraph.
-func TotalDigraphWeight(digraph ewgraph.EdgeWeightedGraph) float64 {
-	return utils.SumList(AllDigraphWeights(digraph))
+func TotalDigraphWeight(wdgr ewgraph.EdgeWeightedGraph) float64 {
+	return utils.SumList(AllDigraphWeights(wdgr))
 }
