@@ -62,10 +62,5 @@ func BuildMinimumSpanningTreePrim(wgr EdgeWeightedGraph) EdgeWeightedGraph {
 			numEdges++
 		}
 	}
-	return _MinimumSpanningTree{
-		numVertices: numVertices,
-		numEdges:    numEdges,
-		adjacency:   adjacency,
-		weights:     weights,
-	}
+	return NewImplEdgeWeightedGraph(numVertices, numEdges, adjacency, weights)
 }

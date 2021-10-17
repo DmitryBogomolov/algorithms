@@ -3,6 +3,7 @@ package ewdigraph
 import (
 	"algorithms/graph/digraph"
 	"algorithms/graph/ewgraph"
+	"algorithms/graph/graph"
 	"algorithms/graph/internals/utils"
 	"container/list"
 	"fmt"
@@ -75,24 +76,6 @@ func relaxVertexBellmanFord(
 	}
 }
 
-type _TmpDigraph struct {
-	numVertices int
-	numEdges    int
-	adjacency   [][]int
-}
-
-func (dgr _TmpDigraph) NumVertices() int {
-	return dgr.numVertices
-}
-
-func (dgr _TmpDigraph) NumEdges() int {
-	return dgr.numEdges
-}
-
-func (dgr _TmpDigraph) AdjacentVertices(vertexID int) []int {
-	return dgr.adjacency[vertexID]
-}
-
 func findNegativeCycle(edgeTo []int) []int {
 	numVertices := len(edgeTo)
 	numEdges := 0
@@ -103,10 +86,6 @@ func findNegativeCycle(edgeTo []int) []int {
 			numEdges++
 		}
 	}
-	tmpDigraph := _TmpDigraph{
-		numVertices: numVertices,
-		numEdges:    numEdges,
-		adjacency:   adjacency,
-	}
-	return digraph.FindDirectedCycle(tmpDigraph)
+	dgr := graph.NewImplGraph(numVertices, numEdges, adjacency)
+	return digraph.FindDirectedCycle(dgr)
 }
