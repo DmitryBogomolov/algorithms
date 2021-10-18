@@ -1,8 +1,8 @@
 package ewgraph
 
 import (
-	"algorithms/graph/graph"
-	"algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/graph"
+	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
 )
 
 // EdgeWeightedGraph is a graph where each edge has an associated weight.

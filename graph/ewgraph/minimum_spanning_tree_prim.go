@@ -1,8 +1,9 @@
 package ewgraph
 
 import (
-	ipq "algorithms/indexpriorityqueue"
 	"math"
+
+	ipq "github.com/DmitryBogomolov/algorithms/indexpriorityqueue"
 )
 
 func scanMinimumSpanningTreeVertexPrim(

@@ -1,9 +1,10 @@
 package ewgraph
 
 import (
-	"algorithms/graph/graph"
-	"algorithms/graph/internals/tests"
 	"testing"
+
+	"github.com/DmitryBogomolov/algorithms/graph/graph"
+	"github.com/DmitryBogomolov/algorithms/graph/internals/tests"
 
 	"github.com/stretchr/testify/assert"
 )

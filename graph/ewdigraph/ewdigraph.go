@@ -1,8 +1,8 @@
 package ewdigraph
 
 import (
-	"algorithms/graph/ewgraph"
-	"algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/ewgraph"
+	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
 )
 
 // AllDigraphWeights returns all edges of an edge-weighted digraph.

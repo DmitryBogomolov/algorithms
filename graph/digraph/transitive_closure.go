@@ -1,8 +1,9 @@
 package digraph
 
 import (
-	"algorithms/graph/graph"
 	"sort"
+
+	"github.com/DmitryBogomolov/algorithms/graph/graph"
 )
 
 // TransitiveClosure is a transitive closure of a digraph.

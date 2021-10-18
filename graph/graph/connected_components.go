@@ -1,8 +1,9 @@
 package graph
 
 import (
-	"algorithms/graph/internals/utils"
 	"fmt"
+
+	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
 )
 
 // ConnectedComponents is a collection of connected components in a graph.

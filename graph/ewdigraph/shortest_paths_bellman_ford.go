@@ -1,13 +1,14 @@
 package ewdigraph
 
 import (
-	"algorithms/graph/digraph"
-	"algorithms/graph/ewgraph"
-	"algorithms/graph/graph"
-	"algorithms/graph/internals/utils"
 	"container/list"
 	"fmt"
 	"math"
+
+	"github.com/DmitryBogomolov/algorithms/graph/digraph"
+	"github.com/DmitryBogomolov/algorithms/graph/ewgraph"
+	"github.com/DmitryBogomolov/algorithms/graph/graph"
+	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
 )
 
 // FindShortedPathsBellmanFord returns shortest paths from a vertex.

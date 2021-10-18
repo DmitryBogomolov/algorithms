@@ -1,11 +1,12 @@
 package ewdigraph
 
 import (
-	"algorithms/graph/ewgraph"
-	"algorithms/graph/internals/utils"
-	ipq "algorithms/indexpriorityqueue"
 	"fmt"
 	"math"
+
+	"github.com/DmitryBogomolov/algorithms/graph/ewgraph"
+	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
+	ipq "github.com/DmitryBogomolov/algorithms/indexpriorityqueue"
 )
 
 // FindShortedPathsDijkstra returns shortest paths from a vertex.

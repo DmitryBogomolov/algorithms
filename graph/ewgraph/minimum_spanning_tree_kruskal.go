@@ -1,9 +1,9 @@
 package ewgraph
 
 import (
-	"algorithms/graph/graph"
-	pq "algorithms/priorityqueue"
-	"algorithms/unionfind"
+	"github.com/DmitryBogomolov/algorithms/graph/graph"
+	pq "github.com/DmitryBogomolov/algorithms/priorityqueue"
+	"github.com/DmitryBogomolov/algorithms/unionfind"
 )
 
 type _EdgesQueueItem struct {

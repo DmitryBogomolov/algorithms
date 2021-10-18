@@ -1,6 +1,6 @@
 package digraph
 
-import "algorithms/graph/graph"
+import "github.com/DmitryBogomolov/algorithms/graph/graph"
 
 type _ReversedDigraph struct {
 	graph.Graph

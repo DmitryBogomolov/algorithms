@@ -1,6 +1,6 @@
 package digraph
 
-import "algorithms/graph/graph"
+import "github.com/DmitryBogomolov/algorithms/graph/graph"
 
 // AllDigraphEdges returns all edges of a digraph.
 func AllDigraphEdges(dgr graph.Graph) []graph.Edge {

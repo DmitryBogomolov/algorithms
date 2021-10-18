@@ -1,6 +1,6 @@
 package ewgraph
 
-import "algorithms/graph/graph"
+import "github.com/DmitryBogomolov/algorithms/graph/graph"
 
 // ImplEdgeWeightedGraph is an implementaion of EdgeWeightedGraph.
 type ImplEdgeWeightedGraph struct {

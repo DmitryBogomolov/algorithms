@@ -1,7 +1,7 @@
 package graph
 
 import (
-	"algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
 )
 
 func findCycleCore(

@@ -1,7 +1,7 @@
 package graph
 
 import (
-	"algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
 )
 
 // In a DFS tree a vertex is articulation point if:

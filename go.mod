@@ -1,4 +1,4 @@
-module algorithms
+module github.com/DmitryBogomolov/algorithms
 
 go 1.17
 

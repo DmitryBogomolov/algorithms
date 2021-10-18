@@ -1,9 +1,10 @@
 package graph
 
 import (
-	"algorithms/graph/internals/utils"
 	"container/list"
 	"fmt"
+
+	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
 )
 
 // Paths is a collection of paths from the source vertex to other vertices.

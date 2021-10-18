@@ -1,8 +1,8 @@
 package digraph
 
 import (
-	"algorithms/graph/graph"
-	"algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/graph"
+	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
 )
 
 func getReversedPostorderCore(
