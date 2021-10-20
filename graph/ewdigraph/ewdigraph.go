@@ -2,7 +2,7 @@ package ewdigraph
 
 import (
 	"github.com/DmitryBogomolov/algorithms/graph/ewgraph"
-	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/internal/utils"
 )
 
 // AllDigraphWeights returns all edges of an edge-weighted digraph.

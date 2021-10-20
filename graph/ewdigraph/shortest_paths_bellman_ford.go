@@ -8,7 +8,7 @@ import (
 	"github.com/DmitryBogomolov/algorithms/graph/digraph"
 	"github.com/DmitryBogomolov/algorithms/graph/ewgraph"
 	"github.com/DmitryBogomolov/algorithms/graph/graph"
-	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/internal/utils"
 )
 
 // FindShortedPathsBellmanFord returns shortest paths from a vertex.

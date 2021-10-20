@@ -5,7 +5,7 @@ import (
 	"math"
 
 	"github.com/DmitryBogomolov/algorithms/graph/ewgraph"
-	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/internal/utils"
 	ipq "github.com/DmitryBogomolov/algorithms/indexpriorityqueue"
 )
 

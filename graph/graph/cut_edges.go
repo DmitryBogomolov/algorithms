@@ -1,7 +1,7 @@
 package graph
 
 import (
-	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/internal/utils"
 )
 
 // In a DFS tree edge "u-v" is bridge if "v" subtree has no back edges to ancestors of "u".

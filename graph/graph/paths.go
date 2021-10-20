@@ -4,7 +4,7 @@ import (
 	"container/list"
 	"fmt"
 
-	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/internal/utils"
 )
 
 // Paths is a collection of paths from the source vertex to other vertices.

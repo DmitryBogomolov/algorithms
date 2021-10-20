@@ -3,7 +3,7 @@ package ewdigraph
 import (
 	"fmt"
 
-	"github.com/DmitryBogomolov/algorithms/graph/internals/utils"
+	"github.com/DmitryBogomolov/algorithms/graph/internal/utils"
 )
 
 // ShortestPaths is a collection of paths from the source vertex to other vertices.

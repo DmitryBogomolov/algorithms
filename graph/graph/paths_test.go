@@ -3,7 +3,7 @@ package graph
 import (
 	"testing"
 
-	"github.com/DmitryBogomolov/algorithms/graph/internals/tests"
+	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
 	"github.com/stretchr/testify/assert"
 )
