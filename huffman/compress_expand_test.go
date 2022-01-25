@@ -1,9 +1,10 @@
-package huffman
+package huffman_test
 
 import (
 	"math/rand"
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/huffman"
 	"github.com/stretchr/testify/assert"
 )
 
