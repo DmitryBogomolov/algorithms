@@ -1,15 +1,16 @@
-package digraph
+package digraph_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/graph/digraph"
 	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestReverseDigraph(t *testing.T) {
-	graph := tests.NewTestDigraph(4,
+	gr := tests.NewTestDigraph(4,
 		0, 1,
 		0, 2,
 		2, 1,
@@ -17,8 +18,7 @@ func TestReverseDigraph(t *testing.T) {
 		2, 3,
 	)
 
-	ret := ReverseDigraph(graph)
-
+	ret := ReverseDigraph(gr)
 	assert.Equal(t, 4, ret.NumVertices(), "vertices")
 	assert.Equal(t, 5, ret.NumEdges(), "edges")
 	assert.Equal(t, []int(nil), ret.AdjacentVertices(0), "vertex 0 adjacency")
@@ -28,7 +28,7 @@ func TestReverseDigraph(t *testing.T) {
 }
 
 func TestReverseReversedDigraph(t *testing.T) {
-	graph := tests.NewTestDigraph(4,
+	gr := tests.NewTestDigraph(4,
 		0, 1,
 		0, 2,
 		2, 1,
@@ -36,9 +36,8 @@ func TestReverseReversedDigraph(t *testing.T) {
 		2, 3,
 	)
 
-	ret, ok := ReverseDigraph(graph).(ReversibleDigraph)
-
+	ret, ok := ReverseDigraph(gr).(ReversibleDigraph)
 	assert.Equal(t, true, ok, "reversible")
-	assert.Equal(t, graph, ret.Reverse(), "reverse to original")
-	assert.Equal(t, graph, ReverseDigraph(ret), "reverse to original")
+	assert.Equal(t, gr, ret.Reverse(), "reverse to original")
+	assert.Equal(t, gr, ReverseDigraph(ret), "reverse to original")
 }
