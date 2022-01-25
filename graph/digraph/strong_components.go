@@ -18,11 +18,14 @@ func findStrongComponentsCore(
 	}
 }
 
+// StrongComponents is a collection of strongly connected components in a digraph.
+type StrongComponents = graph.ConnectedComponents
+
 // FindStrongComponents returns strongly connected components in a digraph.
 // This implementation uses the Kosaraju-Sharir algorithm.
 // In a digraph vertices are strongly connected if they are mutually reachable.
 // https://algs4.cs.princeton.edu/42digraph/KosarajuSharirSCC.java.html
-func FindStrongComponents(dgr graph.Graph) graph.ConnectedComponents {
+func FindStrongComponents(dgr graph.Graph) StrongComponents {
 	marked := make([]bool, dgr.NumVertices())
 	componentCount := 0
 	componendIDs := make([]int, dgr.NumVertices())

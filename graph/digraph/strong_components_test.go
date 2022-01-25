@@ -4,25 +4,24 @@ import (
 	"testing"
 
 	. "github.com/DmitryBogomolov/algorithms/graph/digraph"
-	"github.com/DmitryBogomolov/algorithms/graph/graph"
 	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func checkStrongComponents(t *testing.T, cc graph.ConnectedComponents, componentsData [][]int) {
-	assert.Equal(t, len(componentsData), cc.Count())
+func checkStrongComponents(t *testing.T, sc StrongComponents, componentsData [][]int) {
+	assert.Equal(t, len(componentsData), sc.Count())
 	for i, componentVertices := range componentsData {
-		assert.Equal(t, componentVertices, cc.Component(i))
+		assert.Equal(t, componentVertices, sc.Component(i))
 		for _, vertexID := range componentVertices {
-			assert.Equal(t, i, cc.ComponentID(vertexID))
+			assert.Equal(t, i, sc.ComponentID(vertexID))
 		}
 		for k := 0; k < len(componentVertices)-1; k++ {
-			assert.Equal(t, true, cc.Connected(componentVertices[k], componentVertices[k+1]))
+			assert.Equal(t, true, sc.Connected(componentVertices[k], componentVertices[k+1]))
 		}
 	}
 	for k := 0; k < len(componentsData)-1; k++ {
-		assert.Equal(t, false, cc.Connected(componentsData[k][0], componentsData[k+1][0]))
+		assert.Equal(t, false, sc.Connected(componentsData[k][0], componentsData[k+1][0]))
 	}
 }
 
