@@ -1,15 +1,16 @@
-package ewdigraph
+package ewdigraph_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/graph/ewdigraph"
 	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFindShortedPathsDijkstra(t *testing.T) {
-	target := tests.NewTestEdgeWeightedDigraph(8, []tests.TestWeightedEdge{
+	gr := tests.NewTestEdgeWeightedDigraph(8, []tests.TestWeightedEdge{
 		{V1: 4, V2: 5, Weight: 0.35},
 		{V1: 5, V2: 4, Weight: 0.35},
 		{V1: 4, V2: 7, Weight: 0.37},
@@ -27,7 +28,7 @@ func TestFindShortedPathsDijkstra(t *testing.T) {
 		{V1: 6, V2: 4, Weight: 0.93},
 	})
 
-	paths := FindShortedPathsDijkstra(target, 0)
+	paths := FindShortedPathsDijkstra(gr, 0)
 
 	check := func(vertexID int, expectedVertices []int, expectedWeight float64) {
 		vertices, weight := paths.PathTo(vertexID)
