@@ -1,8 +1,9 @@
-package ewgraph
+package ewgraph_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/graph/ewgraph"
 	"github.com/DmitryBogomolov/algorithms/graph/graph"
 	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
@@ -10,7 +11,7 @@ import (
 )
 
 func TestBuildMinimumSpanningTreePrim(t *testing.T) {
-	target := tests.NewTestEdgeWeightedGraph(8, []tests.TestWeightedEdge{
+	gr := tests.NewTestEdgeWeightedGraph(8, []tests.TestWeightedEdge{
 		{V1: 4, V2: 5, Weight: 0.35},
 		{V1: 4, V2: 7, Weight: 0.37},
 		{V1: 5, V2: 7, Weight: 0.28},
@@ -29,7 +30,7 @@ func TestBuildMinimumSpanningTreePrim(t *testing.T) {
 		{V1: 6, V2: 4, Weight: 0.93},
 	})
 
-	ret := BuildMinimumSpanningTreePrim(target)
+	ret := BuildMinimumSpanningTreePrim(gr)
 
 	assert.Equal(t, 8, ret.NumVertices(), "vertices")
 	assert.Equal(t, 7, ret.NumEdges(), "edges")
