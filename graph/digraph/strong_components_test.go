@@ -1,15 +1,52 @@
-package digraph
+package digraph_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/graph/digraph"
+	"github.com/DmitryBogomolov/algorithms/graph/graph"
 	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func checkStrongComponents(t *testing.T, cc graph.ConnectedComponents, componentsData [][]int) {
+	assert.Equal(t, len(componentsData), cc.Count())
+	for i, componentVertices := range componentsData {
+		assert.Equal(t, componentVertices, cc.Component(i))
+		for _, vertexID := range componentVertices {
+			assert.Equal(t, i, cc.ComponentID(vertexID))
+		}
+		for k := 0; k < len(componentVertices)-1; k++ {
+			assert.Equal(t, true, cc.Connected(componentVertices[k], componentVertices[k+1]))
+		}
+	}
+	for k := 0; k < len(componentsData)-1; k++ {
+		assert.Equal(t, false, cc.Connected(componentsData[k][0], componentsData[k+1][0]))
+	}
+}
+
+func TestFindStrongComponents_EmptyGraph(t *testing.T) {
+	gr := tests.NewTestDigraph(0)
+
+	ret := FindStrongComponents(gr)
+	checkStrongComponents(t, ret, nil)
+}
+
+func TestFindStrongComponents_NoEdges(t *testing.T) {
+	gr := tests.NewTestDigraph(4)
+
+	ret := FindStrongComponents(gr)
+	checkStrongComponents(t, ret, [][]int{
+		{3},
+		{2},
+		{1},
+		{0},
+	})
+}
+
 func TestFindStrongComponents(t *testing.T) {
-	graph := tests.NewTestDigraph(13,
+	gr := tests.NewTestDigraph(13,
 		4, 2,
 		2, 3,
 		3, 2,
@@ -34,31 +71,12 @@ func TestFindStrongComponents(t *testing.T) {
 		7, 6,
 	)
 
-	ret := FindStrongComponents(graph)
-
-	assert.Equal(t, 5, ret.Count(), "count")
-
-	components := make([]int, graph.NumVertices())
-	for v := 0; v < graph.NumVertices(); v++ {
-		components[v] = ret.ComponentID(v)
-	}
-	assert.Equal(t,
-		[]int{1, 0, 1, 1, 1, 1, 3, 4, 3, 2, 2, 2, 2},
-		components,
-		"components",
-	)
-
-	assert.Equal(t, []int{1}, ret.Component(0), "component 0")
-	assert.Equal(t, []int{0, 2, 3, 4, 5}, ret.Component(1), "component 1")
-	assert.Equal(t, []int{9, 10, 11, 12}, ret.Component(2), "component 2")
-	assert.Equal(t, []int{6, 8}, ret.Component(3), "component 3")
-	assert.Equal(t, []int{7}, ret.Component(4), "component 4")
-
-	assert.Equal(t, true, ret.Connected(1, 1), "1 - 1")
-	assert.Equal(t, false, ret.Connected(2, 1), "2 - 1")
-	assert.Equal(t, false, ret.Connected(9, 7), "9 - 7")
-	assert.Equal(t, true, ret.Connected(2, 3), "2 - 3")
-	assert.Equal(t, true, ret.Connected(8, 6), "8 - 6")
-	assert.Equal(t, true, ret.Connected(10, 11), "10 - 11")
-	assert.Equal(t, true, ret.Connected(0, 5), "0 - 5")
+	ret := FindStrongComponents(gr)
+	checkStrongComponents(t, ret, [][]int{
+		{1},
+		{0, 2, 3, 4, 5},
+		{9, 10, 11, 12},
+		{6, 8},
+		{7},
+	})
 }
