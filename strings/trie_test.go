@@ -1,9 +1,10 @@
-package strings
+package strings_test
 
 import (
 	"strings"
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/strings"
 	"github.com/stretchr/testify/assert"
 )
 
