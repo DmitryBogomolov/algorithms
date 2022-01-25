@@ -1,9 +1,10 @@
-package unionfind
+package unionfind_test
 
 import (
 	"fmt"
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/unionfind"
 	"github.com/stretchr/testify/assert"
 )
 
