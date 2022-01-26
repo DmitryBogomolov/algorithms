@@ -41,7 +41,7 @@ func (trie *Trie) size(node *_TrieNode) int {
 	return count
 }
 
-// Size returns amount of elements.
+// Size returns amount of elements in a trie.
 func (trie *Trie) Size() int {
 	return trie.size(trie.root)
 }
@@ -61,7 +61,7 @@ func (trie *Trie) get(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 	return trie.get(node.nodes[nodeIdx], key, symbolIdx+1)
 }
 
-// Get finds value for a key.
+// Get finds a value for a key.
 func (trie *Trie) Get(key string) interface{} {
 	node := trie.get(trie.root, []rune(key), 0)
 	if node == nil {
@@ -83,7 +83,7 @@ func (trie *Trie) put(node *_TrieNode, key []rune, symbolIdx int, val interface{
 	return node
 }
 
-// Put add key-value pair.
+// Put sets a value for a key.
 func (trie *Trie) Put(key string, val interface{}) {
 	trie.root = trie.put(trie.root, []rune(key), 0, val)
 }
