@@ -46,6 +46,10 @@ func (trie *Trie) Size() int {
 	return trie.size(trie.root)
 }
 
+func (trie *Trie) symbolToIdx(key []rune, idx int) int {
+	return trie.alphabet.ToIndex(key[idx])
+}
+
 func (trie *Trie) get(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 	if node == nil {
 		return nil
@@ -53,7 +57,7 @@ func (trie *Trie) get(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 	if symbolIdx == len(key) {
 		return node
 	}
-	nodeIdx := trie.alphabet.ToIndex(key[symbolIdx])
+	nodeIdx := trie.symbolToIdx(key, symbolIdx)
 	return trie.get(node.nodes[nodeIdx], key, symbolIdx+1)
 }
 
@@ -66,10 +70,6 @@ func (trie *Trie) Get(key string) interface{} {
 	return node.value
 }
 
-func getNodeIdx(alphabet Alphabet, key []rune, idx int) int {
-	return alphabet.ToIndex(key[idx])
-}
-
 func (trie *Trie) put(node *_TrieNode, key []rune, symbolIdx int, val interface{}) *_TrieNode {
 	if node == nil {
 		node = newNode(trie.alphabet)
@@ -78,7 +78,7 @@ func (trie *Trie) put(node *_TrieNode, key []rune, symbolIdx int, val interface{
 		node.value = val
 		return node
 	}
-	nodeIdx := getNodeIdx(trie.alphabet, key, symbolIdx)
+	nodeIdx := trie.symbolToIdx(key, symbolIdx)
 	node.nodes[nodeIdx] = trie.put(node.nodes[nodeIdx], key, symbolIdx+1, val)
 	return node
 }
@@ -95,7 +95,7 @@ func (trie *Trie) del(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 	if symbolIdx == len(key) {
 		node.value = nil
 	} else {
-		nodeIdx := getNodeIdx(trie.alphabet, key, symbolIdx)
+		nodeIdx := trie.symbolToIdx(key, symbolIdx)
 		node.nodes[nodeIdx] = trie.del(node.nodes[nodeIdx], key, symbolIdx+1)
 	}
 	if node.value != nil {
@@ -114,6 +114,10 @@ func (trie *Trie) Del(key string) {
 	trie.root = trie.del(trie.root, []rune(key), 0)
 }
 
+func (trie *Trie) idxToSymbol(idx int) rune {
+	return trie.alphabet.ToSymbol(idx)
+}
+
 func (trie *Trie) keysWithPrefix(node *_TrieNode, prefix string, collection *[]string) {
 	if node == nil {
 		return
@@ -122,7 +126,7 @@ func (trie *Trie) keysWithPrefix(node *_TrieNode, prefix string, collection *[]s
 		*collection = append(*collection, prefix)
 	}
 	for i := 0; i < trie.alphabet.Size(); i++ {
-		trie.keysWithPrefix(node.nodes[i], prefix+string(trie.alphabet.ToSymbol(i)), collection)
+		trie.keysWithPrefix(node.nodes[i], prefix+string(trie.idxToSymbol(i)), collection)
 	}
 }
 
@@ -150,8 +154,8 @@ func (trie *Trie) keysThatMatch(node *_TrieNode, prefix string, pattern string, 
 	}
 	nextSymbol := rune(pattern[len(prefix)])
 	for i := 0; i < trie.alphabet.Size(); i++ {
-		if nextSymbol == '.' || nextSymbol == trie.alphabet.ToSymbol(i) {
-			trie.keysThatMatch(node.nodes[i], prefix+string(trie.alphabet.ToSymbol(i)), pattern, collection)
+		if nextSymbol == '.' || nextSymbol == trie.idxToSymbol(i) {
+			trie.keysThatMatch(node.nodes[i], prefix+string(trie.idxToSymbol(i)), pattern, collection)
 		}
 	}
 }
@@ -173,7 +177,7 @@ func (trie *Trie) longestPrefix(node *_TrieNode, str string, symbolIdx int, leng
 	if symbolIdx == len(str) {
 		return length
 	}
-	nodeIdx := trie.alphabet.ToIndex([]rune(str)[symbolIdx])
+	nodeIdx := trie.symbolToIdx([]rune(str), symbolIdx)
 	return trie.longestPrefix(node.nodes[nodeIdx], str, symbolIdx+1, length)
 }
 
