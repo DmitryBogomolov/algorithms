@@ -12,10 +12,10 @@ type _TrieNode struct {
 	nodes []*_TrieNode
 }
 
-func newNode(alphabet Alphabet) *_TrieNode {
+func (trie *Trie) newNode() *_TrieNode {
 	return &_TrieNode{
 		value: nil,
-		nodes: make([]*_TrieNode, alphabet.Size()),
+		nodes: make([]*_TrieNode, trie.alphabet.Size()),
 	}
 }
 
@@ -27,7 +27,7 @@ func NewTrie(alphabet Alphabet) *Trie {
 	}
 }
 
-func (trie *Trie) size(node *_TrieNode) int {
+func (trie *Trie) sizeCore(node *_TrieNode) int {
 	if node == nil {
 		return 0
 	}
@@ -36,21 +36,21 @@ func (trie *Trie) size(node *_TrieNode) int {
 		count++
 	}
 	for i := 0; i < trie.alphabet.Size(); i++ {
-		count += trie.size(node.nodes[i])
+		count += trie.sizeCore(node.nodes[i])
 	}
 	return count
 }
 
 // Size returns amount of elements in a trie.
 func (trie *Trie) Size() int {
-	return trie.size(trie.root)
+	return trie.sizeCore(trie.root)
 }
 
 func (trie *Trie) symbolToIdx(key []rune, idx int) int {
 	return trie.alphabet.ToIndex(key[idx])
 }
 
-func (trie *Trie) get(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
+func (trie *Trie) getCore(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 	if node == nil {
 		return nil
 	}
@@ -58,37 +58,37 @@ func (trie *Trie) get(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 		return node
 	}
 	nodeIdx := trie.symbolToIdx(key, symbolIdx)
-	return trie.get(node.nodes[nodeIdx], key, symbolIdx+1)
+	return trie.getCore(node.nodes[nodeIdx], key, symbolIdx+1)
 }
 
 // Get finds a value for a key.
 func (trie *Trie) Get(key string) interface{} {
-	node := trie.get(trie.root, []rune(key), 0)
+	node := trie.getCore(trie.root, []rune(key), 0)
 	if node == nil {
 		return nil
 	}
 	return node.value
 }
 
-func (trie *Trie) put(node *_TrieNode, key []rune, symbolIdx int, val interface{}) *_TrieNode {
+func (trie *Trie) putCore(node *_TrieNode, key []rune, symbolIdx int, val interface{}) *_TrieNode {
 	if node == nil {
-		node = newNode(trie.alphabet)
+		node = trie.newNode()
 	}
 	if symbolIdx == len(key) {
 		node.value = val
 		return node
 	}
 	nodeIdx := trie.symbolToIdx(key, symbolIdx)
-	node.nodes[nodeIdx] = trie.put(node.nodes[nodeIdx], key, symbolIdx+1, val)
+	node.nodes[nodeIdx] = trie.putCore(node.nodes[nodeIdx], key, symbolIdx+1, val)
 	return node
 }
 
 // Put sets a value for a key.
 func (trie *Trie) Put(key string, val interface{}) {
-	trie.root = trie.put(trie.root, []rune(key), 0, val)
+	trie.root = trie.putCore(trie.root, []rune(key), 0, val)
 }
 
-func (trie *Trie) del(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
+func (trie *Trie) delCore(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 	if node == nil {
 		return nil
 	}
@@ -96,7 +96,7 @@ func (trie *Trie) del(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 		node.value = nil
 	} else {
 		nodeIdx := trie.symbolToIdx(key, symbolIdx)
-		node.nodes[nodeIdx] = trie.del(node.nodes[nodeIdx], key, symbolIdx+1)
+		node.nodes[nodeIdx] = trie.delCore(node.nodes[nodeIdx], key, symbolIdx+1)
 	}
 	if node.value != nil {
 		return node
@@ -111,14 +111,14 @@ func (trie *Trie) del(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 
 // Del removes a key.
 func (trie *Trie) Del(key string) {
-	trie.root = trie.del(trie.root, []rune(key), 0)
+	trie.root = trie.delCore(trie.root, []rune(key), 0)
 }
 
 func (trie *Trie) idxToSymbol(idx int) rune {
 	return trie.alphabet.ToSymbol(idx)
 }
 
-func (trie *Trie) keysWithPrefix(node *_TrieNode, prefix string, collection *[]string) {
+func (trie *Trie) keysWithPrefixCore(node *_TrieNode, prefix string, collection *[]string) {
 	if node == nil {
 		return
 	}
@@ -126,14 +126,14 @@ func (trie *Trie) keysWithPrefix(node *_TrieNode, prefix string, collection *[]s
 		*collection = append(*collection, prefix)
 	}
 	for i := 0; i < trie.alphabet.Size(); i++ {
-		trie.keysWithPrefix(node.nodes[i], prefix+string(trie.idxToSymbol(i)), collection)
+		trie.keysWithPrefixCore(node.nodes[i], prefix+string(trie.idxToSymbol(i)), collection)
 	}
 }
 
 // KeysWithPrefix collects keys with *prefix*.
 func (trie *Trie) KeysWithPrefix(prefix string) []string {
 	var collection []string
-	trie.keysWithPrefix(trie.get(trie.root, []rune(prefix), 0), prefix, &collection)
+	trie.keysWithPrefixCore(trie.getCore(trie.root, []rune(prefix), 0), prefix, &collection)
 	return collection
 }
 
@@ -142,7 +142,7 @@ func (trie *Trie) Keys() []string {
 	return trie.KeysWithPrefix("")
 }
 
-func (trie *Trie) keysThatMatch(node *_TrieNode, prefix string, pattern string, collection *[]string) {
+func (trie *Trie) keysThatMatchCore(node *_TrieNode, prefix string, pattern string, collection *[]string) {
 	if node == nil {
 		return
 	}
@@ -155,7 +155,7 @@ func (trie *Trie) keysThatMatch(node *_TrieNode, prefix string, pattern string, 
 	nextSymbol := rune(pattern[len(prefix)])
 	for i := 0; i < trie.alphabet.Size(); i++ {
 		if nextSymbol == '.' || nextSymbol == trie.idxToSymbol(i) {
-			trie.keysThatMatch(node.nodes[i], prefix+string(trie.idxToSymbol(i)), pattern, collection)
+			trie.keysThatMatchCore(node.nodes[i], prefix+string(trie.idxToSymbol(i)), pattern, collection)
 		}
 	}
 }
@@ -163,11 +163,11 @@ func (trie *Trie) keysThatMatch(node *_TrieNode, prefix string, pattern string, 
 // KeysThatMatch collects keys matching *pattern*.
 func (trie *Trie) KeysThatMatch(pattern string) []string {
 	var collection []string
-	trie.keysThatMatch(trie.root, "", pattern, &collection)
+	trie.keysThatMatchCore(trie.root, "", pattern, &collection)
 	return collection
 }
 
-func (trie *Trie) longestPrefix(node *_TrieNode, str string, symbolIdx int, length int) int {
+func (trie *Trie) longestPrefixCore(node *_TrieNode, str string, symbolIdx int, length int) int {
 	if node == nil {
 		return length
 	}
@@ -178,11 +178,11 @@ func (trie *Trie) longestPrefix(node *_TrieNode, str string, symbolIdx int, leng
 		return length
 	}
 	nodeIdx := trie.symbolToIdx([]rune(str), symbolIdx)
-	return trie.longestPrefix(node.nodes[nodeIdx], str, symbolIdx+1, length)
+	return trie.longestPrefixCore(node.nodes[nodeIdx], str, symbolIdx+1, length)
 }
 
 // LongestPrefix returns longest key that is prefix for *str*.
 func (trie *Trie) LongestPrefix(str string) string {
-	len := trie.longestPrefix(trie.root, str, 0, 0)
+	len := trie.longestPrefixCore(trie.root, str, 0, 0)
 	return str[:len]
 }
