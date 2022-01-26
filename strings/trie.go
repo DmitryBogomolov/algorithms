@@ -1,34 +1,33 @@
 package strings
 
-type trieNode struct {
-	value interface{}
-	nodes []*trieNode
-}
-
 // Trie is a search struct.
 // https://algs4.cs.princeton.edu/52trie/TrieST.java.html
 type Trie struct {
-	root     *trieNode
+	root     *_TrieNode
 	alphabet Alphabet
 }
 
-func newNode(alphabet Alphabet) *trieNode {
-	return &trieNode{
+type _TrieNode struct {
+	value interface{}
+	nodes []*_TrieNode
+}
+
+func newNode(alphabet Alphabet) *_TrieNode {
+	return &_TrieNode{
 		value: nil,
-		nodes: make([]*trieNode, alphabet.Size()),
+		nodes: make([]*_TrieNode, alphabet.Size()),
 	}
 }
 
 // NewTrie constructs trie instance.
 func NewTrie(alphabet Alphabet) *Trie {
-	trie := Trie{
+	return &Trie{
 		root:     nil,
 		alphabet: alphabet,
 	}
-	return &trie
 }
 
-func (trie *Trie) size(node *trieNode) int {
+func (trie *Trie) size(node *_TrieNode) int {
 	if node == nil {
 		return 0
 	}
@@ -47,7 +46,7 @@ func (trie *Trie) Size() int {
 	return trie.size(trie.root)
 }
 
-func (trie *Trie) get(node *trieNode, key []rune, symbolIdx int) *trieNode {
+func (trie *Trie) get(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 	if node == nil {
 		return nil
 	}
@@ -71,7 +70,7 @@ func getNodeIdx(alphabet Alphabet, key []rune, idx int) int {
 	return alphabet.ToIndex(key[idx])
 }
 
-func (trie *Trie) put(node *trieNode, key []rune, symbolIdx int, val interface{}) *trieNode {
+func (trie *Trie) put(node *_TrieNode, key []rune, symbolIdx int, val interface{}) *_TrieNode {
 	if node == nil {
 		node = newNode(trie.alphabet)
 	}
@@ -89,7 +88,7 @@ func (trie *Trie) Put(key string, val interface{}) {
 	trie.root = trie.put(trie.root, []rune(key), 0, val)
 }
 
-func (trie *Trie) del(node *trieNode, key []rune, symbolIdx int) *trieNode {
+func (trie *Trie) del(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode {
 	if node == nil {
 		return nil
 	}
@@ -115,7 +114,7 @@ func (trie *Trie) Del(key string) {
 	trie.root = trie.del(trie.root, []rune(key), 0)
 }
 
-func (trie *Trie) keysWithPrefix(node *trieNode, prefix string, collection *[]string) {
+func (trie *Trie) keysWithPrefix(node *_TrieNode, prefix string, collection *[]string) {
 	if node == nil {
 		return
 	}
@@ -139,7 +138,7 @@ func (trie *Trie) Keys() []string {
 	return trie.KeysWithPrefix("")
 }
 
-func (trie *Trie) keysThatMatch(node *trieNode, prefix string, pattern string, collection *[]string) {
+func (trie *Trie) keysThatMatch(node *_TrieNode, prefix string, pattern string, collection *[]string) {
 	if node == nil {
 		return
 	}
@@ -164,7 +163,7 @@ func (trie *Trie) KeysThatMatch(pattern string) []string {
 	return collection
 }
 
-func (trie *Trie) longestPrefix(node *trieNode, str string, symbolIdx int, length int) int {
+func (trie *Trie) longestPrefix(node *_TrieNode, str string, symbolIdx int, length int) int {
 	if node == nil {
 		return length
 	}
