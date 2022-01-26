@@ -31,6 +31,11 @@ func NewTrie(alphabet TrieAlphabet) *Trie {
 	}
 }
 
+// NewTrieASCII constructs trie with ASCII alphabet.
+func NewTrieASCII() *Trie {
+	return NewTrie(ASCIIAlphabet)
+}
+
 func (trie *Trie) sizeCore(node *_TrieNode) int {
 	if node == nil {
 		return 0

@@ -8,35 +8,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type _TestAlphabet struct {
-}
-
-func (alph _TestAlphabet) Size() int {
-	return 'z' - 'a' + 1
-}
-
-func (alph _TestAlphabet) ToIndex(symbol rune) int {
-	return int(symbol - 'a')
-}
-
-func (alph _TestAlphabet) ToSymbol(idx int) rune {
-	return rune('a' + idx)
-}
-
 func makeTestTrie() *Trie {
-	trie := NewTrie(_TestAlphabet{})
+	trie := NewTrie(NewRangeAlphabet('a', 'z'))
 	for i, str := range strings.Split("she sells sea shells by the sea shore", " ") {
 		trie.Put(str, i)
 	}
 	return trie
-}
-
-func TestAlphabet(t *testing.T) {
-	var alphabet _TestAlphabet
-	assert.Equal(t, 0, alphabet.ToIndex('a'))
-	assert.Equal(t, 25, alphabet.ToIndex('z'))
-	assert.Equal(t, 'b', alphabet.ToSymbol(1))
-	assert.Equal(t, 'y', alphabet.ToSymbol(24))
 }
 
 func TestTrieSize(t *testing.T) {
@@ -102,4 +79,18 @@ func TestTrieLongestPrefix(t *testing.T) {
 	assert.Equal(t, "she", trie.LongestPrefix("shell"))
 	assert.Equal(t, "shells", trie.LongestPrefix("shellsort"))
 	assert.Equal(t, "she", trie.LongestPrefix("shelters"))
+}
+
+func TestTrieASCII(t *testing.T) {
+	trie := NewTrieASCII()
+
+	assert.Equal(t, 0, trie.Size())
+
+	trie.Put("sea", 0)
+	trie.Put("sells", 0)
+	trie.Put("she", 0)
+	trie.Put("shells", 0)
+	assert.Equal(t, 4, trie.Size())
+	assert.Equal(t, 0, trie.Get("sea"))
+	assert.Equal(t, nil, trie.Get("se"))
 }
