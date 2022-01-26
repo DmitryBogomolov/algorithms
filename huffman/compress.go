@@ -10,7 +10,7 @@ func collectFrequencies(data []byte) map[byte]int {
 	return frequencies
 }
 
-func buildTableCore(node *node, table byteCodeTable, code *bitBlock, trieBits *int, dataBits *int) {
+func buildTableCore(node *_Node, table byteCodeTable, code *bitBlock, trieBits *int, dataBits *int) {
 	*trieBits++
 	if node.isLeaf() {
 		*dataBits += node.frequency * code.size
@@ -26,7 +26,7 @@ func buildTableCore(node *node, table byteCodeTable, code *bitBlock, trieBits *i
 	}
 }
 
-func buildTable(root *node) (byteCodeTable, int) {
+func buildTable(root *_Node) (byteCodeTable, int) {
 	table := newByteCodeTable()
 	trieBits, dataBits := 0, 0
 	buildTableCore(root, table, newBitBlock(0), &trieBits, &dataBits)
@@ -34,7 +34,7 @@ func buildTable(root *node) (byteCodeTable, int) {
 	return table, trieBits + 32 + 14 + dataBits
 }
 
-func compressTrieCore(node *node, block *bitBlock) {
+func compressTrieCore(node *_Node, block *bitBlock) {
 	if node.isLeaf() {
 		block.appendBit(true)
 		block.appendByte(node.item)
@@ -45,7 +45,7 @@ func compressTrieCore(node *node, block *bitBlock) {
 	}
 }
 
-func compressTrie(root *node, block *bitBlock) {
+func compressTrie(root *_Node, block *bitBlock) {
 	compressTrieCore(root, block)
 	block.align()
 }
