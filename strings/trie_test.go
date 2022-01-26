@@ -8,23 +8,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type testAlphabet struct {
+type _TestAlphabet struct {
 }
 
-func (a testAlphabet) Size() int {
+func (alph _TestAlphabet) Size() int {
 	return 'z' - 'a' + 1
 }
 
-func (a testAlphabet) ToIndex(symbol rune) int {
+func (alph _TestAlphabet) ToIndex(symbol rune) int {
 	return int(symbol - 'a')
 }
 
-func (a testAlphabet) ToSymbol(idx int) rune {
+func (alph _TestAlphabet) ToSymbol(idx int) rune {
 	return rune('a' + idx)
 }
 
 func makeTestTrie() *Trie {
-	trie := NewTrie(testAlphabet{})
+	trie := NewTrie(_TestAlphabet{})
 	for i, str := range strings.Split("she sells sea shells by the sea shore", " ") {
 		trie.Put(str, i)
 	}
@@ -32,7 +32,7 @@ func makeTestTrie() *Trie {
 }
 
 func TestAlphabet(t *testing.T) {
-	var alphabet testAlphabet
+	var alphabet _TestAlphabet
 	assert.Equal(t, 0, alphabet.ToIndex('a'))
 	assert.Equal(t, 25, alphabet.ToIndex('z'))
 	assert.Equal(t, 'b', alphabet.ToSymbol(1))

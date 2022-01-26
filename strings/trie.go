@@ -4,7 +4,7 @@ package strings
 // https://algs4.cs.princeton.edu/52trie/TrieST.java.html
 type Trie struct {
 	root     *_TrieNode
-	alphabet Alphabet
+	alphabet TrieAlphabet
 }
 
 type _TrieNode struct {
@@ -24,7 +24,7 @@ func (trie *Trie) newNode() *_TrieNode {
 }
 
 // NewTrie constructs trie instance.
-func NewTrie(alphabet Alphabet) *Trie {
+func NewTrie(alphabet TrieAlphabet) *Trie {
 	return &Trie{
 		root:     nil,
 		alphabet: alphabet,
