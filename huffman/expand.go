@@ -2,19 +2,19 @@ package huffman
 
 import "errors"
 
-func expandTrieCore(scanner *bitScanner) *_Node {
+func expandTreeCore(scanner *bitScanner) *_Node {
 	var n _Node
 	if scanner.readBit() {
 		n.item = scanner.readByte()
 	} else {
-		n.lNode = expandTrieCore(scanner)
-		n.rNode = expandTrieCore(scanner)
+		n.lNode = expandTreeCore(scanner)
+		n.rNode = expandTreeCore(scanner)
 	}
 	return &n
 }
 
-func expandTrie(scanner *bitScanner) *_Node {
-	root := expandTrieCore(scanner)
+func expandTree(scanner *bitScanner) *_Node {
+	root := expandTreeCore(scanner)
 	scanner.align()
 	return root
 }
@@ -61,7 +61,7 @@ func Expand(data []byte) (buffer []byte, err error) {
 		}
 	}()
 	scanner := newBitScanner(data)
-	root := expandTrie(scanner)
+	root := expandTree(scanner)
 	length := expandLength(scanner)
 	buffer = expandData(scanner, length, root)
 	return

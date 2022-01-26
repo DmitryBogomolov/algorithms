@@ -14,7 +14,7 @@ func (n _Node) isLeaf() bool {
 	return n.lNode == nil && n.rNode == nil
 }
 
-func buildTrie(frequencies map[byte]int) *_Node {
+func buildTree(frequencies map[byte]int) *_Node {
 	queue := priorityqueue.New(func(lhs, rhs interface{}) bool {
 		lNode := lhs.(*_Node)
 		rNode := rhs.(*_Node)

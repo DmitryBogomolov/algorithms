@@ -10,43 +10,43 @@ func collectFrequencies(data []byte) map[byte]int {
 	return frequencies
 }
 
-func buildTableCore(node *_Node, table byteCodeTable, code *bitBlock, trieBits *int, dataBits *int) {
-	*trieBits++
+func buildTableCore(node *_Node, table byteCodeTable, code *bitBlock, treeBits *int, dataBits *int) {
+	*treeBits++
 	if node.isLeaf() {
 		*dataBits += node.frequency * code.size
-		*trieBits += 8
+		*treeBits += 8
 		table.set(node.item, code)
 	} else {
 		lCode := code.clone()
 		lCode.appendBit(false)
 		rCode := code.clone()
 		rCode.appendBit(true)
-		buildTableCore(node.lNode, table, lCode, trieBits, dataBits)
-		buildTableCore(node.rNode, table, rCode, trieBits, dataBits)
+		buildTableCore(node.lNode, table, lCode, treeBits, dataBits)
+		buildTableCore(node.rNode, table, rCode, treeBits, dataBits)
 	}
 }
 
 func buildTable(root *_Node) (byteCodeTable, int) {
 	table := newByteCodeTable()
-	trieBits, dataBits := 0, 0
-	buildTableCore(root, table, newBitBlock(0), &trieBits, &dataBits)
+	treeBits, dataBits := 0, 0
+	buildTableCore(root, table, newBitBlock(0), &treeBits, &dataBits)
 	// 32 - is for length, 14 - is a worst case of two alignments.
-	return table, trieBits + 32 + 14 + dataBits
+	return table, treeBits + 32 + 14 + dataBits
 }
 
-func compressTrieCore(node *_Node, block *bitBlock) {
+func compressTreeCore(node *_Node, block *bitBlock) {
 	if node.isLeaf() {
 		block.appendBit(true)
 		block.appendByte(node.item)
 	} else {
 		block.appendBit(false)
-		compressTrieCore(node.lNode, block)
-		compressTrieCore(node.rNode, block)
+		compressTreeCore(node.lNode, block)
+		compressTreeCore(node.rNode, block)
 	}
 }
 
-func compressTrie(root *_Node, block *bitBlock) {
-	compressTrieCore(root, block)
+func compressTree(root *_Node, block *bitBlock) {
+	compressTreeCore(root, block)
 	block.align()
 }
 
@@ -75,10 +75,10 @@ func Compress(data []byte) ([]byte, error) {
 		return nil, ErrEmptyData
 	}
 	frequencies := collectFrequencies(data)
-	root := buildTrie(frequencies)
+	root := buildTree(frequencies)
 	table, blockSize := buildTable(root)
 	block := newBitBlock(blockSize)
-	compressTrie(root, block)
+	compressTree(root, block)
 	compressLength(len(data), block)
 	compressData(data, table, block)
 	return block.getBuffer(), nil
