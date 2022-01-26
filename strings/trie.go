@@ -5,6 +5,7 @@ package strings
 type Trie struct {
 	root     *_TrieNode
 	alphabet TrieAlphabet
+	size     int
 }
 
 type _TrieNode struct {
@@ -28,6 +29,7 @@ func NewTrie(alphabet TrieAlphabet) *Trie {
 	return &Trie{
 		root:     nil,
 		alphabet: alphabet,
+		size:     -1,
 	}
 }
 
@@ -52,7 +54,10 @@ func (trie *Trie) sizeCore(node *_TrieNode) int {
 
 // Size returns amount of elements in a trie.
 func (trie *Trie) Size() int {
-	return trie.sizeCore(trie.root)
+	if trie.size == -1 {
+		trie.size = trie.sizeCore(trie.root)
+	}
+	return trie.size
 }
 
 func (trie *Trie) symbolToIdx(key []rune, idx int) int {
@@ -94,6 +99,7 @@ func (trie *Trie) putCore(node *_TrieNode, key []rune, symbolIdx int, val interf
 
 // Put sets a value for a key.
 func (trie *Trie) Put(key string, val interface{}) {
+	trie.size = -1
 	trie.root = trie.putCore(trie.root, []rune(key), 0, val)
 }
 
@@ -120,6 +126,7 @@ func (trie *Trie) delCore(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode
 
 // Del removes a key.
 func (trie *Trie) Del(key string) {
+	trie.size = -1
 	trie.root = trie.delCore(trie.root, []rune(key), 0)
 }
 
