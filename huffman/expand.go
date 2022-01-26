@@ -1,6 +1,9 @@
 package huffman
 
-import "errors"
+import (
+	"encoding/binary"
+	"errors"
+)
 
 func expandTreeCore(scanner *bitScanner) *_Node {
 	var n _Node
@@ -20,12 +23,12 @@ func expandTree(scanner *bitScanner) *_Node {
 }
 
 func expandLength(scanner *bitScanner) int {
-	var length int
-	length |= int(scanner.readByte())
-	length |= int(scanner.readByte()) << 8
-	length |= int(scanner.readByte()) << 16
-	length |= int(scanner.readByte()) << 24
-	return length
+	return int(binary.LittleEndian.Uint32([]byte{
+		scanner.readByte(),
+		scanner.readByte(),
+		scanner.readByte(),
+		scanner.readByte(),
+	}))
 }
 
 func expandData(scanner *bitScanner, length int, root *_Node) []byte {

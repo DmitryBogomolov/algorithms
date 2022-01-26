@@ -1,6 +1,9 @@
 package huffman
 
-import "errors"
+import (
+	"encoding/binary"
+	"errors"
+)
 
 func collectFrequencies(data []byte) map[byte]int {
 	frequencies := make(map[byte]int)
@@ -51,10 +54,12 @@ func compressTree(root *_Node, block *bitBlock) {
 }
 
 func compressLength(length int, block *bitBlock) {
-	block.appendByte(byte(length))
-	block.appendByte(byte(length >> 8))
-	block.appendByte(byte(length >> 16))
-	block.appendByte(byte(length >> 24))
+	var bytes [4]byte
+	binary.LittleEndian.PutUint32(bytes[:], uint32(length))
+	block.appendByte(bytes[0])
+	block.appendByte(bytes[1])
+	block.appendByte(bytes[2])
+	block.appendByte(bytes[3])
 }
 
 func compressData(data []byte, table byteCodeTable, block *bitBlock) {
