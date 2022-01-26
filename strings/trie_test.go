@@ -39,13 +39,13 @@ func TestAlphabet(t *testing.T) {
 	assert.Equal(t, 'y', alphabet.ToSymbol(24))
 }
 
-func TestSize(t *testing.T) {
+func TestTrieSize(t *testing.T) {
 	trie := makeTestTrie()
 
 	assert.Equal(t, 7, trie.Size())
 }
 
-func TestGet(t *testing.T) {
+func TestTrieGet(t *testing.T) {
 	trie := makeTestTrie()
 
 	assert.Equal(t, 0, trie.Get("she"))
@@ -59,7 +59,7 @@ func TestGet(t *testing.T) {
 	assert.Equal(t, nil, trie.Get("sher"))
 }
 
-func TestDel(t *testing.T) {
+func TestTrieDel(t *testing.T) {
 	trie := makeTestTrie()
 
 	trie.Del("shells")
@@ -70,13 +70,13 @@ func TestDel(t *testing.T) {
 	assert.Equal(t, nil, trie.Get("sea"))
 }
 
-func TestKeys(t *testing.T) {
+func TestTrieKeys(t *testing.T) {
 	trie := makeTestTrie()
 
 	assert.Equal(t, []string{"by", "sea", "sells", "she", "shells", "shore", "the"}, trie.KeysWithPrefix(""))
 }
 
-func TestKeysWithPrefix(t *testing.T) {
+func TestTrieKeysWithPrefix(t *testing.T) {
 	trie := makeTestTrie()
 
 	assert.Equal(t, []string{"by", "sea", "sells", "she", "shells", "shore", "the"}, trie.KeysWithPrefix(""))
@@ -85,7 +85,7 @@ func TestKeysWithPrefix(t *testing.T) {
 	assert.Equal(t, []string(nil), trie.KeysWithPrefix("tt"))
 }
 
-func TestKeysThatMatch(t *testing.T) {
+func TestTrieKeysThatMatch(t *testing.T) {
 	trie := makeTestTrie()
 
 	assert.Equal(t, []string(nil), trie.KeysThatMatch(""))
@@ -95,7 +95,7 @@ func TestKeysThatMatch(t *testing.T) {
 	assert.Equal(t, []string{"sea", "she", "the"}, trie.KeysThatMatch("..."))
 }
 
-func TestLongestPrefix(t *testing.T) {
+func TestTrieLongestPrefix(t *testing.T) {
 	trie := makeTestTrie()
 
 	assert.Equal(t, "she", trie.LongestPrefix("she"))
