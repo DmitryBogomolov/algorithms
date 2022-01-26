@@ -12,10 +12,14 @@ type _TrieNode struct {
 	nodes []*_TrieNode
 }
 
+func (trie *Trie) symbolsCount() int {
+	return trie.alphabet.Size()
+}
+
 func (trie *Trie) newNode() *_TrieNode {
 	return &_TrieNode{
 		value: nil,
-		nodes: make([]*_TrieNode, trie.alphabet.Size()),
+		nodes: make([]*_TrieNode, trie.symbolsCount()),
 	}
 }
 
@@ -35,7 +39,7 @@ func (trie *Trie) sizeCore(node *_TrieNode) int {
 	if node.value != nil {
 		count++
 	}
-	for i := 0; i < trie.alphabet.Size(); i++ {
+	for i := 0; i < trie.symbolsCount(); i++ {
 		count += trie.sizeCore(node.nodes[i])
 	}
 	return count
@@ -101,7 +105,7 @@ func (trie *Trie) delCore(node *_TrieNode, key []rune, symbolIdx int) *_TrieNode
 	if node.value != nil {
 		return node
 	}
-	for i := 0; i < trie.alphabet.Size(); i++ {
+	for i := 0; i < trie.symbolsCount(); i++ {
 		if node.nodes[i] != nil {
 			return node
 		}
@@ -118,22 +122,22 @@ func (trie *Trie) idxToSymbol(idx int) rune {
 	return trie.alphabet.ToSymbol(idx)
 }
 
-func (trie *Trie) keysWithPrefixCore(node *_TrieNode, prefix string, collection *[]string) {
+func (trie *Trie) keysWithPrefixCore(node *_TrieNode, prefix []rune, collection *[]string) {
 	if node == nil {
 		return
 	}
 	if node.value != nil {
-		*collection = append(*collection, prefix)
+		*collection = append(*collection, string(prefix))
 	}
-	for i := 0; i < trie.alphabet.Size(); i++ {
-		trie.keysWithPrefixCore(node.nodes[i], prefix+string(trie.idxToSymbol(i)), collection)
+	for i := 0; i < trie.symbolsCount(); i++ {
+		trie.keysWithPrefixCore(node.nodes[i], append(prefix, trie.idxToSymbol(i)), collection)
 	}
 }
 
 // KeysWithPrefix collects keys with *prefix*.
 func (trie *Trie) KeysWithPrefix(prefix string) []string {
 	var collection []string
-	trie.keysWithPrefixCore(trie.getCore(trie.root, []rune(prefix), 0), prefix, &collection)
+	trie.keysWithPrefixCore(trie.getCore(trie.root, []rune(prefix), 0), []rune(prefix), &collection)
 	return collection
 }
 
@@ -142,20 +146,20 @@ func (trie *Trie) Keys() []string {
 	return trie.KeysWithPrefix("")
 }
 
-func (trie *Trie) keysThatMatchCore(node *_TrieNode, prefix string, pattern string, collection *[]string) {
+func (trie *Trie) keysThatMatchCore(node *_TrieNode, prefix []rune, pattern []rune, collection *[]string) {
 	if node == nil {
 		return
 	}
 	if len(prefix) == len(pattern) {
 		if node.value != nil {
-			*collection = append(*collection, prefix)
+			*collection = append(*collection, string(prefix))
 		}
 		return
 	}
-	nextSymbol := rune(pattern[len(prefix)])
-	for i := 0; i < trie.alphabet.Size(); i++ {
+	nextSymbol := pattern[len(prefix)]
+	for i := 0; i < trie.symbolsCount(); i++ {
 		if nextSymbol == '.' || nextSymbol == trie.idxToSymbol(i) {
-			trie.keysThatMatchCore(node.nodes[i], prefix+string(trie.idxToSymbol(i)), pattern, collection)
+			trie.keysThatMatchCore(node.nodes[i], append(prefix, trie.idxToSymbol(i)), pattern, collection)
 		}
 	}
 }
@@ -163,11 +167,11 @@ func (trie *Trie) keysThatMatchCore(node *_TrieNode, prefix string, pattern stri
 // KeysThatMatch collects keys matching *pattern*.
 func (trie *Trie) KeysThatMatch(pattern string) []string {
 	var collection []string
-	trie.keysThatMatchCore(trie.root, "", pattern, &collection)
+	trie.keysThatMatchCore(trie.root, nil, []rune(pattern), &collection)
 	return collection
 }
 
-func (trie *Trie) longestPrefixCore(node *_TrieNode, str string, symbolIdx int, length int) int {
+func (trie *Trie) longestPrefixCore(node *_TrieNode, str []rune, symbolIdx int, length int) int {
 	if node == nil {
 		return length
 	}
@@ -177,12 +181,12 @@ func (trie *Trie) longestPrefixCore(node *_TrieNode, str string, symbolIdx int, 
 	if symbolIdx == len(str) {
 		return length
 	}
-	nodeIdx := trie.symbolToIdx([]rune(str), symbolIdx)
+	nodeIdx := trie.symbolToIdx(str, symbolIdx)
 	return trie.longestPrefixCore(node.nodes[nodeIdx], str, symbolIdx+1, length)
 }
 
 // LongestPrefix returns longest key that is prefix for *str*.
 func (trie *Trie) LongestPrefix(str string) string {
-	len := trie.longestPrefixCore(trie.root, str, 0, 0)
+	len := trie.longestPrefixCore(trie.root, []rune(str), 0, 0)
 	return str[:len]
 }
