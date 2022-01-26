@@ -1,15 +1,33 @@
-package digraph
+package digraph_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/graph/digraph"
 	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func TestTransitiveClosure_EmptyGraph(t *testing.T) {
+	gr := tests.NewTestDigraph(0)
+
+	ret := BuildTransitiveClosure(gr)
+	assert.Equal(t, 0, ret.NumVertices())
+}
+
+func TestTransitiveClosure_NoEdges(t *testing.T) {
+	gr := tests.NewTestDigraph(5)
+
+	ret := BuildTransitiveClosure(gr)
+	assert.Equal(t, 5, ret.NumVertices())
+	assert.Equal(t, false, ret.Reachable(0, 1), "0 - 1")
+	assert.Equal(t, false, ret.Reachable(1, 2), "1 - 2")
+	assert.Equal(t, false, ret.Reachable(2, 3), "2 - 3")
+}
+
 func TestTransitiveClosure(t *testing.T) {
-	target := tests.NewTestDigraph(6,
+	gr := tests.NewTestDigraph(6,
 		0, 1,
 		1, 2,
 		0, 3,
@@ -19,8 +37,8 @@ func TestTransitiveClosure(t *testing.T) {
 		5, 4,
 	)
 
-	ret := BuildTransitiveClosure(target)
-
+	ret := BuildTransitiveClosure(gr)
+	assert.Equal(t, gr.NumVertices(), ret.NumVertices())
 	assert.Equal(t, true, ret.Reachable(0, 2), "0 - 2")
 	assert.Equal(t, false, ret.Reachable(1, 0), "1 - 0")
 	assert.Equal(t, true, ret.Reachable(3, 2), "3 - 2")

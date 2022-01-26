@@ -1,10 +1,11 @@
-package sorting
+package sorting_test
 
 import (
 	"math/rand"
 	"sort"
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/sorting"
 	"github.com/stretchr/testify/assert"
 )
 

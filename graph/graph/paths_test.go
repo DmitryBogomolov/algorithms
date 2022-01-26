@@ -1,15 +1,44 @@
-package graph
+package graph_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/graph/graph"
 	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func checkPaths(t *testing.T, paths Paths, source int, count int, pathsTo map[int][]int) {
+	assert.Equal(t, source, paths.SourceVertex())
+	assert.Equal(t, count, paths.VertexCount())
+	assert.Equal(t, true, paths.HasPathTo(source))
+	assert.Equal(t, []int{source}, paths.PathTo(source))
+	for i, pathTo := range pathsTo {
+		assert.Equal(t, pathTo != nil, paths.HasPathTo(i))
+		assert.Equal(t, pathTo, paths.PathTo(i))
+	}
+}
+
+func TestFindPathsDepthFirst_OneVertex(t *testing.T) {
+	gr := tests.NewTestGraph(1)
+
+	ret := FindPathsDepthFirst(gr, 0)
+	checkPaths(t, ret, 0, 0, nil)
+}
+
+func TestFindPathsDepthFirst_NoEdges(t *testing.T) {
+	gr := tests.NewTestGraph(3)
+
+	ret := FindPathsDepthFirst(gr, 1)
+	checkPaths(t, ret, 1, 0, map[int][]int{
+		0: nil,
+		2: nil,
+	})
+}
+
 func TestFindPathsDepthFirst(t *testing.T) {
-	target := tests.NewTestGraph(7,
+	gr := tests.NewTestGraph(7,
 		0, 5,
 		2, 4,
 		2, 3,
@@ -20,73 +49,45 @@ func TestFindPathsDepthFirst(t *testing.T) {
 		0, 2,
 	)
 
-	t.Run("Count", func(t *testing.T) {
-		var ret Paths
-
-		ret = FindPathsDepthFirst(target, 0)
-		assert.Equal(t, ret.VertexCount(), 5, "vertex 0")
-
-		ret = FindPathsDepthFirst(target, 5)
-		assert.Equal(t, ret.VertexCount(), 5, "vertex 5")
-
-		ret = FindPathsDepthFirst(target, 6)
-		assert.Equal(t, ret.VertexCount(), 0, "vertex 6")
+	checkPaths(t, FindPathsDepthFirst(gr, 0), 0, 5, map[int][]int{
+		1: {0, 5, 3, 2, 1},
+		2: {0, 5, 3, 2},
+		3: {0, 5, 3},
+		4: {0, 5, 3, 2, 4},
+		5: {0, 5},
+		6: nil,
 	})
 
-	t.Run("Marked", func(t *testing.T) {
-		var ret Paths
-
-		allMarked := func() []bool {
-			all := make([]bool, target.NumVertices())
-			for i := 0; i < target.NumVertices(); i++ {
-				all[i] = ret.HasPathTo(i)
-			}
-			return all
-		}
-
-		ret = FindPathsDepthFirst(target, 0)
-		assert.Equal(t,
-			[]bool{true, true, true, true, true, true, false},
-			allMarked(),
-			"vertex 0",
-		)
-
-		ret = FindPathsDepthFirst(target, 5)
-		assert.Equal(t,
-			[]bool{true, true, true, true, true, true, false},
-			allMarked(),
-			"vertex 5",
-		)
-
-		ret = FindPathsDepthFirst(target, 6)
-		assert.Equal(t,
-			[]bool{false, false, false, false, false, false, true},
-			allMarked(),
-			"vertex 6",
-		)
+	checkPaths(t, FindPathsDepthFirst(gr, 3), 3, 5, map[int][]int{
+		1: {3, 2, 1},
+		2: {3, 2},
+		4: {3, 2, 4},
+		5: {3, 2, 1, 0, 5},
+		6: nil,
 	})
 
-	t.Run("PathTo", func(t *testing.T) {
-		var ret Paths
+	checkPaths(t, FindPathsDepthFirst(gr, 6), 6, 0, map[int][]int{})
+}
 
-		ret = FindPathsDepthFirst(target, 0)
-		assert.Equal(t, []int{0}, ret.PathTo(0), "0 -> 0")
-		assert.Equal(t, []int{0, 5, 3, 2, 1}, ret.PathTo(1), "0 -> 1")
-		assert.Equal(t, []int{0, 5, 3, 2, 4}, ret.PathTo(4), "0 -> 4")
+func TestFindPathsBreadthFirst_OneVertex(t *testing.T) {
+	gr := tests.NewTestGraph(1)
 
-		ret = FindPathsDepthFirst(target, 2)
-		assert.Equal(t, []int{2}, ret.PathTo(2), "2 -> 2")
-		assert.Equal(t, []int{2, 4, 3, 5, 0, 1}, ret.PathTo(1), "2 -> 1")
-		assert.Equal(t, []int(nil), ret.PathTo(6), "2 -> 6")
+	ret := FindPathsBreadthFirst(gr, 0)
+	checkPaths(t, ret, 0, 0, nil)
+}
 
-		ret = FindPathsDepthFirst(target, 6)
-		assert.Equal(t, []int{6}, ret.PathTo(6), "6 -> 6")
-		assert.Equal(t, []int(nil), ret.PathTo(5), "6 -> 5")
+func TestFindPathsBreadthFirst_NoEdges(t *testing.T) {
+	gr := tests.NewTestGraph(3)
+
+	ret := FindPathsBreadthFirst(gr, 1)
+	checkPaths(t, ret, 1, 0, map[int][]int{
+		0: nil,
+		2: nil,
 	})
 }
 
 func TestFindPathsBreadthFirst(t *testing.T) {
-	target := tests.NewTestGraph(7,
+	gr := tests.NewTestGraph(7,
 		0, 5,
 		2, 4,
 		2, 3,
@@ -97,68 +98,22 @@ func TestFindPathsBreadthFirst(t *testing.T) {
 		0, 2,
 	)
 
-	t.Run("Count", func(t *testing.T) {
-		var ret Paths
-
-		ret = FindPathsBreadthFirst(target, 0)
-		assert.Equal(t, ret.VertexCount(), 5, "vertex 0")
-
-		ret = FindPathsBreadthFirst(target, 5)
-		assert.Equal(t, ret.VertexCount(), 5, "vertex 5")
-
-		ret = FindPathsBreadthFirst(target, 6)
-		assert.Equal(t, ret.VertexCount(), 0, "vertex 6")
+	checkPaths(t, FindPathsBreadthFirst(gr, 0), 0, 5, map[int][]int{
+		1: {0, 1},
+		2: {0, 2},
+		3: {0, 5, 3},
+		4: {0, 2, 4},
+		5: {0, 5},
+		6: nil,
 	})
 
-	t.Run("Marked", func(t *testing.T) {
-		var ret Paths
-
-		allMarked := func() []bool {
-			all := make([]bool, target.NumVertices())
-			for v := 0; v < target.NumVertices(); v++ {
-				all[v] = ret.HasPathTo(v)
-			}
-			return all
-		}
-
-		ret = FindPathsBreadthFirst(target, 0)
-		assert.Equal(t,
-			[]bool{true, true, true, true, true, true, false},
-			allMarked(),
-			"vertex 0",
-		)
-
-		ret = FindPathsBreadthFirst(target, 5)
-		assert.Equal(t,
-			[]bool{true, true, true, true, true, true, false},
-			allMarked(),
-			"vertex 5",
-		)
-
-		ret = FindPathsBreadthFirst(target, 6)
-		assert.Equal(t,
-			[]bool{false, false, false, false, false, false, true},
-			allMarked(),
-			"vertex 6",
-		)
+	checkPaths(t, FindPathsBreadthFirst(gr, 3), 3, 5, map[int][]int{
+		1: {3, 2, 1},
+		2: {3, 2},
+		4: {3, 4},
+		5: {3, 5},
+		6: nil,
 	})
 
-	t.Run("PathTo", func(t *testing.T) {
-		var ret Paths
-
-		ret = FindPathsBreadthFirst(target, 0)
-		assert.Equal(t, []int{0}, ret.PathTo(0), "0 -> 0")
-		assert.Equal(t, []int{0, 1}, ret.PathTo(1), "0 -> 1")
-		assert.Equal(t, []int{0, 2, 4}, ret.PathTo(4), "0 -> 4")
-
-		ret = FindPathsBreadthFirst(target, 2)
-		assert.Equal(t, []int{2}, ret.PathTo(2), "2 -> 2")
-		assert.Equal(t, []int{2, 1}, ret.PathTo(1), "2 -> 1")
-		assert.Equal(t, []int{2, 3, 5}, ret.PathTo(5), "2 -> 5")
-		assert.Equal(t, []int(nil), ret.PathTo(6), "2 -> 6")
-
-		ret = FindPathsBreadthFirst(target, 6)
-		assert.Equal(t, []int{6}, ret.PathTo(6), "6 -> 6")
-		assert.Equal(t, []int(nil), ret.PathTo(5), "6 -> 5")
-	})
+	checkPaths(t, FindPathsBreadthFirst(gr, 6), 6, 0, map[int][]int{})
 }

@@ -1,8 +1,9 @@
-package priorityqueue
+package priorityqueue_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/priorityqueue"
 	"github.com/stretchr/testify/assert"
 )
 

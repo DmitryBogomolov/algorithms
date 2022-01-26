@@ -1,16 +1,26 @@
-package digraph
+package digraph_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/graph/digraph"
 	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func TestTopologicalSort_EmptyGraph(t *testing.T) {
+	gr := tests.NewTestDigraph(0)
+	assert.Equal(t, []int(nil), TopologicalSort(gr))
+}
+
+func TestTopologicalSort_NoEdges(t *testing.T) {
+	gr := tests.NewTestDigraph(5)
+	assert.Equal(t, []int{4, 3, 2, 1, 0}, TopologicalSort(gr))
+}
+
 func TestTopologicalSort(t *testing.T) {
-	var ret []int
-	graph := tests.NewTestDigraph(16,
+	gr := tests.NewTestDigraph(16,
 		0, 1,
 		0, 5,
 		0, 6,
@@ -31,11 +41,11 @@ func TestTopologicalSort(t *testing.T) {
 		14, 15,
 	)
 
-	ret = TopologicalSort(graph)
+	ret := TopologicalSort(gr)
 	assert.Equal(t, []int{13, 14, 15, 8, 7, 2, 3, 0, 6, 9, 11, 12, 10, 5, 4, 1}, ret)
 
-	graph.AddDirectedEdge(15, 13)
+	gr.AddDirectedEdge(15, 13)
 
-	ret = TopologicalSort(graph)
+	ret = TopologicalSort(gr)
 	assert.Equal(t, []int(nil), ret)
 }

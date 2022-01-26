@@ -1,18 +1,29 @@
-package graph
+package graph_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/graph/graph"
 	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFindCutEdges_EmptyGraph(t *testing.T) {
+	gr := tests.NewTestGraph(0)
+	assert.Equal(t, []Edge(nil), FindCutEdges(gr))
+}
+
+func TestFindCutEdges_NoEdges(t *testing.T) {
+	gr := tests.NewTestGraph(5)
+	assert.Equal(t, []Edge(nil), FindCutEdges(gr))
+}
+
 func TestFindCutEdges(t *testing.T) {
-	var target *tests.TestGraph
+	var gr *tests.TestGraph
 	var ret []Edge
 
-	target = tests.NewTestGraph(7,
+	gr = tests.NewTestGraph(7,
 		0, 1,
 		0, 2,
 		1, 3,
@@ -22,16 +33,16 @@ func TestFindCutEdges(t *testing.T) {
 		4, 6,
 	)
 
-	ret = FindCutEdges(target)
-	assert.Equal(t, []Edge{{4, 5}, {4, 6}, {3, 4}}, ret)
+	ret = FindCutEdges(gr)
+	assert.Equal(t, []Edge{NewEdge(4, 5), NewEdge(4, 6), NewEdge(3, 4)}, ret)
 
-	target.AddEdge(5, 6)
+	gr.AddEdge(5, 6)
 
-	ret = FindCutEdges(target)
-	assert.Equal(t, []Edge{{3, 4}}, ret)
+	ret = FindCutEdges(gr)
+	assert.Equal(t, []Edge{NewEdge(3, 4)}, ret)
 
-	target.AddEdge(1, 5)
+	gr.AddEdge(1, 5)
 
-	ret = FindCutEdges(target)
+	ret = FindCutEdges(gr)
 	assert.Equal(t, []Edge(nil), ret)
 }

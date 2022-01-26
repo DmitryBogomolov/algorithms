@@ -1,8 +1,9 @@
-package indexpriorityqueue
+package indexpriorityqueue_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/indexpriorityqueue"
 	"github.com/stretchr/testify/assert"
 )
 

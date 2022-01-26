@@ -1,16 +1,27 @@
-package digraph
+package digraph_test
 
 import (
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/graph/digraph"
 	"github.com/DmitryBogomolov/algorithms/graph/graph"
 	"github.com/DmitryBogomolov/algorithms/graph/internal/tests"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func TestAllDigraphEdges_EmptyGraph(t *testing.T) {
+	gr := tests.NewTestDigraph(0)
+	assert.Equal(t, []graph.Edge(nil), AllDigraphEdges(gr))
+}
+
+func TestAllDigraphEdges_NoEdges(t *testing.T) {
+	gr := tests.NewTestDigraph(5)
+	assert.Equal(t, []graph.Edge(nil), AllDigraphEdges(gr))
+}
+
 func TestAllDigraphEdges(t *testing.T) {
-	target := tests.NewTestDigraph(6,
+	gr := tests.NewTestDigraph(6,
 		0, 1,
 		1, 2,
 		0, 3,
@@ -20,8 +31,7 @@ func TestAllDigraphEdges(t *testing.T) {
 		5, 0,
 	)
 
-	ret := AllDigraphEdges(target)
-
+	ret := AllDigraphEdges(gr)
 	assert.Equal(t, []graph.Edge{
 		graph.NewEdge(0, 1),
 		graph.NewEdge(0, 3),
