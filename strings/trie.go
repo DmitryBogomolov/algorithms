@@ -1,25 +1,21 @@
 package strings
 
 type trieNode struct {
-	value int
+	value interface{}
 	nodes []*trieNode
 }
 
-// Trie is search struct.
+// Trie is a search struct.
 // https://algs4.cs.princeton.edu/52trie/TrieST.java.html
 type Trie struct {
 	root     *trieNode
 	alphabet Alphabet
 }
 
-// NoValue is placeholder for empty nodes in a tree.
-const NoValue = -1
-
 func newNode(alphabet Alphabet) *trieNode {
-	size := alphabet.Size()
 	return &trieNode{
-		value: NoValue,
-		nodes: make([]*trieNode, size, size),
+		value: nil,
+		nodes: make([]*trieNode, alphabet.Size()),
 	}
 }
 
@@ -37,7 +33,7 @@ func (trie *Trie) size(node *trieNode) int {
 		return 0
 	}
 	count := 0
-	if node.value != NoValue {
+	if node.value != nil {
 		count++
 	}
 	for i := 0; i < trie.alphabet.Size(); i++ {
@@ -63,10 +59,10 @@ func (trie *Trie) get(node *trieNode, key []rune, symbolIdx int) *trieNode {
 }
 
 // Get finds value for a key.
-func (trie *Trie) Get(key string) int {
+func (trie *Trie) Get(key string) interface{} {
 	node := trie.get(trie.root, []rune(key), 0)
 	if node == nil {
-		return NoValue
+		return nil
 	}
 	return node.value
 }
@@ -75,7 +71,7 @@ func getNodeIdx(alphabet Alphabet, key []rune, idx int) int {
 	return alphabet.ToIndex(key[idx])
 }
 
-func (trie *Trie) put(node *trieNode, key []rune, symbolIdx int, val int) *trieNode {
+func (trie *Trie) put(node *trieNode, key []rune, symbolIdx int, val interface{}) *trieNode {
 	if node == nil {
 		node = newNode(trie.alphabet)
 	}
@@ -89,7 +85,7 @@ func (trie *Trie) put(node *trieNode, key []rune, symbolIdx int, val int) *trieN
 }
 
 // Put add key-value pair.
-func (trie *Trie) Put(key string, val int) {
+func (trie *Trie) Put(key string, val interface{}) {
 	trie.root = trie.put(trie.root, []rune(key), 0, val)
 }
 
@@ -98,12 +94,12 @@ func (trie *Trie) del(node *trieNode, key []rune, symbolIdx int) *trieNode {
 		return nil
 	}
 	if symbolIdx == len(key) {
-		node.value = NoValue
+		node.value = nil
 	} else {
 		nodeIdx := getNodeIdx(trie.alphabet, key, symbolIdx)
 		node.nodes[nodeIdx] = trie.del(node.nodes[nodeIdx], key, symbolIdx+1)
 	}
-	if node.value != NoValue {
+	if node.value != nil {
 		return node
 	}
 	for i := 0; i < trie.alphabet.Size(); i++ {
@@ -123,7 +119,7 @@ func (trie *Trie) keysWithPrefix(node *trieNode, prefix string, collection *[]st
 	if node == nil {
 		return
 	}
-	if node.value != NoValue {
+	if node.value != nil {
 		*collection = append(*collection, prefix)
 	}
 	for i := 0; i < trie.alphabet.Size(); i++ {
@@ -148,7 +144,7 @@ func (trie *Trie) keysThatMatch(node *trieNode, prefix string, pattern string, c
 		return
 	}
 	if len(prefix) == len(pattern) {
-		if node.value != NoValue {
+		if node.value != nil {
 			*collection = append(*collection, prefix)
 		}
 		return
@@ -172,7 +168,7 @@ func (trie *Trie) longestPrefix(node *trieNode, str string, symbolIdx int, lengt
 	if node == nil {
 		return length
 	}
-	if node.value != NoValue {
+	if node.value != nil {
 		length = symbolIdx
 	}
 	if symbolIdx == len(str) {

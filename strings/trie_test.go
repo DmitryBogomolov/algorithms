@@ -55,18 +55,19 @@ func TestGet(t *testing.T) {
 	assert.Equal(t, 5, trie.Get("the"))
 	assert.Equal(t, 6, trie.Get("sea"))
 	assert.Equal(t, 7, trie.Get("shore"))
-	assert.Equal(t, NoValue, trie.Get("sher"))
+	assert.Equal(t, nil, trie.Get("sh"))
+	assert.Equal(t, nil, trie.Get("sher"))
 }
 
 func TestDel(t *testing.T) {
 	trie := makeTestTrie()
 
 	trie.Del("shells")
-	assert.Equal(t, NoValue, trie.Get("shells"))
+	assert.Equal(t, nil, trie.Get("shells"))
 
 	trie.Del("sea")
 	trie.Del("sea")
-	assert.Equal(t, NoValue, trie.Get("sea"))
+	assert.Equal(t, nil, trie.Get("sea"))
 }
 
 func TestKeys(t *testing.T) {
