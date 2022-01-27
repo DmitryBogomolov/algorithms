@@ -2,7 +2,6 @@ package huffman
 
 import (
 	"encoding/binary"
-	"errors"
 )
 
 func collectFrequencies(data []byte) []int {
@@ -69,9 +68,6 @@ func compressData(data []byte, table byteCodeTable, block *bitBlock) {
 	}
 	block.align()
 }
-
-// ErrEmptyData tells that data is nil or empty.
-var ErrEmptyData = errors.New("data is nil or empty")
 
 // Compress compresses *data*.
 // https://algs4.cs.princeton.edu/55compression/Huffman.java.html

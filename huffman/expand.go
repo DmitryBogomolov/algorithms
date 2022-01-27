@@ -2,7 +2,6 @@ package huffman
 
 import (
 	"encoding/binary"
-	"errors"
 )
 
 func expandTreeCore(scanner *bitScanner) *_Node {
@@ -47,9 +46,6 @@ func expandData(scanner *bitScanner, length int, root *_Node) []byte {
 	scanner.align()
 	return buffer
 }
-
-// ErrDataCorrupted tells that data is corrupted.
-var ErrDataCorrupted = errors.New("data is corrupted")
 
 // Expand expands *data*.
 // https://algs4.cs.princeton.edu/55compression/Huffman.java.html
