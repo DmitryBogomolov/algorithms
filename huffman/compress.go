@@ -5,8 +5,8 @@ import (
 	"errors"
 )
 
-func collectFrequencies(data []byte) map[byte]int {
-	frequencies := make(map[byte]int)
+func collectFrequencies(data []byte) []int {
+	frequencies := make([]int, 256)
 	for _, item := range data {
 		frequencies[item]++
 	}

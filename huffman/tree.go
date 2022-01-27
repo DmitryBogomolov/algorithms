@@ -14,14 +14,16 @@ func (n _Node) isLeaf() bool {
 	return n.lNode == nil && n.rNode == nil
 }
 
-func buildTree(frequencies map[byte]int) *_Node {
+func buildTree(frequencies []int) *_Node {
 	queue := priorityqueue.New(func(lhs, rhs interface{}) bool {
 		lNode := lhs.(*_Node)
 		rNode := rhs.(*_Node)
 		return lNode.frequency < rNode.frequency
 	})
-	for item, frequency := range frequencies {
-		queue.Insert(&_Node{item: item, frequency: frequency})
+	for i, freq := range frequencies {
+		if freq > 0 {
+			queue.Insert(&_Node{item: byte(i), frequency: freq})
+		}
 	}
 	for queue.Size() > 1 {
 		lNode := queue.Remove().(*_Node)
