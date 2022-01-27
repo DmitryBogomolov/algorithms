@@ -13,6 +13,12 @@ func TestExpand(t *testing.T) {
 	)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, []byte("Hello World"), data)
+
+	data, err = Expand(
+		[]byte{0x06, 0x91, 0xc8, 0x90, 0x43, 0x4a, 0x15, 0x02, 0xc, 0x00, 0x00, 0x00, 0x3e, 0x2d, 0x3e, 0x05},
+	)
+	assert.Equal(t, nil, err)
+	assert.Equal(t, []byte("ABRACADABRA!"), data)
 }
 
 func TestExpandEmptyBuffer(t *testing.T) {
