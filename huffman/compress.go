@@ -12,12 +12,12 @@ func collectFrequencies(data []byte) []int {
 	return frequencies
 }
 
-func buildTableCore(node *_Node, table byteCodeTable, code *bitBlock, treeBits *int, dataBits *int) {
+func buildTableCore(node *_Node, table map[byte]*bitBlock, code *bitBlock, treeBits *int, dataBits *int) {
 	*treeBits++
 	if node.isLeaf() {
 		*dataBits += node.frequency * code.size
 		*treeBits += 8
-		table.set(node.item, code)
+		table[node.item] = code
 	} else {
 		lCode := code.clone()
 		lCode.appendBit(false)
@@ -28,8 +28,8 @@ func buildTableCore(node *_Node, table byteCodeTable, code *bitBlock, treeBits *
 	}
 }
 
-func buildTable(root *_Node) (byteCodeTable, int) {
-	table := newByteCodeTable()
+func buildTable(root *_Node) (map[byte]*bitBlock, int) {
+	table := map[byte]*bitBlock{}
 	treeBits, dataBits := 0, 0
 	buildTableCore(root, table, newBitBlock(0), &treeBits, &dataBits)
 	// 32 - is for length, 14 - is a worst case of two alignments.
@@ -61,9 +61,9 @@ func compressLength(length int, block *bitBlock) {
 	block.appendByte(bytes[3])
 }
 
-func compressData(data []byte, table byteCodeTable, block *bitBlock) {
+func compressData(data []byte, table map[byte]*bitBlock, block *bitBlock) {
 	for _, item := range data {
-		code := table.get(item)
+		code := table[item]
 		block.append(code)
 	}
 	block.align()
