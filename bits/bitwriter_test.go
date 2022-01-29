@@ -75,6 +75,7 @@ func TestBitWriter_WriteUint8(t *testing.T) {
 	writer.WriteBit(1)
 	writer.Flush()
 	assert.Equal(t, []byte{0b01110101, 0b1001}, buffer.Bytes())
+	assert.Equal(t, 16, writer.BitCount())
 }
 
 func TestBitWriter_WriteUint8Aligned(t *testing.T) {
@@ -85,6 +86,7 @@ func TestBitWriter_WriteUint8Aligned(t *testing.T) {
 	writer.WriteUint8(201)
 	writer.Flush()
 	assert.Equal(t, []byte{125, 201}, buffer.Bytes())
+	assert.Equal(t, 16, writer.BitCount())
 }
 
 func TestBitWriter_WriteUint16(t *testing.T) {
@@ -98,6 +100,7 @@ func TestBitWriter_WriteUint16(t *testing.T) {
 	writer.WriteBit(1)
 	writer.Flush()
 	assert.Equal(t, []byte{0b11001101, 0b10011100, 0b1001}, buffer.Bytes())
+	assert.Equal(t, 24, writer.BitCount())
 }
 
 func TestBitWriter_WriteUint16Aligned(t *testing.T) {
@@ -112,6 +115,7 @@ func TestBitWriter_WriteUint16Aligned(t *testing.T) {
 		[]byte{12001 & 0xFF, (12001 >> 8) & 0xFF, 40022 & 0xFF, (40022 >> 8) & 0xFF},
 		buffer.Bytes(),
 	)
+	assert.Equal(t, 32, writer.BitCount())
 }
 
 func TestBitWriter_WriteUint32(t *testing.T) {
@@ -125,6 +129,7 @@ func TestBitWriter_WriteUint32(t *testing.T) {
 	writer.WriteBit(1)
 	writer.Flush()
 	assert.Equal(t, []byte{0b10101101, 0b01111010, 0b00110000, 0b10011011, 0b1001}, buffer.Bytes())
+	assert.Equal(t, 40, writer.BitCount())
 }
 
 func TestBitWriter_WriteUint32Aligned(t *testing.T) {
@@ -148,4 +153,5 @@ func TestBitWriter_WriteUint32Aligned(t *testing.T) {
 		},
 		buffer.Bytes(),
 	)
+	assert.Equal(t, 64, writer.BitCount())
 }

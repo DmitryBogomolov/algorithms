@@ -59,6 +59,7 @@ func (writer *BitWriter) WriteUint8(value byte) error {
 	writer.currentByte |= value << writer.bitOffset
 	err := writer.writeByte()
 	writer.currentByte |= value >> (8 - writer.bitOffset)
+	writer.bitCount += 8
 	return err
 }
 
