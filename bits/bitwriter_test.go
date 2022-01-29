@@ -16,23 +16,11 @@ func TestBitWriter_WriteBit(t *testing.T) {
 	writer.WriteBit(1)
 	writer.WriteBit(0)
 	assert.Equal(t, []byte(nil), buffer.Bytes())
-
 	writer.Flush()
 	assert.Equal(t, []byte{0b0110}, buffer.Bytes())
 }
 
-func TestBitWriter_WriteBitMore(t *testing.T) {
-	var buffer bytes.Buffer
-	writer := NewBitWriter(&buffer)
-
-	for _, bit := range []byte{1, 0, 1, 0, 0, 0, 0, 1, 0, 1} {
-		writer.WriteBit(bit)
-	}
-	writer.Flush()
-	assert.Equal(t, []byte{0b10000101, 0b10}, buffer.Bytes())
-}
-
-func TestBitWriter_WriteBitAlign(t *testing.T) {
+func TestBitWriter_Flush(t *testing.T) {
 	var buffer bytes.Buffer
 	writer := NewBitWriter(&buffer)
 
@@ -44,6 +32,14 @@ func TestBitWriter_WriteBitAlign(t *testing.T) {
 	writer.WriteBit(1)
 	writer.Flush()
 	assert.Equal(t, []byte{0b101, 0b11}, buffer.Bytes())
+}
+
+func TestBitWriter_FlushAligned(t *testing.T) {
+	var buffer bytes.Buffer
+	writer := NewBitWriter(&buffer)
+
+	writer.Flush()
+	assert.Equal(t, []byte(nil), buffer.Bytes())
 }
 
 func TestBitWriter_WriteBits8(t *testing.T) {
@@ -89,7 +85,11 @@ func TestBitWriter_WriteBits16Aligned(t *testing.T) {
 	writer.WriteBits16(12001)
 	writer.WriteBits16(40022)
 	writer.Flush()
-	assert.Equal(t, []byte{12001 & 0xFF, (12001 >> 8) & 0xFF, 40022 & 0xFF, (40022 >> 8) & 0xFF}, buffer.Bytes())
+	assert.Equal(
+		t,
+		[]byte{12001 & 0xFF, (12001 >> 8) & 0xFF, 40022 & 0xFF, (40022 >> 8) & 0xFF},
+		buffer.Bytes(),
+	)
 }
 
 func TestBitWriter_WriteBits32(t *testing.T) {
@@ -112,14 +112,18 @@ func TestBitWriter_WriteBits32Aligned(t *testing.T) {
 	writer.WriteBits32(100123)
 	writer.WriteBits32(200801)
 	writer.Flush()
-	assert.Equal(t, []byte{
-		100123 & 0xFF,
-		(100123 >> 8) & 0xFF,
-		(100123 >> 16) & 0xFF,
-		(100123 >> 24) & 0xFF,
-		200801 & 0xFF,
-		(200801 >> 8) & 0xFF,
-		(200801 >> 16) & 0xFF,
-		(200801 >> 24) & 0xFF,
-	}, buffer.Bytes())
+	assert.Equal(
+		t,
+		[]byte{
+			100123 & 0xFF,
+			(100123 >> 8) & 0xFF,
+			(100123 >> 16) & 0xFF,
+			(100123 >> 24) & 0xFF,
+			200801 & 0xFF,
+			(200801 >> 8) & 0xFF,
+			(200801 >> 16) & 0xFF,
+			(200801 >> 24) & 0xFF,
+		},
+		buffer.Bytes(),
+	)
 }
