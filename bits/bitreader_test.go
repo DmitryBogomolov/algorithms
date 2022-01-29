@@ -8,9 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var b0 byte = 0
-var b1 byte = 1
-
 func TestBitReader_ReadBit(t *testing.T) {
 	buffer := bytes.NewBuffer([]byte{0b11001})
 	reader := NewBitReader(buffer)
