@@ -1,10 +1,11 @@
-package bits
+package bits_test
 
 import (
 	"bytes"
 	"io"
 	"testing"
 
+	. "github.com/DmitryBogomolov/algorithms/bits"
 	"github.com/stretchr/testify/assert"
 )
 

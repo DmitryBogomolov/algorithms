@@ -2,30 +2,34 @@ package bits
 
 import "io"
 
-type _BitReader struct {
+// BitReader reads bit by bit from an underlying reader.
+type BitReader struct {
 	reader      io.ByteReader
 	currentByte byte
 	bitOffset   int
 	bitCount    int
 }
 
-func NewBitReader(reader io.ByteReader) *_BitReader {
-	return &_BitReader{
+// NewBitReader creates BitReader instance.
+func NewBitReader(reader io.ByteReader) *BitReader {
+	return &BitReader{
 		reader: reader,
 	}
 }
 
-func (reader *_BitReader) BitCount() int {
+// BitCount gets amount of read bits.
+func (reader *BitReader) BitCount() int {
 	return reader.bitCount
 }
 
-func (reader *_BitReader) readByte() error {
+func (reader *BitReader) readByte() error {
 	nextByte, err := reader.reader.ReadByte()
 	reader.currentByte = nextByte
 	return err
 }
 
-func (reader *_BitReader) ReadBit() (byte, error) {
+// ReadBit reads a bit.
+func (reader *BitReader) ReadBit() (byte, error) {
 	if reader.bitOffset == 0 {
 		if err := reader.readByte(); err != nil {
 			return 0, err
@@ -43,7 +47,8 @@ func (reader *_BitReader) ReadBit() (byte, error) {
 	return 0, nil
 }
 
-func (reader *_BitReader) Flush() (byte, error) {
+// Flush alignes to the next byte.
+func (reader *BitReader) Flush() (byte, error) {
 	if reader.bitOffset == 0 {
 		return 0, nil
 	}
@@ -54,7 +59,8 @@ func (reader *_BitReader) Flush() (byte, error) {
 	return ret, nil
 }
 
-func (reader *_BitReader) ReadUint8() (uint8, error) {
+// ReadUint8 reads an uint8.
+func (reader *BitReader) ReadUint8() (uint8, error) {
 	if reader.bitOffset == 0 {
 		if err := reader.readByte(); err != nil {
 			return 0, err
@@ -72,7 +78,8 @@ func (reader *_BitReader) ReadUint8() (uint8, error) {
 	return ret, nil
 }
 
-func (reader *_BitReader) ReadUint16() (uint16, error) {
+// ReadUint16 reads an uint16.
+func (reader *BitReader) ReadUint16() (uint16, error) {
 	var ret uint16
 	var tmp uint8
 	var err error
@@ -86,7 +93,8 @@ func (reader *_BitReader) ReadUint16() (uint16, error) {
 	return ret, err
 }
 
-func (reader *_BitReader) ReadUint32() (uint32, error) {
+// ReadUint32 reads an uint32.
+func (reader *BitReader) ReadUint32() (uint32, error) {
 	var ret uint32
 	var tmp uint16
 	var err error
