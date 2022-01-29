@@ -1,72 +1,62 @@
 package huffman
 
 import (
-	"encoding/binary"
+	"bytes"
+
+	"github.com/DmitryBogomolov/algorithms/bits"
 )
 
-func collectFrequencies(data []byte) []int {
-	frequencies := make([]int, 256)
-	for _, item := range data {
-		frequencies[item]++
-	}
-	return frequencies
+type _ByteCode []byte
+type _ByteCodeTable []_ByteCode
+
+func extendCode(code _ByteCode, bit byte) _ByteCode {
+	tmp := append(_ByteCode{}, code...)
+	return append(tmp, bit)
 }
 
-func buildTableCore(node *_Node, table map[byte]*bitBlock, code *bitBlock, treeBits *int, dataBits *int) {
-	*treeBits++
+func buildTableCore(node *_Node, table _ByteCodeTable, code []byte) {
 	if node.isLeaf() {
-		*dataBits += node.frequency * code.size
-		*treeBits += 8
 		table[node.item] = code
 	} else {
-		lCode := code.clone()
-		lCode.appendBit(false)
-		rCode := code.clone()
-		rCode.appendBit(true)
-		buildTableCore(node.lNode, table, lCode, treeBits, dataBits)
-		buildTableCore(node.rNode, table, rCode, treeBits, dataBits)
+		buildTableCore(node.lNode, table, extendCode(code, 0))
+		buildTableCore(node.rNode, table, extendCode(code, 1))
 	}
 }
 
-func buildTable(root *_Node) (map[byte]*bitBlock, int) {
-	table := map[byte]*bitBlock{}
-	treeBits, dataBits := 0, 0
-	buildTableCore(root, table, newBitBlock(0), &treeBits, &dataBits)
-	// 32 - is for length, 14 - is a worst case of two alignments.
-	return table, treeBits + 32 + 14 + dataBits
+func buildTable(root *_Node) _ByteCodeTable {
+	table := make(_ByteCodeTable, 256)
+	buildTableCore(root, table, nil)
+	return table
 }
 
-func compressTreeCore(node *_Node, block *bitBlock) {
+func compressTreeCore(node *_Node, writer *bits.BitWriter) {
 	if node.isLeaf() {
-		block.appendBit(true)
-		block.appendByte(node.item)
+		writer.WriteBit(1)
+		writer.WriteUint8(node.item)
 	} else {
-		block.appendBit(false)
-		compressTreeCore(node.lNode, block)
-		compressTreeCore(node.rNode, block)
+		writer.WriteBit(0)
+		compressTreeCore(node.lNode, writer)
+		compressTreeCore(node.rNode, writer)
 	}
 }
 
-func compressTree(root *_Node, block *bitBlock) {
-	compressTreeCore(root, block)
-	block.align()
+func compressTree(root *_Node, writer *bits.BitWriter) {
+	compressTreeCore(root, writer)
+	writer.Flush()
 }
 
-func compressLength(length int, block *bitBlock) {
-	var bytes [4]byte
-	binary.LittleEndian.PutUint32(bytes[:], uint32(length))
-	block.appendByte(bytes[0])
-	block.appendByte(bytes[1])
-	block.appendByte(bytes[2])
-	block.appendByte(bytes[3])
+func compressByteCode(code _ByteCode, writer *bits.BitWriter) {
+	for _, bit := range code {
+		writer.WriteBit(bit)
+	}
 }
 
-func compressData(data []byte, table map[byte]*bitBlock, block *bitBlock) {
+func compressData(data []byte, table _ByteCodeTable, writer *bits.BitWriter) {
 	for _, item := range data {
 		code := table[item]
-		block.append(code)
+		compressByteCode(code, writer)
 	}
-	block.align()
+	writer.Flush()
 }
 
 // Compress compresses *data*.
@@ -75,12 +65,12 @@ func Compress(data []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return nil, ErrEmptyData
 	}
-	frequencies := collectFrequencies(data)
-	root := buildTree(frequencies)
-	table, blockSize := buildTable(root)
-	block := newBitBlock(blockSize)
-	compressTree(root, block)
-	compressLength(len(data), block)
-	compressData(data, table, block)
-	return block.getBuffer(), nil
+	root := buildTree(data)
+	table := buildTable(root)
+	var buffer bytes.Buffer
+	writer := bits.NewBitWriter(&buffer)
+	compressTree(root, writer)
+	writer.WriteUint32(uint32(len(data)))
+	compressData(data, table, writer)
+	return buffer.Bytes(), nil
 }

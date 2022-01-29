@@ -1,67 +1,86 @@
 package huffman
 
 import (
-	"encoding/binary"
+	"bytes"
+
+	"github.com/DmitryBogomolov/algorithms/bits"
 )
 
-func expandTreeCore(scanner *bitScanner) *_Node {
-	var n _Node
-	if scanner.readBit() {
-		n.item = scanner.readByte()
-	} else {
-		n.lNode = expandTreeCore(scanner)
-		n.rNode = expandTreeCore(scanner)
+func expandTreeCore(reader *bits.BitReader) (*_Node, error) {
+	var node _Node
+	bit, err := reader.ReadBit()
+	if err != nil {
+		return nil, err
 	}
-	return &n
+	if bit > 0 {
+		if node.item, err = reader.ReadUint8(); err != nil {
+			return nil, err
+		}
+	} else {
+		if node.lNode, err = expandTreeCore(reader); err != nil {
+			return nil, err
+		}
+		if node.rNode, err = expandTreeCore(reader); err != nil {
+			return nil, err
+		}
+	}
+	return &node, nil
 }
 
-func expandTree(scanner *bitScanner) *_Node {
-	root := expandTreeCore(scanner)
-	scanner.align()
-	return root
+func expandTree(reader *bits.BitReader) (*_Node, error) {
+	root, err := expandTreeCore(reader)
+	reader.Flush()
+	return root, err
 }
 
-func expandLength(scanner *bitScanner) int {
-	return int(binary.LittleEndian.Uint32([]byte{
-		scanner.readByte(),
-		scanner.readByte(),
-		scanner.readByte(),
-		scanner.readByte(),
-	}))
+func expandByteCode(reader *bits.BitReader, root *_Node) (byte, error) {
+	node := root
+	for !node.isLeaf() {
+		bit, err := reader.ReadBit()
+		if err != nil {
+			return 0, err
+		}
+		if bit > 0 {
+			node = node.rNode
+		} else {
+			node = node.lNode
+		}
+	}
+	return node.item, nil
 }
 
-func expandData(scanner *bitScanner, length int, root *_Node) []byte {
+func expandData(reader *bits.BitReader, length int, root *_Node) ([]byte, error) {
 	buffer := make([]byte, length)
 	for i := 0; i < length; i++ {
-		node := root
-		for !node.isLeaf() {
-			if scanner.readBit() {
-				node = node.rNode
-			} else {
-				node = node.lNode
-			}
+		b, err := expandByteCode(reader, root)
+		if err != nil {
+			return nil, err
 		}
-		buffer[i] = node.item
+		buffer[i] = b
 	}
-	scanner.align()
-	return buffer
+	reader.Flush()
+	return buffer, nil
 }
 
 // Expand expands *data*.
 // https://algs4.cs.princeton.edu/55compression/Huffman.java.html
-func Expand(data []byte) (buffer []byte, err error) {
+func Expand(data []byte) (result []byte, err error) {
 	if len(data) == 0 {
-		err = ErrEmptyData
-		return
+		return nil, ErrEmptyData
 	}
-	defer func() {
-		if innerErr := recover(); innerErr != nil {
-			err = ErrDataCorrupted
-		}
-	}()
-	scanner := newBitScanner(data)
-	root := expandTree(scanner)
-	length := expandLength(scanner)
-	buffer = expandData(scanner, length, root)
-	return
+	buffer := bytes.NewBuffer(data)
+	reader := bits.NewBitReader(buffer)
+	root, err := expandTree(reader)
+	if err != nil {
+		return nil, ErrDataCorrupted
+	}
+	length, err := reader.ReadUint32()
+	if err != nil {
+		return nil, ErrDataCorrupted
+	}
+	result, err = expandData(reader, int(length), root)
+	if err != nil {
+		return nil, ErrDataCorrupted
+	}
+	return result, nil
 }
