@@ -17,11 +17,8 @@ func NewBitReader(reader io.ByteReader) *_BitReader {
 
 func (reader *_BitReader) readByte() error {
 	nextByte, err := reader.reader.ReadByte()
-	if err != nil {
-		return err
-	}
 	reader.currentByte = nextByte
-	return nil
+	return err
 }
 
 func (reader *_BitReader) BitCount() int {
@@ -34,8 +31,7 @@ func (reader *_BitReader) ReadBit() (byte, error) {
 			return 0, err
 		}
 	}
-	mask := bitMasks[reader.bitOffset]
-	bit := reader.currentByte & mask
+	bit := reader.currentByte & bitMasks[reader.bitOffset]
 	reader.bitCount++
 	reader.bitOffset++
 	if reader.bitOffset == 8 {
