@@ -15,14 +15,14 @@ func NewBitReader(reader io.ByteReader) *_BitReader {
 	}
 }
 
+func (reader *_BitReader) BitCount() int {
+	return reader.bitCount
+}
+
 func (reader *_BitReader) readByte() error {
 	nextByte, err := reader.reader.ReadByte()
 	reader.currentByte = nextByte
 	return err
-}
-
-func (reader *_BitReader) BitCount() int {
-	return reader.bitCount
 }
 
 func (reader *_BitReader) ReadBit() (byte, error) {

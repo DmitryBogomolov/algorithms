@@ -1,21 +1,6 @@
 package bits
 
-import (
-	"io"
-)
-
-const (
-	bit0 uint8 = 1 << iota
-	bit1
-	bit2
-	bit3
-	bit4
-	bit5
-	bit6
-	bit7
-)
-
-var bitMasks = []byte{bit0, bit1, bit2, bit3, bit4, bit5, bit6, bit7}
+import "io"
 
 type _BitWriter struct {
 	writer      io.ByteWriter
@@ -34,6 +19,12 @@ func (writer *_BitWriter) BitCount() int {
 	return writer.bitCount
 }
 
+func (writer *_BitWriter) writeByte() error {
+	err := writer.writer.WriteByte(writer.currentByte)
+	writer.currentByte = 0
+	return err
+}
+
 func (writer *_BitWriter) WriteBit(value byte) error {
 	mask := bitMasks[writer.bitOffset]
 	if value > 0 {
@@ -45,6 +36,15 @@ func (writer *_BitWriter) WriteBit(value byte) error {
 	writer.bitOffset++
 	if writer.bitOffset == 8 {
 		return writer.Flush()
+	}
+	return nil
+}
+
+func (writer *_BitWriter) Flush() error {
+	if writer.bitOffset > 0 {
+		writer.bitCount += 8 - writer.bitOffset
+		writer.bitOffset = 0
+		return writer.writeByte()
 	}
 	return nil
 }
@@ -70,19 +70,4 @@ func (writer *_BitWriter) WriteUint32(value uint32) error {
 		writer.WriteUint16(uint16(value >> 16))
 	}
 	return err
-}
-
-func (writer *_BitWriter) writeByte() error {
-	err := writer.writer.WriteByte(writer.currentByte)
-	writer.currentByte = 0
-	return err
-}
-
-func (writer *_BitWriter) Flush() error {
-	if writer.bitOffset > 0 {
-		writer.bitCount += 8 - writer.bitOffset
-		writer.bitOffset = 0
-		return writer.writeByte()
-	}
-	return nil
 }
