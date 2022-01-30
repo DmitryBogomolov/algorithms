@@ -1,68 +1,92 @@
 package huffman
 
-import "errors"
+import (
+	"bufio"
+	"io"
 
-func expandTrieCore(scanner *bitScanner) *node {
-	var n node
-	if scanner.readBit() {
-		n.item = scanner.readByte()
-	} else {
-		n.lNode = expandTrieCore(scanner)
-		n.rNode = expandTrieCore(scanner)
+	"github.com/DmitryBogomolov/algorithms/bits"
+)
+
+func expandTreeCore(reader *bits.BitReader) (*_Node, error) {
+	var node _Node
+	bit, err := reader.ReadBit()
+	if err != nil {
+		return nil, err
 	}
-	return &n
-}
-
-func expandTrie(scanner *bitScanner) *node {
-	root := expandTrieCore(scanner)
-	scanner.align()
-	return root
-}
-
-func expandLength(scanner *bitScanner) int {
-	var length int
-	length |= int(scanner.readByte())
-	length |= int(scanner.readByte()) << 8
-	length |= int(scanner.readByte()) << 16
-	length |= int(scanner.readByte()) << 24
-	return length
-}
-
-func expandData(scanner *bitScanner, length int, root *node) []byte {
-	buffer := make([]byte, length)
-	for i := 0; i < length; i++ {
-		node := root
-		for !node.isLeaf() {
-			if scanner.readBit() {
-				node = node.rNode
-			} else {
-				node = node.lNode
-			}
+	if bit > 0 {
+		if node.item, err = reader.ReadUint8(); err != nil {
+			return nil, err
 		}
-		buffer[i] = node.item
+	} else {
+		if node.lNode, err = expandTreeCore(reader); err != nil {
+			return nil, err
+		}
+		if node.rNode, err = expandTreeCore(reader); err != nil {
+			return nil, err
+		}
 	}
-	scanner.align()
-	return buffer
+	return &node, nil
 }
 
-// ErrDataCorrupted tells that data is corrupted.
-var ErrDataCorrupted = errors.New("data is corrupted")
+func expandTree(reader *bits.BitReader) (*_Node, error) {
+	root, err := expandTreeCore(reader)
+	if err == nil {
+		_, err = reader.Flush()
+	}
+	return root, err
+}
+
+func expandByteCode(root *_Node, reader *bits.BitReader) (byte, error) {
+	node := root
+	for !node.isLeaf() {
+		bit, err := reader.ReadBit()
+		if err != nil {
+			return 0, err
+		}
+		if bit > 0 {
+			node = node.rNode
+		} else {
+			node = node.lNode
+		}
+	}
+	return node.item, nil
+}
+
+func expandData(root *_Node, length int, reader *bits.BitReader, target io.ByteWriter) error {
+	var err error
+	for i := 0; i < length; i++ {
+		b, err := expandByteCode(root, reader)
+		if err != nil {
+			return err
+		}
+		if err = target.WriteByte(b); err != nil {
+			return err
+		}
+	}
+	_, err = reader.Flush()
+	return err
+}
 
 // Expand expands *data*.
 // https://algs4.cs.princeton.edu/55compression/Huffman.java.html
-func Expand(data []byte) (buffer []byte, err error) {
-	if len(data) == 0 {
-		err = ErrEmptyData
-		return
+func Expand(input io.Reader, output io.Writer) error {
+	var err error
+	inputWrapper := bufio.NewReader(input)
+	bitReader := bits.NewBitReader(inputWrapper)
+	root, err := expandTree(bitReader)
+	if err != nil {
+		return ExpandError{err}
 	}
-	defer func() {
-		if innerErr := recover(); innerErr != nil {
-			err = ErrDataCorrupted
-		}
-	}()
-	scanner := newBitScanner(data)
-	root := expandTrie(scanner)
-	length := expandLength(scanner)
-	buffer = expandData(scanner, length, root)
-	return
+	length, err := bitReader.ReadUint32()
+	if err != nil {
+		return ExpandError{err}
+	}
+	outputWrapper := bufio.NewWriter(output)
+	if err = expandData(root, int(length), bitReader, outputWrapper); err != nil {
+		return ExpandError{err}
+	}
+	if err = outputWrapper.Flush(); err != nil {
+		return ExpandError{err}
+	}
+	return nil
 }
