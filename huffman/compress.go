@@ -58,34 +58,55 @@ func buildTable(root *_Node) _ByteCodeTable {
 	return table
 }
 
-func compressTreeCore(node *_Node, writer *bits.BitWriter) {
+func compressTreeCore(node *_Node, writer *bits.BitWriter) error {
+	var err error
 	if node.isLeaf() {
-		writer.WriteBit(1)
-		writer.WriteUint8(node.item)
+		err = writer.WriteBit(1)
+		if err == nil {
+			writer.WriteUint8(node.item)
+		}
 	} else {
-		writer.WriteBit(0)
-		compressTreeCore(node.lNode, writer)
-		compressTreeCore(node.rNode, writer)
+		err = writer.WriteBit(0)
+		if err == nil {
+			compressTreeCore(node.lNode, writer)
+		}
+		if err == nil {
+			compressTreeCore(node.rNode, writer)
+		}
 	}
+	return err
 }
 
-func compressTree(root *_Node, writer *bits.BitWriter) {
-	compressTreeCore(root, writer)
-	writer.Flush()
+func compressTree(root *_Node, writer *bits.BitWriter) error {
+	err := compressTreeCore(root, writer)
+	if err == nil {
+		err = writer.Flush()
+	}
+	return err
 }
 
-func compressByteCode(code _ByteCode, writer *bits.BitWriter) {
+func compressByteCode(code _ByteCode, writer *bits.BitWriter) error {
+	var err error
 	for _, bit := range code {
-		writer.WriteBit(bit)
+		if err = writer.WriteBit(bit); err != nil {
+			break
+		}
 	}
+	return err
 }
 
-func compressData(data []byte, table _ByteCodeTable, writer *bits.BitWriter) {
+func compressData(data []byte, table _ByteCodeTable, writer *bits.BitWriter) error {
+	var err error
 	for _, item := range data {
 		code := table[item]
-		compressByteCode(code, writer)
+		if err = compressByteCode(code, writer); err != nil {
+			break
+		}
 	}
-	writer.Flush()
+	if err == nil {
+		err = writer.Flush()
+	}
+	return err
 }
 
 // Compress compresses *data*.
@@ -98,8 +119,15 @@ func Compress(data []byte) ([]byte, error) {
 	table := buildTable(root)
 	var buffer bytes.Buffer
 	writer := bits.NewBitWriter(&buffer)
-	compressTree(root, writer)
-	writer.WriteUint32(uint32(len(data)))
-	compressData(data, table, writer)
+	var err error
+	if err = compressTree(root, writer); err != nil {
+		return nil, CompressError{err}
+	}
+	if err = writer.WriteUint32(uint32(len(data))); err != nil {
+		return nil, CompressError{err}
+	}
+	if err = compressData(data, table, writer); err != nil {
+		return nil, CompressError{err}
+	}
 	return buffer.Bytes(), nil
 }

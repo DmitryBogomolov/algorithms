@@ -29,7 +29,9 @@ func expandTreeCore(reader *bits.BitReader) (*_Node, error) {
 
 func expandTree(reader *bits.BitReader) (*_Node, error) {
 	root, err := expandTreeCore(reader)
-	reader.Flush()
+	if err == nil {
+		_, err = reader.Flush()
+	}
 	return root, err
 }
 
@@ -58,29 +60,30 @@ func expandData(reader *bits.BitReader, length int, root *_Node) ([]byte, error)
 		}
 		buffer[i] = b
 	}
-	reader.Flush()
-	return buffer, nil
+	_, err := reader.Flush()
+	return buffer, err
 }
 
 // Expand expands *data*.
 // https://algs4.cs.princeton.edu/55compression/Huffman.java.html
-func Expand(data []byte) (result []byte, err error) {
+func Expand(data []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return nil, ErrEmptyData
 	}
 	buffer := bytes.NewBuffer(data)
 	reader := bits.NewBitReader(buffer)
+	var err error
 	root, err := expandTree(reader)
 	if err != nil {
-		return nil, DataCorruptedError{err}
+		return nil, ExpandError{err}
 	}
 	length, err := reader.ReadUint32()
 	if err != nil {
-		return nil, DataCorruptedError{err}
+		return nil, ExpandError{err}
 	}
-	result, err = expandData(reader, int(length), root)
+	result, err := expandData(reader, int(length), root)
 	if err != nil {
-		return nil, DataCorruptedError{err}
+		return nil, ExpandError{err}
 	}
 	return result, nil
 }

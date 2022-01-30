@@ -8,15 +8,28 @@ import (
 // ErrEmptyData tells that data is nil or empty.
 var ErrEmptyData = errors.New("data is nil or empty")
 
-// DataCorruptedError tells that compressed data is corrupted.
-type DataCorruptedError struct {
+// CompressError is returned when compress failed.
+type CompressError struct {
 	err error
 }
 
-func (e DataCorruptedError) Error() string {
-	return fmt.Sprintf("compressed data is corrupted: %v", e.err)
+func (e CompressError) Error() string {
+	return fmt.Sprintf("failed to compress: %v", e.err)
 }
 
-func (e DataCorruptedError) Unwrap() error {
+func (e CompressError) Unwrap() error {
+	return e.err
+}
+
+// ExpandError is returned when expand failed.
+type ExpandError struct {
+	err error
+}
+
+func (e ExpandError) Error() string {
+	return fmt.Sprintf("failed to expand: %v", e.err)
+}
+
+func (e ExpandError) Unwrap() error {
 	return e.err
 }
