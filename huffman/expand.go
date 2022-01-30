@@ -1,7 +1,8 @@
 package huffman
 
 import (
-	"bytes"
+	"bufio"
+	"io"
 
 	"github.com/DmitryBogomolov/algorithms/bits"
 )
@@ -35,7 +36,7 @@ func expandTree(reader *bits.BitReader) (*_Node, error) {
 	return root, err
 }
 
-func expandByteCode(reader *bits.BitReader, root *_Node) (byte, error) {
+func expandByteCode(root *_Node, reader *bits.BitReader) (byte, error) {
 	node := root
 	for !node.isLeaf() {
 		bit, err := reader.ReadBit()
@@ -51,39 +52,41 @@ func expandByteCode(reader *bits.BitReader, root *_Node) (byte, error) {
 	return node.item, nil
 }
 
-func expandData(reader *bits.BitReader, length int, root *_Node) ([]byte, error) {
-	buffer := make([]byte, length)
+func expandData(root *_Node, length int, reader *bits.BitReader, target io.ByteWriter) error {
+	var err error
 	for i := 0; i < length; i++ {
-		b, err := expandByteCode(reader, root)
+		b, err := expandByteCode(root, reader)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		buffer[i] = b
+		if err = target.WriteByte(b); err != nil {
+			return err
+		}
 	}
-	_, err := reader.Flush()
-	return buffer, err
+	_, err = reader.Flush()
+	return err
 }
 
 // Expand expands *data*.
 // https://algs4.cs.princeton.edu/55compression/Huffman.java.html
-func Expand(data []byte) ([]byte, error) {
-	if len(data) == 0 {
-		return nil, ErrEmptyData
-	}
-	buffer := bytes.NewBuffer(data)
-	reader := bits.NewBitReader(buffer)
+func Expand(input io.Reader, output io.Writer) error {
 	var err error
-	root, err := expandTree(reader)
+	inputWrapper := bufio.NewReader(input)
+	bitReader := bits.NewBitReader(inputWrapper)
+	root, err := expandTree(bitReader)
 	if err != nil {
-		return nil, ExpandError{err}
+		return ExpandError{err}
 	}
-	length, err := reader.ReadUint32()
+	length, err := bitReader.ReadUint32()
 	if err != nil {
-		return nil, ExpandError{err}
+		return ExpandError{err}
 	}
-	result, err := expandData(reader, int(length), root)
-	if err != nil {
-		return nil, ExpandError{err}
+	outputWrapper := bufio.NewWriter(output)
+	if err = expandData(root, int(length), bitReader, outputWrapper); err != nil {
+		return ExpandError{err}
 	}
-	return result, nil
+	if err = outputWrapper.Flush(); err != nil {
+		return ExpandError{err}
+	}
+	return nil
 }

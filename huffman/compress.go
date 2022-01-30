@@ -1,7 +1,9 @@
 package huffman
 
 import (
-	"bytes"
+	"bufio"
+	"io"
+	"io/ioutil"
 
 	"github.com/DmitryBogomolov/algorithms/bits"
 	"github.com/DmitryBogomolov/algorithms/priorityqueue"
@@ -10,8 +12,10 @@ import (
 type _ByteCode []byte
 type _ByteCodeTable []_ByteCode
 
+const tableSize = 256
+
 func buildTree(data []byte) *_Node {
-	frequencies := make([]int, 256)
+	frequencies := make([]int, tableSize)
 	for _, item := range data {
 		frequencies[item]++
 	}
@@ -53,7 +57,7 @@ func buildTableCore(node *_Node, table _ByteCodeTable, code []byte) {
 }
 
 func buildTable(root *_Node) _ByteCodeTable {
-	table := make(_ByteCodeTable, 256)
+	table := make(_ByteCodeTable, tableSize)
 	buildTableCore(root, table, nil)
 	return table
 }
@@ -111,23 +115,30 @@ func compressData(data []byte, table _ByteCodeTable, writer *bits.BitWriter) err
 
 // Compress compresses *data*.
 // https://algs4.cs.princeton.edu/55compression/Huffman.java.html
-func Compress(data []byte) ([]byte, error) {
+func Compress(input io.Reader, output io.Writer) error {
+	var err error
+	data, err := ioutil.ReadAll(input)
+	if err != nil {
+		return CompressError{err}
+	}
 	if len(data) == 0 {
-		return nil, ErrEmptyData
+		return CompressError{io.EOF}
 	}
 	root := buildTree(data)
 	table := buildTable(root)
-	var buffer bytes.Buffer
-	writer := bits.NewBitWriter(&buffer)
-	var err error
-	if err = compressTree(root, writer); err != nil {
-		return nil, CompressError{err}
+	outputWrapper := bufio.NewWriter(output)
+	bitWriter := bits.NewBitWriter(outputWrapper)
+	if err = compressTree(root, bitWriter); err != nil {
+		return CompressError{err}
 	}
-	if err = writer.WriteUint32(uint32(len(data))); err != nil {
-		return nil, CompressError{err}
+	if err = bitWriter.WriteUint32(uint32(len(data))); err != nil {
+		return CompressError{err}
 	}
-	if err = compressData(data, table, writer); err != nil {
-		return nil, CompressError{err}
+	if err = compressData(data, table, bitWriter); err != nil {
+		return CompressError{err}
 	}
-	return buffer.Bytes(), nil
+	if err = outputWrapper.Flush(); err != nil {
+		return CompressError{err}
+	}
+	return nil
 }

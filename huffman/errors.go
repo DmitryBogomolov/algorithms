@@ -1,12 +1,8 @@
 package huffman
 
 import (
-	"errors"
 	"fmt"
 )
-
-// ErrEmptyData tells that data is nil or empty.
-var ErrEmptyData = errors.New("data is nil or empty")
 
 // CompressError is returned when compress failed.
 type CompressError struct {
