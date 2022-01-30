@@ -72,15 +72,15 @@ func Expand(data []byte) (result []byte, err error) {
 	reader := bits.NewBitReader(buffer)
 	root, err := expandTree(reader)
 	if err != nil {
-		return nil, ErrDataCorrupted
+		return nil, DataCorruptedError{err}
 	}
 	length, err := reader.ReadUint32()
 	if err != nil {
-		return nil, ErrDataCorrupted
+		return nil, DataCorruptedError{err}
 	}
 	result, err = expandData(reader, int(length), root)
 	if err != nil {
-		return nil, ErrDataCorrupted
+		return nil, DataCorruptedError{err}
 	}
 	return result, nil
 }

@@ -1,6 +1,8 @@
 package huffman_test
 
 import (
+	"errors"
+	"io"
 	"testing"
 
 	. "github.com/DmitryBogomolov/algorithms/huffman"
@@ -35,5 +37,5 @@ func TestExpandEmptyBuffer(t *testing.T) {
 
 	ret, err = Expand([]byte{1})
 	assert.Equal(t, []byte(nil), ret)
-	assert.Equal(t, ErrDataCorrupted, err)
+	assert.Equal(t, io.EOF, errors.Unwrap(err))
 }
