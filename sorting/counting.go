@@ -1,22 +1,19 @@
 package sorting
 
-// Counting sorts items using counting sort algorithm.
-func Counting(items []interface{}, keyRange int, keyFunc func(item interface{}) int) {
-	count := make([]int, len(items)+1)
-	aux := make([]interface{}, len(items))
-	for _, item := range items {
-		key := keyFunc(item)
-		count[key+1]++
+// KeyIndexedCounting sorts by positive integer keys in ascending order.
+// Accepts array of keys and maximum key value. Returns array of positions.
+func KeyIndexedCounting(keys []int, keyBound int) []int {
+	count := make([]int, keyBound+1)
+	for _, key := range keys {
+		count[(key%keyBound)+1]++
 	}
-	for i := 1; i < len(count); i++ {
-		count[i] += count[i-1]
+	for i := 0; i < keyBound; i++ {
+		count[i+1] += count[i]
 	}
-	for _, item := range items {
-		key := keyFunc(item)
-		aux[count[key]] = item
-		count[key]++
+	positions := make([]int, len(keys))
+	for i, key := range keys {
+		positions[i] = count[key%keyBound]
+		count[key%keyBound]++
 	}
-	for i := range items {
-		items[i] = aux[i]
-	}
+	return positions
 }
