@@ -2,24 +2,28 @@ package strings
 
 import "github.com/DmitryBogomolov/algorithms/sorting"
 
-func RadixLSD(items []string, radix int, alph TrieAlphabet) {
+// RadixLSD sorts array of strings by character-by-character starting from the last one
+// (least-significant-digit-first).
+func RadixLSD(items []string, radixCount int, alph TrieAlphabet) {
 	count := len(items)
 	keys := make([]int, count)
 	positions := make([]int, count)
-	aux1 := make([]string, count)
-	copy(aux1, items)
-	aux2 := make([]string, count)
-	for k := 0; k < radix; k++ {
-		for i, item := range aux1 {
+	src := items
+	dst := make([]string, count)
+	for k := 0; k < radixCount; k++ {
+		for i, item := range src {
 			keys[i] = getLSDIndex(item, k, alph)
 		}
 		sorting.KeyIndexedCounting(keys, alph.Size(), positions)
-		for i, item := range aux1 {
-			aux2[positions[i]] = item
+		for i, item := range src {
+			dst[positions[i]] = item
 		}
-		copy(aux1, aux2)
+		src, dst = dst, src
 	}
-	copy(items, aux1)
+	// After odd passes "src" points to internal array. So "items" must be explicitly updated.
+	if radixCount%2 != 0 {
+		copy(items, src)
+	}
 }
 
 func getLSDIndex(str string, idx int, alph TrieAlphabet) int {
