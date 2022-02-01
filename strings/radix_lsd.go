@@ -4,7 +4,7 @@ import "github.com/DmitryBogomolov/algorithms/sorting"
 
 // RadixLSD sorts array of strings by character-by-character starting from the last one
 // (least-significant-digit-first).
-func RadixLSD(items []string, radixCount int, alph TrieAlphabet) {
+func RadixLSD(items []string, radixCount int, alph Alphabet) {
 	count := len(items)
 	keys := make([]int, count)
 	positions := make([]int, count)
@@ -26,7 +26,7 @@ func RadixLSD(items []string, radixCount int, alph TrieAlphabet) {
 	}
 }
 
-func getLSDIndex(str string, idx int, alph TrieAlphabet) int {
+func getLSDIndex(str string, idx int, alph Alphabet) int {
 	runes := []rune(str)
 	i := len(runes) - 1 - idx
 	if i >= 0 {

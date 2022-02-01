@@ -1,7 +1,7 @@
 package strings
 
-// TrieAlphabet describes all available trie symbols.
-type TrieAlphabet interface {
+// Alphabet describes all available trie symbols.
+type Alphabet interface {
 	// Size gets alphabet size.
 	Size() int
 	// ToIndex converts symbol to index.
@@ -40,4 +40,4 @@ func NewRangeAlphabet(start rune, end rune) RangeAlphabet {
 }
 
 // ASCIIAlphabet contains 0..127 symbols.
-var ASCIIAlphabet TrieAlphabet = NewRangeAlphabet(0, 127)
+var ASCIIAlphabet Alphabet = NewRangeAlphabet(0, 127)

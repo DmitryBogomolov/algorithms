@@ -4,7 +4,7 @@ import "github.com/DmitryBogomolov/algorithms/sorting"
 
 // RadixMSD sorts array of strings by character-by-character starting from the first one
 // (most-significant-digit-first).
-func RadixMSD(items []string, radixCount int, alph TrieAlphabet) {
+func RadixMSD(items []string, radixCount int, alph Alphabet) {
 	count := len(items)
 	keys := make([]int, count)
 	positions := make([]int, count)
@@ -26,7 +26,7 @@ func RadixMSD(items []string, radixCount int, alph TrieAlphabet) {
 	}
 }
 
-func getMSDIndex(str string, idx int, alph TrieAlphabet) int {
+func getMSDIndex(str string, idx int, alph Alphabet) int {
 	runes := []rune(str)
 	if idx < len(runes) {
 		return alph.ToIndex(runes[idx])

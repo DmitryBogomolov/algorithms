@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTrieRangeAlphabet(t *testing.T) {
+func TestRangeAlphabet(t *testing.T) {
 	alph := NewRangeAlphabet('a', 'z')
 
 	assert.Equal(t, 26, alph.Size())
