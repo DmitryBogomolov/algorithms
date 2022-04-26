@@ -1,5 +1,5 @@
-install:
-	go get -v -t -d ./...
+install_lint:
+	go get -u golang.org/x/lint/golint
 
 lint:
 	golint ./...
