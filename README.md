@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/DmitryBogomolov/algorithms.svg?style=svg)](https://circleci.com/gh/DmitryBogomolov/algorithms)
+[![CI](https://github.com/DmitryBogomolov/algorithms/actions/workflows/ci.yml/badge.svg)](https://github.com/DmitryBogomolov/algorithms/actions/workflows/ci.yml)
 
 # algorithms
 
