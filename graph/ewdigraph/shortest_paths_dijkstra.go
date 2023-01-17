@@ -43,7 +43,7 @@ func FindShortedPathsDijkstra(wdgr ewgraph.EdgeWeightedGraph, vertexID int) Shor
 }
 
 func relaxVerticesDijkstra(
-	wdgr ewgraph.EdgeWeightedGraph, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue,
+	wdgr ewgraph.EdgeWeightedGraph, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue[any],
 ) {
 	for verticesQueue.Size() > 0 {
 		_, currentVertexID := verticesQueue.Remove()
@@ -55,7 +55,7 @@ func relaxVerticesDijkstra(
 }
 
 func relaxEdgeDijkstra(
-	wdgr ewgraph.EdgeWeightedGraph, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue,
+	wdgr ewgraph.EdgeWeightedGraph, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue[any],
 	fromVertexID int, toVertexID int, weight float64,
 ) {
 	if distTo[toVertexID] > distTo[fromVertexID]+weight {

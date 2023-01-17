@@ -7,7 +7,7 @@ import (
 )
 
 func scanMinimumSpanningTreeVertexPrim(
-	wgr EdgeWeightedGraph, marked []bool, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue,
+	wgr EdgeWeightedGraph, marked []bool, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue[any],
 	vertexID int,
 ) {
 	marked[vertexID] = true
@@ -23,7 +23,7 @@ func scanMinimumSpanningTreeVertexPrim(
 }
 
 func processMinimumSpanningTreePrim(
-	wgr EdgeWeightedGraph, marked []bool, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue,
+	wgr EdgeWeightedGraph, marked []bool, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue[any],
 	startVertexID int,
 ) {
 	distTo[startVertexID] = 0
