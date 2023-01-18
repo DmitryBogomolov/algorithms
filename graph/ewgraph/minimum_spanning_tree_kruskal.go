@@ -14,8 +14,8 @@ type _EdgesQueueItem struct {
 // BuildMinimumSpanningTreeKruskal computes minimum spanning tree using Kruskal's algorithm.
 // https://algs4.cs.princeton.edu/43mst/KruskalMST.java.html
 func BuildMinimumSpanningTreeKruskal(wgr EdgeWeightedGraph) EdgeWeightedGraph {
-	edgesQueue := pq.New(func(lhs, rhs interface{}) bool {
-		return lhs.(_EdgesQueueItem).weight < rhs.(_EdgesQueueItem).weight
+	edgesQueue := pq.New(func(lhs, rhs _EdgesQueueItem) bool {
+		return lhs.weight < rhs.weight
 	})
 	allWeights := AllGraphWeights(wgr)
 	for i, edge := range graph.AllGraphEdges(wgr) {
@@ -27,7 +27,7 @@ func BuildMinimumSpanningTreeKruskal(wgr EdgeWeightedGraph) EdgeWeightedGraph {
 	weights := make([][]float64, numVertices)
 	numEdges := 0
 	for edgesQueue.Size() > 0 {
-		queueItem := edgesQueue.Remove().(_EdgesQueueItem)
+		queueItem := edgesQueue.Remove()
 		vertexID1, vertexID2 := queueItem.edge.Vertex1(), queueItem.edge.Vertex2()
 		if !uf.Connected(vertexID1, vertexID2) {
 			uf.Union(vertexID1, vertexID2)

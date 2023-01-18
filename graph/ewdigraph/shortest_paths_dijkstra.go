@@ -23,8 +23,8 @@ func FindShortedPathsDijkstra(wdgr ewgraph.EdgeWeightedGraph, vertexID int) Shor
 		distTo[i] = math.MaxFloat64
 	}
 	distTo[vertexID] = 0.0
-	verticesQueue := ipq.New(func(lhs, rhs interface{}) bool {
-		return lhs.(float64) < rhs.(float64)
+	verticesQueue := ipq.New(func(lhs, rhs float64) bool {
+		return lhs < rhs
 	})
 	verticesQueue.Insert(vertexID, distTo[vertexID])
 	relaxVerticesDijkstra(wdgr, edgeTo, distTo, verticesQueue)
@@ -43,7 +43,7 @@ func FindShortedPathsDijkstra(wdgr ewgraph.EdgeWeightedGraph, vertexID int) Shor
 }
 
 func relaxVerticesDijkstra(
-	wdgr ewgraph.EdgeWeightedGraph, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue[any],
+	wdgr ewgraph.EdgeWeightedGraph, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue[float64],
 ) {
 	for verticesQueue.Size() > 0 {
 		_, currentVertexID := verticesQueue.Remove()
@@ -55,7 +55,7 @@ func relaxVerticesDijkstra(
 }
 
 func relaxEdgeDijkstra(
-	wdgr ewgraph.EdgeWeightedGraph, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue[any],
+	wdgr ewgraph.EdgeWeightedGraph, edgeTo []int, distTo []float64, verticesQueue ipq.IndexPriorityQueue[float64],
 	fromVertexID int, toVertexID int, weight float64,
 ) {
 	if distTo[toVertexID] > distTo[fromVertexID]+weight {
