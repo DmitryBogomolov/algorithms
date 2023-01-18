@@ -5,47 +5,48 @@ import (
 )
 
 // LessFunc is an ordering function.
-type LessFunc func(lhs, rhs interface{}) bool
+type LessFunc[T any] func(lhs, rhs T) bool
 
-func (queue _IndexPriorityQueue) Len() int {
+func (queue _IndexPriorityQueue[T]) Len() int {
 	return len(queue.items)
 }
 
-func (queue _IndexPriorityQueue) Swap(i, j int) {
+func (queue _IndexPriorityQueue[T]) Swap(i, j int) {
 	queue.items[i], queue.items[j] = queue.items[j], queue.items[i]
 	iKey, jKey := queue.idxToKey[i], queue.idxToKey[j]
 	queue.keyToIdx[iKey], queue.keyToIdx[jKey] = j, i
 	queue.idxToKey[i], queue.idxToKey[j] = jKey, iKey
 }
 
-func (queue _IndexPriorityQueue) Less(i, j int) bool {
+func (queue _IndexPriorityQueue[T]) Less(i, j int) bool {
 	return queue.less(queue.items[i], queue.items[j])
 }
 
-func (queue *_IndexPriorityQueue) Push(item interface{}) {
-	queue.items = append(queue.items, item)
+func (queue *_IndexPriorityQueue[T]) Push(item interface{}) {
+	queue.items = append(queue.items, item.(T))
 }
 
-func (queue *_IndexPriorityQueue) Pop() interface{} {
+func (queue *_IndexPriorityQueue[T]) Pop() interface{} {
 	last := queue.Len() - 1
 	item := queue.items[last]
-	queue.items[last] = nil
+	var stub T
+	queue.items[last] = stub
 	queue.items = queue.items[0:last]
 	return item
 }
 
-type _IndexPriorityQueue struct {
-	items    []interface{}
+type _IndexPriorityQueue[T any] struct {
+	items    []T
 	keyToIdx map[int]int
 	idxToKey map[int]int
-	less     LessFunc
+	less     LessFunc[T]
 }
 
-func (queue _IndexPriorityQueue) Size() int {
+func (queue _IndexPriorityQueue[T]) Size() int {
 	return queue.Len()
 }
 
-func (queue *_IndexPriorityQueue) Insert(key int, element interface{}) {
+func (queue *_IndexPriorityQueue[T]) Insert(key int, element T) {
 	idx, hasKey := queue.keyToIdx[key]
 	if hasKey {
 		queue.items[idx] = element
@@ -58,53 +59,53 @@ func (queue *_IndexPriorityQueue) Insert(key int, element interface{}) {
 	}
 }
 
-func (queue *_IndexPriorityQueue) Remove() (interface{}, int) {
+func (queue *_IndexPriorityQueue[T]) Remove() (T, int) {
 	if queue.Len() == 0 {
 		panic("queue is empty")
 	}
 	key := queue.idxToKey[0]
-	element := heap.Pop(queue)
+	element := heap.Pop(queue).(T)
 	delete(queue.idxToKey, queue.keyToIdx[key])
 	delete(queue.keyToIdx, key)
 	return element, key
 }
 
-func (queue _IndexPriorityQueue) Peek() interface{} {
+func (queue _IndexPriorityQueue[T]) Peek() T {
 	if queue.Len() == 0 {
 		panic("queue is empty")
 	}
 	return queue.items[0]
 }
 
-func (queue *_IndexPriorityQueue) RemoveByKey(key int) interface{} {
+func (queue *_IndexPriorityQueue[T]) RemoveByKey(key int) T {
 	idx := queue.keyToIdx[key]
-	element := heap.Remove(queue, idx)
+	element := heap.Remove(queue, idx).(T)
 	delete(queue.idxToKey, queue.keyToIdx[key])
 	delete(queue.keyToIdx, key)
 	return element
 }
 
-func (queue _IndexPriorityQueue) PeekKey() int {
+func (queue _IndexPriorityQueue[T]) PeekKey() int {
 	return queue.idxToKey[0]
 }
 
-func (queue _IndexPriorityQueue) HasKey(key int) bool {
+func (queue _IndexPriorityQueue[T]) HasKey(key int) bool {
 	_, hasKey := queue.keyToIdx[key]
 	return hasKey
 }
 
 // IndexPriorityQueue is index priority queue data structure.
-type IndexPriorityQueue interface {
+type IndexPriorityQueue[T any] interface {
 	// Size gets number of elements in a queue.
 	Size() int
 	// Insert adds element to a queue.
-	Insert(key int, element interface{})
+	Insert(key int, element T)
 	// Remove removes element from a queue.
-	Remove() (interface{}, int)
+	Remove() (T, int)
 	// Peek returns first element of a queue.
-	Peek() interface{}
+	Peek() T
 	// RemoveByKey removes element by key.
-	RemoveByKey(key int) interface{}
+	RemoveByKey(key int) T
 	// PeekKey returns first element key.
 	PeekKey() int
 	// HasKey tells if key exists.
@@ -112,11 +113,11 @@ type IndexPriorityQueue interface {
 }
 
 // New creates instance of IndexPriorityQueue
-func New(less LessFunc) IndexPriorityQueue {
+func New[T any](less LessFunc[T]) IndexPriorityQueue[T] {
 	if less == nil {
 		panic("less func is nil")
 	}
-	return &_IndexPriorityQueue{
+	return &_IndexPriorityQueue[T]{
 		items:    nil,
 		keyToIdx: map[int]int{},
 		idxToKey: map[int]int{},

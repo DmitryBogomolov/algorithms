@@ -4,54 +4,55 @@ import (
 	"container/heap"
 )
 
-func (queue _PriorityQueue) Len() int {
+func (queue _PriorityQueue[T]) Len() int {
 	return len(queue.items)
 }
 
-func (queue _PriorityQueue) Swap(i, j int) {
+func (queue _PriorityQueue[T]) Swap(i, j int) {
 	queue.items[i], queue.items[j] = queue.items[j], queue.items[i]
 }
 
-func (queue _PriorityQueue) Less(i, j int) bool {
+func (queue _PriorityQueue[T]) Less(i, j int) bool {
 	return queue.less(queue.items[i], queue.items[j])
 }
 
-func (queue *_PriorityQueue) Push(item interface{}) {
-	queue.items = append(queue.items, item)
+func (queue *_PriorityQueue[T]) Push(item interface{}) {
+	queue.items = append(queue.items, item.(T))
 }
 
-func (queue *_PriorityQueue) Pop() interface{} {
+func (queue *_PriorityQueue[T]) Pop() interface{} {
 	last := queue.Len() - 1
 	item := queue.items[last]
-	queue.items[last] = nil
+	var stub T
+	queue.items[last] = stub
 	queue.items = queue.items[0:last]
 	return item
 }
 
 // LessFunc is an ordering function.
-type LessFunc func(lhs, rhs interface{}) bool
+type LessFunc[T any] func(lhs, rhs T) bool
 
-type _PriorityQueue struct {
-	items []interface{}
-	less  LessFunc
+type _PriorityQueue[T any] struct {
+	items []T
+	less  LessFunc[T]
 }
 
-func (queue _PriorityQueue) Size() int {
+func (queue _PriorityQueue[T]) Size() int {
 	return queue.Len()
 }
 
-func (queue *_PriorityQueue) Insert(element interface{}) {
+func (queue *_PriorityQueue[T]) Insert(element T) {
 	heap.Push(queue, element)
 }
 
-func (queue *_PriorityQueue) Remove() interface{} {
+func (queue *_PriorityQueue[T]) Remove() T {
 	if queue.Len() == 0 {
 		panic("queue is empty")
 	}
-	return heap.Pop(queue)
+	return heap.Pop(queue).(T)
 }
 
-func (queue _PriorityQueue) Peek() interface{} {
+func (queue _PriorityQueue[T]) Peek() T {
 	if queue.Len() == 0 {
 		panic("queue is empty")
 	}
@@ -59,23 +60,23 @@ func (queue _PriorityQueue) Peek() interface{} {
 }
 
 // PriorityQueue is priority queue data structure.
-type PriorityQueue interface {
+type PriorityQueue[T any] interface {
 	// Size gets number of element in a queue.
 	Size() int
 	// Insert adds element to a queue.
-	Insert(element interface{})
+	Insert(element T)
 	// Remove removes element from a queue.
-	Remove() interface{}
+	Remove() T
 	// Peek returns first element of a queue.
-	Peek() interface{}
+	Peek() T
 }
 
 // New create instance of PriorityQueue.
-func New(less LessFunc) PriorityQueue {
+func New[T any](less LessFunc[T]) PriorityQueue[T] {
 	if less == nil {
 		panic("less func is nil")
 	}
-	return &_PriorityQueue{
+	return &_PriorityQueue[T]{
 		less:  less,
 		items: nil,
 	}

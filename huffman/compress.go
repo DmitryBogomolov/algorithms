@@ -19,10 +19,8 @@ func buildTree(data []byte) *_Node {
 	for _, item := range data {
 		frequencies[item]++
 	}
-	queue := priorityqueue.New(func(lhs, rhs interface{}) bool {
-		lNode := lhs.(*_Node)
-		rNode := rhs.(*_Node)
-		return lNode.frequency < rNode.frequency
+	queue := priorityqueue.New(func(lhs, rhs *_Node) bool {
+		return lhs.frequency < rhs.frequency
 	})
 	for i, freq := range frequencies {
 		if freq > 0 {
@@ -30,8 +28,8 @@ func buildTree(data []byte) *_Node {
 		}
 	}
 	for queue.Size() > 1 {
-		lNode := queue.Remove().(*_Node)
-		rNode := queue.Remove().(*_Node)
+		lNode := queue.Remove()
+		rNode := queue.Remove()
 		n := &_Node{
 			frequency: lNode.frequency + rNode.frequency,
 			lNode:     lNode,
@@ -39,7 +37,7 @@ func buildTree(data []byte) *_Node {
 		}
 		queue.Insert(n)
 	}
-	return queue.Remove().(*_Node)
+	return queue.Remove()
 }
 
 func extendCode(code _ByteCode, bit byte) _ByteCode {
